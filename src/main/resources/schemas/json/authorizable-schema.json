@@ -1,0 +1,12 @@
+{
+    "description":"A representation of a minimum authorization object.",
+    "type":"object",
+    "properties":{
+        "authorizableId":{
+            "type":"string"
+        },
+        "home":{
+            "type":"string"
+        }
+    }
+}

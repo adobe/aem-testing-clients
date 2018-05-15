@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ Copyright 2017 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema xmlns="http://www.w3schools.com" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.xmlsoap.org/soap/envelope/"  xmlns:s7="http://www.scene7.com/IpsApi/xsd/2011-11-04-beta" elementFormDefault="qualified">
+	<xs:import namespace="http://www.scene7.com/IpsApi/xsd/2011-11-04-beta" schemaLocation="scene7ElementsSchema.xsd"/>
+    <xs:element name="Envelope">
+	    <xs:complexType>
+		    <xs:sequence>
+		    	<xs:element name="Header"/>
+		    	<xs:element name="Body" >
+		    		<xs:complexType>
+		    			<xs:choice>
+		    				<xs:element ref="s7:getUserInfoParam"/>
+		    				<xs:element ref="s7:getCompanyMembershipParam"/>
+		    				<xs:element ref="s7:getPropertySetTypesParam"/>
+		    				<xs:element ref="s7:getPropertySetsParam"/>
+		    				<xs:element ref="s7:getActiveJobsParam"/>
+		    				<xs:element ref="s7:submitJobParam"/>
+		    				<xs:element ref="s7:searchAssetsParam"/>
+		    				<xs:element ref="s7:getJobLogDetailsParam"/>
+		    				<xs:element ref="s7:getAssetsParam"/>
+		    				<xs:element ref="s7:deleteAssetParam"/>
+		    				<xs:element ref="s7:deleteFolderParam"/>
+		    				<xs:element ref="s7:getAssociatedAssetsParam"/>
+		    				<xs:element ref="s7:getFolderTreeParam" />
+		    				<xs:element ref="s7:searchAssetsByMetadataParam"/>
+		    			</xs:choice>
+		    		</xs:complexType>
+		    	</xs:element>
+		    </xs:sequence>
+	    </xs:complexType>
+    </xs:element>
+</xs:schema>

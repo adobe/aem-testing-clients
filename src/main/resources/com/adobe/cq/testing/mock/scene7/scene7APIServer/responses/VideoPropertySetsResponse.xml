@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  ~ Copyright 2017 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<getPropertySetsReturn xmlns="http://www.scene7.com/IpsApi/xsd/2011-11-04-beta">
+			<setArray>
+				<items>
+					<setHandle>ps|1592948</setHandle>
+					<typeHandle>pt|61</typeHandle>
+					<propertyArray>
+						<items>
+							<name>Name</name>
+							<value>16:9, 1920x1080 (5036 Kbps), OGG (Jayan Kandathil)</value>
+						</items>
+						<items>
+							<name>Extension</name>
+							<value></value>
+						</items>
+						<items>
+							<name>Active</name>
+							<value>true</value>
+						</items>
+						<items>
+							<name>Description</name>
+							<value>Custom video encoding preset by Jayan Kandathil</value>
+						</items>
+						<items>
+							<name>AspectRatio</name>
+							<value>16:9</value>
+						</items>
+						<items>
+							<name>TargetBitRate</name>
+							<value>5036</value>
+						</items>
+						<items>
+							<name>Height</name>
+							<value>1080</value>
+						</items>
+						<items>
+							<name>Width</name>
+							<value>1920</value>
+						</items>
+						<items>
+							<name>PlaybackOn</name>
+							<value>OGG</value>
+						</items>
+					</propertyArray>
+				</items>
+			</setArray>
+		</getPropertySetsReturn>
+	</soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,9 @@
+{ 
+  "description": "A representation of ace objects.",
+  "type": "object",
+    "properties": {
+      "jcr:primaryType": {"type": "string"},
+      "rep:principalName": {"type": "string"},
+      "rep:privileges": {"type": "object"}
+    }
+}

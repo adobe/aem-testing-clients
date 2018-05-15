@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  ~ Copyright 2017 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<getPropertySetTypesReturn xmlns="http://www.scene7.com/IpsApi/xsd/2011-11-04-beta">
+			<typeArray>
+				<items>
+					<typeHandle>pt|1</typeHandle>
+					<name>Adobe.SPS.ApplicationSetting</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|8</typeHandle>
+					<name>Adobe.SPS.License</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|9</typeHandle>
+					<name>Adobe.SPS.PersonalSetting</name>
+					<propertyType>UserProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|10</typeHandle>
+					<name>Adobe.SPS.ViewerPreset</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>true</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|61</typeHandle>
+					<name>Adobe.IPS.VideoEncoderPreset</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>true</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|121</typeHandle>
+					<name>Adobe.IPS.AutomatedSetCreation</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>true</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|141</typeHandle>
+					<name>Adobe.SPS.ControlSettings</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|142</typeHandle>
+					<name>Adobe.SPS.ActiveUsersSettings</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|143</typeHandle>
+					<name>Adobe.SPS.ActiveUDFSettings</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|144</typeHandle>
+					<name>Adobe.SPS.ActiveImagePresetsSettings</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|145</typeHandle>
+					<name>Adobe.SPS.ActiveAccounts</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|146</typeHandle>
+					<name>Adobe.SPS.XMPMetadataFilterPresets</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>true</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|147</typeHandle>
+					<name>Adobe.SPS.XMPMetadataPresets</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>true</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|148</typeHandle>
+					<name>Adobe.SPS.XMPMetadataTemplates</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>true</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|149</typeHandle>
+					<name>Adobe.SPS.XMPMetadataPresetDefault</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|150</typeHandle>
+					<name>Adobe.SPS.BrandUISettings</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>false</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|438</typeHandle>
+					<name>Adobe.SPS.ImagePresetGroupPermission</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>true</allowMultiple>
+				</items>
+				<items>
+					<typeHandle>pt|151</typeHandle>
+					<name>Adobe.SPS.VideoEncoderPreset</name>
+					<propertyType>CompanyProperty</propertyType>
+					<allowMultiple>true</allowMultiple>
+				</items>
+			</typeArray>
+		</getPropertySetTypesReturn>
+	</soapenv:Body>
+</soapenv:Envelope>

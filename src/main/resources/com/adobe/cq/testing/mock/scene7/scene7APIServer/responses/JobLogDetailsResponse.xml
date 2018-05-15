@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  ~ Copyright 2017 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<getJobLogDetailsReturn xmlns="http://www.scene7.com/IpsApi/xsd/2011-11-04-beta">
+			<jobLogArray>
+				<items>
+					<companyHandle>c|8680</companyHandle>
+					<jobHandle>j|8680||CQ5_publish_job_CQ5DEMO_1355745624148_2012-12-17-06:00:40.552|12603894</jobHandle>
+					<jobName>CQ5_publish_job_CQ5DEMO_1355745624148_2012-12-17-06:00:40.552</jobName>
+					<originalJobName>CQ5_publish_job_CQ5DEMO_1355745624148</originalJobName>
+					<submitUserEmail>qa@day.com</submitUserEmail>
+					<logType>BeginImageServingPublish</logType>
+					<jobSubType>increment</jobSubType>
+					<startDate>2012-12-17T06:00:55.354-06:00</startDate>
+					<endDate>2012-12-17T06:02:12.334-06:00</endDate>
+					<description></description>
+					<fileSuccessCount>10</fileSuccessCount>
+					<fileErrorCount>1</fileErrorCount>
+					<fileWarningCount>0</fileWarningCount>
+					<fileDuplicateCount>0</fileDuplicateCount>
+					<fileUpdateCount>0</fileUpdateCount>
+					<totalFileCount>11</totalFileCount>
+					<transferSuccessCount>0</transferSuccessCount>
+					<transferErrorCount>0</transferErrorCount>
+					<transferWarningCount>0</transferWarningCount>
+					<fatalError>false</fatalError>
+					<detailTotalRows>12</detailTotalRows>
+					<detailArray>
+						<items>
+							<logMessage>FontFile</logMessage>
+							<logType>ImageServingPublishError</logType>
+							<assetName>HelveticaLTStd-Bold-OTF</assetName>
+							<assetHandle>a|68573284</assetHandle>
+							<auxArray>
+								<items>
+									<logMessage>Font definition is incomplete</logMessage>
+									<logType>EndImageServingPublish</logType>
+									<dateCreated>2012-12-17T00:00:00.000-06:00</dateCreated>
+								</items>
+							</auxArray>
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server:
+								DA2_OBU_VIP7_Manifest</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server: IS Pre-Live
+								Server</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server: NJw2pISmanifest</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server:
+								manifestfileservers</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server: njmanifestserver</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server:
+								DA2_OBU_VIP11_Manifest</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server:
+								DA2_OBU_VIP1_Manifest</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server:
+								NJ_VIP11_Manifest</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server: NJ_VIP1_Manifest</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>Catalog files were pushed to server: s7search_da2</logMessage>
+							<logType>ImageServingPublishSuccess</logType>
+							<assetType>PublishCatalog</assetType>
+							<auxArray />
+						</items>
+						<items>
+							<logMessage>11</logMessage>
+							<logType>TotalFileCount</logType>
+							<auxArray />
+						</items>
+					</detailArray>
+				</items>
+			</jobLogArray>
+		</getJobLogDetailsReturn>
+	</soapenv:Body>
+</soapenv:Envelope>

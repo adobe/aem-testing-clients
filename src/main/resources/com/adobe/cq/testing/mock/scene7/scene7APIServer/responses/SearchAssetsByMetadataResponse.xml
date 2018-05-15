@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  ~ Copyright 2017 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<searchAssetsByMetadataReturn xmlns="http://www.scene7.com/IpsApi/xsd/2011-11-04-beta">
+			<totalRows>19</totalRows>
+			<assetSummaryArray>
+				<items>
+					<assetHandle>a|81305161</assetHandle>
+					<filename>2012-01-30T12-04-00_Nairobi Pink.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81305937</assetHandle>
+					<filename>2012-01-30T12-21-39_Nairobi Green.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81306277</assetHandle>
+					<filename>2012-01-30T12-31-19_Lake Titicaca Blue.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81306441</assetHandle>
+					<filename>2012-01-30T12-11-44_Tobermory.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81306516</assetHandle>
+					<filename>2012-01-30T11-37-36_Kamloops.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81306708</assetHandle>
+					<filename>2012-01-30T12-22-37_Interlaken.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81374308</assetHandle>
+					<filename>2012-01-31T07-10-53_dedication.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81375179</assetHandle>
+					<filename>2012-01-31T07-15-32_cool-and-stylish.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81375410</assetHandle>
+					<filename>2012-01-31T07-19-40_keep-your-cool.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81376007</assetHandle>
+					<filename>2012-01-31T07-37-42_userconf.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81376868</assetHandle>
+					<filename>2012-01-31T07-32-12_city.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81377156</assetHandle>
+					<filename>2012-01-31T07-45-08_airport.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81377251</assetHandle>
+					<filename>2012-01-31T07-47-05_techsummit.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81380388</assetHandle>
+					<filename>2012-01-31T08-22-26_basel meetingroom.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81380483</assetHandle>
+					<filename>2012-01-31T08-27-37_newport beach.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|81425191</assetHandle>
+					<filename>2012-01-31T15-11-44_Mont Tremblant.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|119457901</assetHandle>
+					<filename>shapecon.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|119640698</assetHandle>
+					<filename>test.swf</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+				<items>
+					<assetHandle>a|120886262</assetHandle>
+					<filename>test.jpg</filename>
+					<createUser />
+					<lastModifyUser />
+				</items>
+			</assetSummaryArray>
+		</searchAssetsByMetadataReturn>
+	</soapenv:Body>
+</soapenv:Envelope>

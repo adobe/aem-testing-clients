@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ Copyright 2017 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema xmlns="http://www.w3schools.com" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:s7="http://www.scene7.com/IpsApi/xsd/2011-11-04-beta" targetNamespace="http://www.scene7.com/IpsApi/xsd/2011-11-04-beta" elementFormDefault="qualified">
+	<xs:element name="getUserInfoParam" type="s7:getUserInfo"/>
+	<xs:element name="getCompanyMembershipParam" type="s7:getCompanyMembership"/>
+	<xs:element name="getPropertySetTypesParam" type="s7:getPropertySetTypes"/>
+	<xs:element name="getPropertySetsParam" type="s7:getPropertySets"/>
+	<xs:element name="getActiveJobsParam" type="s7:getActiveJobs"/>
+	<xs:element name="submitJobParam" type="s7:submitJob"/>
+	<xs:element name="searchAssetsParam" type="s7:searchAssets"/>
+	<xs:element name="getJobLogDetailsParam" type="s7:getJobLogDetails"/>
+	<xs:element name="getAssetsParam" type="s7:getAssets"/>
+	<xs:element name="deleteAssetParam" type="s7:deleteAsset"/>
+	<xs:element name="deleteFolderParam" type="s7:deleteFolder"/>
+	<xs:element name="getFolderTreeParam" type="s7:getFolderTree"/>
+	<xs:element name="searchAssetsByMetadataParam" type="s7:searchAssetsByMetadata"/>
+	<xs:element name="getAssociatedAssetsParam" type="s7:getAssociatedAssets"/>
+	
+	<xs:complexType name="getUserInfo">
+		<xs:all>
+	   		<xs:element name="email" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="userHandle" type="xs:string" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="getCompanyMembership">
+		<xs:all>
+	   		<xs:element name="userHandle" type="xs:string" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="getPropertySetTypes">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="getPropertySets">
+		<xs:all>
+	   		<xs:element name="typeHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="primaryOwnerHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="secondaryOwnerHandle" type="xs:string" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="getActiveJobs">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="jobHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="originalName" type="xs:string" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="submitJob">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="userHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="jobName" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="locale" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="execTime" type="xs:dateTime" minOccurs="0"/>
+	   		<xs:element name="execSchedule" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="description" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="imageServingPublishJob" minOccurs="0"/>
+	   		<xs:element name="imageRenderingPublishJob" minOccurs="0"/>
+	   		<xs:element name="videoPublishJob"  minOccurs="0"/>
+	   		<xs:element name="serverDirectoryPublishJob"  minOccurs="0"/>
+	   		<xs:element name="uploadDirectoryJob"  minOccurs="0"/>
+	   		<xs:element name="uploadUrlsJob"  minOccurs="0"/>
+	   		<xs:element name="optimizeImagesJob"  minOccurs="0"/>
+	   		<xs:element name="ripPdfsJob"  minOccurs="0"/>
+	   		<xs:element name="reprocessAssetsJob" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="searchAssets">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="accessUserHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="accessGroupHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="folder" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="includeSubfolders" type="xs:boolean" minOccurs="1"/>
+	   		<xs:element name="publishState" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="trashState" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="conditionMatchMode" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="keywordArray" minOccurs="0"/>
+	   		<xs:element name="systemFieldMatchMode" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="systemFieldConditionArray" minOccurs="0"/>
+	   		<xs:element name="tagMatchMode" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="tagConditionArray" minOccurs="0"/>
+	   		<xs:element name="metadataMatchMode" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="metadataConditionArray"  minOccurs="0"/>
+	   		<xs:element name="assetTypeArray" minOccurs="0"/>
+	   		<xs:element name="excludeAssetTypeArray" minOccurs="0"/>
+	   		<xs:element name="assetSubTypeArray" minOccurs="0"/>
+	   		<xs:element name="strictSubTypeCheck" type="xs:boolean" minOccurs="0"/>
+	   		<xs:element name="excludeByproducts" type="xs:boolean" minOccurs="0"/>
+	   		<xs:element name="excludeByproductArray" minOccurs="0"/>
+	   		<xs:element name="projectHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="recordsPerPage" type="xs:int" minOccurs="0"/>
+	   		<xs:element name="resultsPage" type="xs:int" minOccurs="0"/>
+	   		<xs:element name="sortBy" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="sortDirection" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="responseFieldArray" minOccurs="0"/>
+	   		<xs:element name="excludeFieldArray" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="getJobLogDetails">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="jobHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="originalName" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="logTypeArray" minOccurs="0"/>
+	   		<xs:element name="recordsPerPage" type="xs:int" minOccurs="0"/>
+	   		<xs:element name="resultsPage" type="xs:int" minOccurs="0"/>
+	   		<xs:element name="sortBy" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="sortDirection" type="xs:string" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="getAssets">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="accessUserHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="accessGroupHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="assetHandleArray" minOccurs="1"/>
+	   		<xs:element name="responseFieldArray" minOccurs="0"/>
+	   		<xs:element name="excludeFieldArray" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="deleteAsset">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="assetHandle" type="xs:string" minOccurs="1"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="deleteFolder">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="folderHandle" type="xs:string" minOccurs="1"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="getFolderTree">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="accessUserHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="accessGroupHandle" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="folderPath" type="xs:string" minOccurs="0"/>
+	   		<xs:element name="depth" type="xs:int" minOccurs="1"/>
+	   		<xs:element name="assetTypeArray" minOccurs="0"/>
+	   		<xs:element name="responseFieldArray" minOccurs="0"/>
+	   		<xs:element name="excludeFieldArray" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="searchAssetsByMetadata">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="metadataConditionArray" minOccurs="0"/>
+	   		<xs:element name="responseMetadataArray" minOccurs="0"/>
+	   		<xs:element name="filters" minOccurs="0"/>
+	   		<xs:element name="recordsPerPage" type="xs:int" minOccurs="0"/>
+	   		<xs:element name="resultsPage" type="xs:int" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="getAssociatedAssets">
+		<xs:all>
+	   		<xs:element name="companyHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="assetHandle" type="xs:string" minOccurs="1"/>
+	   		<xs:element name="responseFieldArray" minOccurs="0"/>
+	   		<xs:element name="excludeFieldArray" minOccurs="0"/>
+	   	</xs:all>
+	</xs:complexType>
+	
+</xs:schema>

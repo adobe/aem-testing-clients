@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  ~ Copyright 2017 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<searchAssetsReturn xmlns="http://www.scene7.com/IpsApi/xsd/2011-11-04-beta">
+			<totalRows>1</totalRows>
+			<assetArray>
+				<items>
+					<assetHandle>a|119643849</assetHandle>
+					<type>Image</type>
+					<name>waterfall</name>
+					<fileName>waterfall.jpg</fileName>
+					<folder>./</folder>
+					<folderHandle>f|./</folderHandle>
+					<readyForPublish>true</readyForPublish>
+					<trashState>NotInTrash</trashState>
+					<projects />
+					<ipsImageUrl>image-no-ips/CQ5DEMO/_optimized_/665/66532145-bdda-4615-983f-a95201a1df0b.tif
+					</ipsImageUrl>
+					<created>2012-11-26T06:16:49.632-06:00</created>
+					<createUser>qa@day.com</createUser>
+					<lastModified>2013-01-22T03:37:02.764-06:00</lastModified>
+					<lastModifyUser>qa@day.com</lastModifyUser>
+					<metadataArray>
+						<items>
+							<name>CreationDiscoverySite</name>
+							<value></value>
+						</items>
+						<items>
+							<name>GroupCode</name>
+							<value></value>
+						</items>
+						<items>
+							<name>Product Family</name>
+							<value></value>
+						</items>
+						<items>
+							<name>Product Name</name>
+							<value></value>
+						</items>
+						<items>
+							<name>School</name>
+							<value></value>
+						</items>
+						<items>
+							<name>Season</name>
+							<value></value>
+						</items>
+						<items>
+							<name>eVideoTypeImage</name>
+							<value></value>
+						</items>
+					</metadataArray>
+					<imageInfo>
+						<originalPath>CQ5DEMO/_master_/118/</originalPath>
+						<originalFile>1189f9b1-29a6-4527-a9ac-748abd043347.jpg
+						</originalFile>
+						<optimizedPath>CQ5DEMO/_optimized_/665/</optimizedPath>
+						<optimizedFile>66532145-bdda-4615-983f-a95201a1df0b.tif
+						</optimizedFile>
+						<maskPath></maskPath>
+						<maskFile></maskFile>
+						<width>188</width>
+						<height>250</height>
+						<fileSize>11732</fileSize>
+						<resolution>72.0</resolution>
+						<sku />
+						<description>waterfall.jpg</description>
+						<comments></comments>
+						<userData></userData>
+						<anchorX>94</anchorX>
+						<anchorY>125</anchorY>
+						<urlModifier />
+						<urlPostApplyModifier />
+						<zoomTargets />
+						<masks />
+						<imageMaps />
+					</imageInfo>
+				</items>
+			</assetArray>
+		</searchAssetsReturn>
+	</soapenv:Body>
+</soapenv:Envelope>

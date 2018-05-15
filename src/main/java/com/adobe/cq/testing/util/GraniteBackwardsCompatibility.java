@@ -1,0 +1,67 @@
+/*
+ * Copyright 2017 Adobe Systems Incorporated
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.adobe.cq.testing.util;
+
+import org.apache.sling.testing.clients.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class GraniteBackwardsCompatibility {
+    private static final Logger LOG = LoggerFactory.getLogger(GraniteBackwardsCompatibility.class);
+
+    public static void translateGranitePropertiesToSling() {
+        for (String property : System.getProperties().stringPropertyNames()) {
+            if (property.startsWith("granite.it.")) {
+                String slingProp = property.replaceFirst("granite\\.it\\.", Constants.CONFIG_PROP_PREFIX);
+                if (System.getProperty(slingProp) == null) {
+                    System.setProperty(slingProp, System.getProperty(property));
+                    LOG.info("Set {}={} from {}", slingProp, System.getProperty(slingProp), property);
+                }
+            }
+        }
+
+        // Special handling of granite.it.author.url and granite.it.publish.url
+        String authorUrl = System.getProperty("granite.it.author.url");
+        if (authorUrl != null && !isInstanceAlreadyConfigured(authorUrl, "author")) {
+            final int instances = Integer.valueOf(System.getProperty(Constants.CONFIG_PROP_PREFIX + "instances", "0"));
+            System.setProperty(Constants.CONFIG_PROP_PREFIX + "instance.url." + String.valueOf(instances + 1), authorUrl);
+            System.setProperty(Constants.CONFIG_PROP_PREFIX + "instance.runmode." + String.valueOf(instances + 1), "author");
+            System.setProperty(Constants.CONFIG_PROP_PREFIX + "instances", String.valueOf(instances + 1));
+        }
+
+        String publishUrl = System.getProperty("granite.it.publish.url");
+        if (publishUrl != null && !isInstanceAlreadyConfigured(publishUrl, "publish")) {
+            final int instances = Integer.valueOf(System.getProperty(Constants.CONFIG_PROP_PREFIX + "instances", "0"));
+            System.setProperty(Constants.CONFIG_PROP_PREFIX + "instance.url." + String.valueOf(instances + 1), publishUrl);
+            System.setProperty(Constants.CONFIG_PROP_PREFIX + "instance.runmode." + String.valueOf(instances + 1), "publish");
+            System.setProperty(Constants.CONFIG_PROP_PREFIX + "instances", String.valueOf(instances + 1));
+        }
+    }
+
+    private static boolean isInstanceAlreadyConfigured(String url, String runmode) {
+        final int instances = Integer.valueOf(System.getProperty(Constants.CONFIG_PROP_PREFIX + "instances", "0"));
+        for (int i = 1; i <= instances; i++) {
+            String instanceUrl = System.getProperty(Constants.CONFIG_PROP_PREFIX + "instance.url." + String.valueOf(i));
+            String instanceRunmode = System.getProperty(Constants.CONFIG_PROP_PREFIX + "instance.runmode." + String.valueOf(i));
+
+            if ("author".equals(instanceRunmode) && url.equals(instanceUrl)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

@@ -1,0 +1,38 @@
+*INFO* [FelixStartLevel] slf4j.api BundleEvent STARTED
+*INFO* [main] org.apache.felix.framework BundleEvent STARTED
+*INFO* [FelixDispatchQueue] org.apache.felix.framework FrameworkEvent STARTED
+*INFO* [OsgiInstallerImpl] org.apache.aries.jmx.api BundleEvent INSTALLED
+*INFO* [OsgiInstallerImpl] org.apache.sling.audit.osgi.installer Installed bundle org.apache.aries.jmx.api [22] from resource TaskResource(url=launchpad:resources/install/2/org.apache.aries.jmx.api-1.1.0.jar, entity=bundle:org.apache.aries.jmx.api, state=INSTALL, attributes=[org.apache.sling.installer.api.tasks.ResourceTransformer=:21:, Bundle-SymbolicName=org.apache.aries.jmx.api, Bundle-Version=1.1.0], digest=1414760806000)
+*ERROR* [Indexer: /var/search-collections/ugc-sc: Thread-141] com.adobe.cq.social.sc.lucene.LuceneSearchCollection Error executing doUpdate.
+java.lang.NullPointerException: null
+    at com.adobe.cq.social.commons.ugc.impl.index.ModerationUgcNodeIndexerExtension.getUgcIndexProperties(ModerationUgcNodeIndexerExtension.java:183)
+    at com.adobe.cq.social.ugc.api.AbstractUgcNodeIndexerExtension.getAllUgcIndexProperties(AbstractUgcNodeIndexerExtension.java:186)
+    at com.adobe.cq.social.ugc.impl.UgcNodeIndexer.createDocument(UgcNodeIndexer.java:95)
+    at com.adobe.cq.social.sc.lucene.LuceneSearchCollection.doUpdate(LuceneSearchCollection.java:555)
+    at com.adobe.cq.social.sc.lucene.LuceneSearchCollection.access$500(LuceneSearchCollection.java:90)
+    at com.adobe.cq.social.sc.lucene.LuceneSearchCollection$WorkerThread.run(LuceneSearchCollection.java:155)
+    at java.lang.Thread.run(Thread.java:695)
+*ERROR* [Indexer: /var/search-collections/ugc-journal-search: Thread-143] com.adobe.cq.social.sc.lucene.LuceneSearchCollection Error executing doUpdate.
+java.lang.NullPointerException: null
+    at com.adobe.cq.social.journal.impl.JournalUgcNodeIndexerExtension.getUgcIndexProperties(JournalUgcNodeIndexerExtension.java:99)
+    at com.adobe.cq.social.ugc.api.AbstractUgcNodeIndexerExtension.getAllUgcIndexProperties(AbstractUgcNodeIndexerExtension.java:186)
+    at com.adobe.cq.social.ugc.impl.UgcNodeIndexer.createDocument(UgcNodeIndexer.java:95)
+    at com.adobe.cq.social.sc.lucene.LuceneSearchCollection.doUpdate(LuceneSearchCollection.java:555)
+    at com.adobe.cq.social.sc.lucene.LuceneSearchCollection.access$500(LuceneSearchCollection.java:90)
+    at com.adobe.cq.social.sc.lucene.LuceneSearchCollection$WorkerThread.run(LuceneSearchCollection.java:155)
+    at java.lang.Thread.run(Thread.java:695)
+*WARN* [FelixStartLevel] com.adobe.cq.projects.impl.ProjectStorageProvider Unable to resolve the template for the project /content/projects/20141031/media
+*WARN* [FelixStartLevel] com.adobe.cq.projects.impl.ProjectStorageProvider Unable to resolve the template for the project /content/projects/20141031/media
+Default end marker: WorkflowLauncherListener StartupListener.startupFinished called
+Lines after end marker are supposed to be ignored
+*INFO* [FelixStartLevel] slf4j.api BundleEvent STARTED
+*WARN* [FelixStartLevel] com.adobe.cq.projects.impl.ProjectStorageProvider Unable to resolve the template for the project /content/projects/20141031/media
+*ERROR* [Indexer: /var/search-collections/ugc-journal-search: Thread-143] com.adobe.cq.social.sc.lucene.LuceneSearchCollection Error executing doUpdate.
+java.lang.NullPointerException: null
+    at com.adobe.cq.social.journal.impl.JournalUgcNodeIndexerExtension.getUgcIndexProperties(JournalUgcNodeIndexerExtension.java:99)
+    at com.adobe.cq.social.ugc.api.AbstractUgcNodeIndexerExtension.getAllUgcIndexProperties(AbstractUgcNodeIndexerExtension.java:186)
+    at com.adobe.cq.social.ugc.impl.UgcNodeIndexer.createDocument(UgcNodeIndexer.java:95)
+    at com.adobe.cq.social.sc.lucene.LuceneSearchCollection.doUpdate(LuceneSearchCollection.java:555)
+    at com.adobe.cq.social.sc.lucene.LuceneSearchCollection.access$500(LuceneSearchCollection.java:90)
+    at com.adobe.cq.social.sc.lucene.LuceneSearchCollection$WorkerThread.run(LuceneSearchCollection.java:155)
+    at java.lang.Thread.run(Thread.java:695)

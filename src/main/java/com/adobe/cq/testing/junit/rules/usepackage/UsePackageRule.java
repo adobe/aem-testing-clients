@@ -16,34 +16,24 @@
 package com.adobe.cq.testing.junit.rules.usepackage;
 
 import org.apache.sling.testing.junit.rules.instance.Instance;
-import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * Install a package on the provided instance every time this rule is applied.
+ * Install a content package from resources.
+ * Takes in an {@code Instance} rule, which has to be applied before this rule
  */
 public class UsePackageRule implements TestRule {
 
     private String srcPath;
-
     private Instance instance;
-
-    protected TestRule ruleChain;
 
     public UsePackageRule(String srcPath, Instance instance) {
         this.srcPath = srcPath;
         this.instance = instance;
-        this.ruleChain = RuleChain.outerRule(new InternalRule(this));
-    } 
-    
-    
-    @Override
-    public Statement apply(Statement base, Description description) {
-        return ruleChain.apply(base, description);
     }
-    
+
     public String getSrcPath() {
         return srcPath;
     }
@@ -51,19 +41,9 @@ public class UsePackageRule implements TestRule {
     public Instance getInstance() {
         return instance;
     }
-    
-    private class InternalRule implements TestRule {
-        
-        private UsePackageRule parentRule;
-        
-        protected InternalRule(UsePackageRule rule) {
-            this.parentRule = rule;
-        }
 
-        @Override
-        public Statement apply(Statement base, Description description) {
-            return new UsingPackageStatement(parentRule, base);
-        }
-        
+    @Override
+    public Statement apply(Statement statement, Description description) {
+        return new UsingPackageStatement(this, statement);
     }
 }

@@ -27,14 +27,26 @@ import static com.adobe.cq.testing.junit.rules.CQClassRule.DEFAULT_AUTHOR_CONFIG
 
 public class CQAuthorClassRule implements TestRule {
     /** Granite rules to be executed at class level */
-    public final CQClassRule cqClassRule = new CQClassRule();
+    public final CQClassRule cqClassRule;
 
     /** ExistingInstance to reserve an Author */
-    public final Instance authorRule = ClassRuleUtils.newInstanceRule()
-            .withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
+    public final Instance authorRule;
 
-    protected TestRule ruleChain = RuleChain.outerRule(cqClassRule)
-            .around(authorRule);
+    protected TestRule ruleChain;
+
+    public CQAuthorClassRule() {
+        this(false);
+    }
+
+    public CQAuthorClassRule(boolean forceBasicAuth) {
+        super();
+        cqClassRule = new CQClassRule();
+        authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuth)
+                .withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
+
+        ruleChain = RuleChain.outerRule(cqClassRule)
+                .around(authorRule);
+    }
 
     @Override
     public Statement apply(Statement base, Description description) {

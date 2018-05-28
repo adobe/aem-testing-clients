@@ -27,17 +27,28 @@ import static com.adobe.cq.testing.junit.rules.CQClassRule.DEFAULT_PUBLISH_CONFI
 
 public class CQPublishClassRule implements TestRule {
     /** CQ rules to be executed at class level */
-    public final CQClassRule cqClassRule = new CQClassRule();
+    public final CQClassRule cqClassRule;
 
-    /** ExistingInstance to reserve an Author */
-    public final Instance publishRule = ClassRuleUtils.newInstanceRule()
-            .withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
+    /** ExistingInstance to reserve a Publish */
+    public final Instance publishRule;
 
-    protected TestRule graniteRuleChain = RuleChain.outerRule(cqClassRule)
-            .around(publishRule);
+    protected TestRule ruleChain;
 
+    public CQPublishClassRule() {
+        this(false);
+    }
+
+    public CQPublishClassRule(boolean forceBasicAuth) {
+        super();
+        cqClassRule = new CQClassRule();
+        publishRule = ClassRuleUtils.newInstanceRule()
+                .withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
+
+        ruleChain = RuleChain.outerRule(cqClassRule)
+                .around(publishRule);
+    }
     @Override
     public Statement apply(Statement base, Description description) {
-        return graniteRuleChain.apply(base, description);
+        return ruleChain.apply(base, description);
     }
 }

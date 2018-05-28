@@ -27,23 +27,34 @@ import static com.adobe.cq.testing.junit.rules.CQClassRule.DEFAULT_PUBLISH_CONFI
 
 public class CQAuthorPublishClassRule implements TestRule {
     /** Granite rules to be executed at class level */
-    public final CQClassRule cqClassRule = new CQClassRule();
+    public final CQClassRule cqClassRule;
 
     /** ExistingInstance to reserve an Author */
-    public final Instance authorRule = ClassRuleUtils.newInstanceRule()
-            .withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
+    public final Instance authorRule;
 
     /** ExistingInstance to reserve a Publish */
-    public final Instance publishRule = ClassRuleUtils.newInstanceRule()
-            .withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
+    public final Instance publishRule;
 
     /** Configure the default replication agents to point to the given author and publish */
-    public final DefaultReplicationAgents defaultReplicationAgentsRule = new DefaultReplicationAgents(authorRule, publishRule);
+    public final DefaultReplicationAgents defaultReplicationAgentsRule;
 
-    protected TestRule ruleChain = RuleChain.outerRule(cqClassRule)
-            .around(authorRule)
-            .around(publishRule)
-            .around(defaultReplicationAgentsRule);
+    protected TestRule ruleChain;
+
+    public CQAuthorPublishClassRule() {
+        this(false);
+    }
+
+    public CQAuthorPublishClassRule(boolean forceBasicAuth) {
+        super();
+        cqClassRule = new CQClassRule();
+        authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
+        publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
+        defaultReplicationAgentsRule = new DefaultReplicationAgents(authorRule, publishRule);
+        ruleChain = RuleChain.outerRule(cqClassRule)
+                .around(authorRule)
+                .around(publishRule)
+                .around(defaultReplicationAgentsRule);
+    }
 
     @Override
     public Statement apply(Statement base, Description description) {

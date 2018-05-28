@@ -161,9 +161,11 @@ public class ReplicationClient extends CQClient {
      *
      * @return the json representation of agent's (jcr:content) node
      * @throws ClientException if the request fails
+     * @throws InterruptedException to mark this method as waiting
      */
     public JsonNode createReplicationAgent(String name, String title, String parentPath, String template,
-                                           BasicNameValuePair... properties) throws ClientException {
+                                           BasicNameValuePair... properties)
+            throws ClientException, InterruptedException {
         SlingHttpResponse page = createPage(name, title, parentPath, template, SC_CREATED, SC_OK);
         String agentPath = page.getSlingPath();
 
@@ -178,16 +180,29 @@ public class ReplicationClient extends CQClient {
      *
      * @return the json representation of the agent's (jcr:content) node
      * @throws ClientException if the request fails
+     * @throws InterruptedException to mark this method as waiting
      */
-    public JsonNode adaptReplicationAgent(String agentPath, BasicNameValuePair... properties) throws ClientException {
+    public JsonNode adaptReplicationAgent(final String agentPath, BasicNameValuePair... properties)
+            throws ClientException, InterruptedException {
         if ("".equals(agentPath) || agentPath == null) {
             throw new IllegalArgumentException("agentPath may not be null.");
         }
 
-        HttpEntity entity = FormEntityBuilder.create()
+        final HttpEntity entity = FormEntityBuilder.create()
                 .addAllParameters(Arrays.<NameValuePair>asList(properties))
                 .build();
-        doPost(agentPath + "/jcr:content", entity, SC_OK);
+
+        try {
+            new Polling() {
+                @Override
+                public Boolean call() throws Exception {
+                    doPost(agentPath + "/jcr:content", entity, SC_OK);
+                    return true;
+                }
+            }.poll(10000, 100);
+        } catch (TimeoutException e) {
+            throw new ClientException("Failed to adapt replication agent" + agentPath, e);
+        }
 
         return doGetJson(agentPath, -1).get("jcr:content");
     }

@@ -1068,11 +1068,30 @@ public class CommerceClient extends FormClient {
      * @return SlingHttpResponse object
      * @throws ClientException if the request fails
      */
-    public SlingHttpResponse addQueryFilter(String blueprintPath, String query) throws ClientException {
+    public SlingHttpResponse addSQL2QueryFilter(String blueprintPath, String query) throws ClientException {
 
         FormEntityBuilder form = FormEntityBuilder.create()
                 .addParameter("_charset_", "UTF-8")
                 .addParameter("./filter/searchType", "JCR-SQL2")
+                .addParameter("./filter/search", query);
+
+        return this.doPost(blueprintPath + "/_jcr_content", form.build(), SC_OK);
+
+    }
+
+    /**
+     * Set the product filter of a blueprint or blueprint section using an XPath query.
+     *
+     * @param blueprintPath Blueprint or blueprint section path
+     * @param query XPath query
+     * @return SlingHttpResponse object
+     * @throws ClientException if the request fails
+     */
+    public SlingHttpResponse addXPathQueryFilter(String blueprintPath, String query) throws ClientException {
+
+        FormEntityBuilder form = FormEntityBuilder.create()
+                .addParameter("_charset_", "UTF-8")
+                .addParameter("./filter/searchType", "xpath")
                 .addParameter("./filter/search", query);
 
         return this.doPost(blueprintPath + "/_jcr_content", form.build(), SC_OK);

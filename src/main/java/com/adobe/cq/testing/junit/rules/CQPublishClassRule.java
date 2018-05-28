@@ -16,7 +16,6 @@
 
 package com.adobe.cq.testing.junit.rules;
 
-import org.apache.sling.testing.junit.rules.instance.ExistingInstance;
 import org.apache.sling.testing.junit.rules.instance.Instance;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
@@ -31,7 +30,8 @@ public class CQPublishClassRule implements TestRule {
     public final CQClassRule cqClassRule = new CQClassRule();
 
     /** ExistingInstance to reserve an Author */
-    public final Instance publishRule = new ExistingInstance().withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
+    public final Instance publishRule = ClassRuleUtils.newInstanceRule()
+            .withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
 
     protected TestRule graniteRuleChain = RuleChain.outerRule(cqClassRule)
             .around(publishRule);

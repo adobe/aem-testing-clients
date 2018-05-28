@@ -88,6 +88,7 @@ public class PackageManagerClient extends CQClient {
          * Build factory from a definition dump. This is intended for testing purposes only.
          * @param definitionJson the string with the definition json
          * @return a new Package object
+         * @throws ClientException if the init fails
          */
         public static Package build(final String definitionJson) throws ClientException {
             Package p = new Package(null, "dummyName", "dummyVersion", "dummyGroup");

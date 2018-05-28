@@ -16,7 +16,6 @@
 
 package com.adobe.cq.testing.junit.rules;
 
-import org.apache.sling.testing.junit.rules.instance.ExistingInstance;
 import org.apache.sling.testing.junit.rules.instance.Instance;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
@@ -31,10 +30,12 @@ public class CQAuthorPublishClassRule implements TestRule {
     public final CQClassRule cqClassRule = new CQClassRule();
 
     /** ExistingInstance to reserve an Author */
-    public final Instance authorRule = new ExistingInstance().withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
+    public final Instance authorRule = ClassRuleUtils.newInstanceRule()
+            .withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
 
     /** ExistingInstance to reserve a Publish */
-    public final Instance publishRule = new ExistingInstance().withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
+    public final Instance publishRule = ClassRuleUtils.newInstanceRule()
+            .withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
 
     /** Configure the default replication agents to point to the given author and publish */
     public final DefaultReplicationAgents defaultReplicationAgentsRule = new DefaultReplicationAgents(authorRule, publishRule);

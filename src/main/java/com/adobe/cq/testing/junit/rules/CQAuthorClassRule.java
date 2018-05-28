@@ -16,7 +16,6 @@
 
 package com.adobe.cq.testing.junit.rules;
 
-import org.apache.sling.testing.junit.rules.instance.ExistingInstance;
 import org.apache.sling.testing.junit.rules.instance.Instance;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
@@ -31,7 +30,8 @@ public class CQAuthorClassRule implements TestRule {
     public final CQClassRule cqClassRule = new CQClassRule();
 
     /** ExistingInstance to reserve an Author */
-    public final Instance authorRule = new ExistingInstance().withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
+    public final Instance authorRule = ClassRuleUtils.newInstanceRule()
+            .withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
 
     protected TestRule ruleChain = RuleChain.outerRule(cqClassRule)
             .around(authorRule);

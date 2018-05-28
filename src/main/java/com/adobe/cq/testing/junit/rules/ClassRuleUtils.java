@@ -42,18 +42,27 @@ public class ClassRuleUtils {
     }
 
     /**
-     * Create a new {{Instance}} object depending on the default auth mechanism
-     *
+     * Create a new {@code Instance} object depending on the default auth mechanism
+     * @param forceBasicAuth set to true to always use basic auth
      * @return the instance object
      */
-    public static Instance newInstanceRule() {
-        if (loginTokenAuth()) {
+    public static Instance newInstanceRule(boolean forceBasicAuth) {
+        if (!forceBasicAuth && loginTokenAuth()) {
             LOG.info("Using LoginToken Auth as default");
             return new LoginTokenInstance();
         } else {
             LOG.info("Using Basic Auth as default");
             return new ExistingInstance();
         }
+    }
+
+    /**
+     * Create a new {@code Instance} object depending on the default auth mechanism
+     *
+     * @return the instance object
+     */
+    public static Instance newInstanceRule() {
+        return newInstanceRule(false);
     }
 
     /**

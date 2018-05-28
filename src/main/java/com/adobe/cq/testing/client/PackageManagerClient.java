@@ -28,8 +28,10 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.ResourceUtil;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
@@ -82,39 +84,59 @@ public class PackageManagerClient extends CQClient {
             this.pm = pm;
             initAll(path);
         }
+        /**
+         * Build factory from a definition dump. This is intended for testing purposes only.
+         * @param definitionJson the string with the definition json
+         * @return a new Package object
+         */
+        public static Package build(final String definitionJson) throws ClientException {
+            Package p = new Package(null, "dummyName", "dummyVersion", "dummyGroup");
+            p.initFromJson(definitionJson);
+            return p;
+        }
 
         private void initAll(String path) throws ClientException {
+            checkValidPackagePath(path);
+            initFromJson(getDefinition(path));
+        }
+
+        private void checkValidPackagePath(final String path) {
             String regexp = "/etc/packages/([^/]+)/([^\\-.]+)-?(.*).zip";
             Matcher re = Pattern.compile(regexp).matcher(path);
             if (!re.matches()) {
                 throw new IllegalArgumentException("The path supplied does not look like a path to a package. It is expected to match " + regexp);
             }
-            String resp = pm.doGet(path + "/jcr:content/vlt:definition.9.json").getContent();
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode packageDefinition;
+        }
+
+        private void initFromJson(String json) throws ClientException {
+            JsonNode node;
             try {
-                packageDefinition = mapper.readTree(resp);
-            } catch (Exception ex) {
-                throw new ClientException("Unable to load package properties", ex);
+                ObjectMapper mapper = new ObjectMapper();
+                node = mapper.readTree(json);
+            } catch (JsonProcessingException e) {
+                throw new ClientException("Unable to parse package properties json: " + json, e);
+            } catch (IOException e) {
+                throw new ClientException("Unable to read package properties.", e);
             }
+
             init(
-                    getJsonStringSafely(packageDefinition, "name"),
-                    getJsonStringSafely(packageDefinition, "version"),
-                    getJsonStringSafely(packageDefinition, "group"),
-                    getJsonStringSafely(packageDefinition, "jcr:description"),
-                    getJsonStringSafely(packageDefinition, "filter"),
-                    getJsonDateSafely(packageDefinition, "jcr:created"),
-                    getJsonDateSafely(packageDefinition, "jcr:lastModified"),
-                    getJsonDateSafely(packageDefinition, "lastWrapped"),
-                    getJsonStringSafely(packageDefinition, "lastWrappedBy"),
-                    getJsonDateSafely(packageDefinition, "lastUnwrapped"),
-                    getJsonStringSafely(packageDefinition, "lastUnwrappedBy"),
-                    getJsonDateSafely(packageDefinition, "lastUnpacked"),
-                    getJsonStringSafely(packageDefinition, "lastUnpackedBy"),
-                    getJsonBooleanSafely(packageDefinition, "requiresRestart"),
-                    getJsonBooleanSafely(packageDefinition, "requiresRoot"),
-                    getJsonIntegerSafely(packageDefinition, "buildCount"),
-                    getJsonStringSafely(packageDefinition, "builtWith"));
+                    getJsonStringSafely(node, "name"),
+                    getJsonStringSafely(node, "version"),
+                    getJsonStringSafely(node, "group"),
+                    getJsonStringSafely(node, "jcr:description"),
+                    getJsonStringSafely(node, "filter"),
+                    getJsonDateSafely(node, "jcr:created"),
+                    getJsonDateSafely(node, "jcr:lastModified"),
+                    getJsonDateSafely(node, "lastWrapped"),
+                    getJsonStringSafely(node, "lastWrappedBy"),
+                    getJsonDateSafely(node, "lastUnwrapped"),
+                    getJsonStringSafely(node, "lastUnwrappedBy"),
+                    getJsonDateSafely(node, "lastUnpacked"),
+                    getJsonStringSafely(node, "lastUnpackedBy"),
+                    getJsonBooleanSafely(node, "requiresRestart"),
+                    getJsonBooleanSafely(node, "requiresRoot"),
+                    getJsonIntegerSafely(node, "buildCount"),
+                    getJsonStringSafely(node, "builtWith"));
         }
 
         private void init(
@@ -155,6 +177,8 @@ public class PackageManagerClient extends CQClient {
             this.builtWith = builtWith;
             this.versionUpdated = false;
         }
+
+
 
         @Override
         public boolean equals(Object o) {
@@ -298,6 +322,10 @@ public class PackageManagerClient extends CQClient {
             return String.format("/etc/packages/%s/%s-%s.zip", getGroup(), getName(), getVersion());
         }
 
+        public String getDefinition(final String path) throws ClientException {
+            return pm.doGet(path + "/jcr:content/vlt:definition.9.json", SC_OK).getContent();
+        }
+
         /**
          * Commit all property changes to the server.
          * @return The HTML response.
@@ -405,7 +433,7 @@ public class PackageManagerClient extends CQClient {
 
         private SlingHttpResponse checkStatus(SlingHttpResponse exec) throws ClientException {
             String content = exec.getContent();
-            String statusMessage = content.replaceFirst("^.*\\(\\{\"success\":[^,]*,\"msg\":\"[^\"]*\"\\}\\).*$", "\\1");
+            String statusMessage = content.replaceFirst("^.*\\(\\{\"success\":[^,]*,\"msg\":\"[^\"]*\"}\\).*$", "\\1");
             if (!statusMessage.contains("\"success\":true"))
                 throw new ClientException("The get contents request returned an error:\n" + statusMessage);
             return exec;
@@ -446,7 +474,7 @@ public class PackageManagerClient extends CQClient {
         private static Date getJsonDateSafely(JsonNode node, String attr) {
             try {
                 String dateAsString = node.get(attr).getTextValue();
-                return new SimpleDateFormat().parse(dateAsString);
+                return new SimpleDateFormat("E MMM dd yyyy HH:mm:ss 'GMT'z").parse(dateAsString);
             } catch (Exception e) {
                 return null;
             }
@@ -454,7 +482,7 @@ public class PackageManagerClient extends CQClient {
 
         private static Integer getJsonIntegerSafely(JsonNode node, String attr) {
             try {
-                return node.get(attr).getIntValue();
+                return Integer.parseInt(node.get(attr).getValueAsText());
             } catch (Exception e) {
                 return null;
             }
@@ -462,7 +490,7 @@ public class PackageManagerClient extends CQClient {
 
         private static Boolean getJsonBooleanSafely(JsonNode node, String attr) {
             try {
-                return node.get(attr).getBooleanValue();
+                return Boolean.parseBoolean(node.get(attr).getValueAsText());
             } catch (Exception e) {
                 return null;
             }

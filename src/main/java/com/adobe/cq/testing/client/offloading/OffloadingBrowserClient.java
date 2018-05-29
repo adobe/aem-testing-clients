@@ -23,6 +23,7 @@ import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.JsonUtils;
+import org.apache.sling.testing.clients.util.poller.Polling;
 import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 
 public class OffloadingBrowserClient extends CQClient {
     public static final Logger LOG = LoggerFactory.getLogger(OffloadingBrowserClient.class);
@@ -123,38 +125,33 @@ public class OffloadingBrowserClient extends CQClient {
 
     /**
      * Enables/ disables a topic for the given slingId.
-     * This method checks every second for until the topic was enabled/ disabled in the OffloadingBrowser,
-     * for a maximum of waitCount seconds
-     * If the change was not visible after waitCount, throws ClientException
+     * This method checks periodically until the topic was enabled/disabled in the OffloadingBrowser with timeout.
+     * If the change was not visible after timeout, throws ClientException
      * @param slingId id of the instance
      * @param topic topic to enable/disable
      * @param enable enable or disable
-     * @param waitCount number of seconds to wait and check the topic configuration
-     * @throws ClientException if the action did not register with the OffloadingBrowser
+     * @param timeout number of milliseconds to wait for the topic configuration to be updated
+     * @throws ClientException if the action did not register with the OffloadingBrowser before timeout
      * @throws InterruptedException if the method was interrupted
      */
-    public void enableDisableTopicWithWait(String slingId, String topic, boolean enable, int waitCount) throws ClientException,
-            InterruptedException {
+    public void enableDisableTopicWithWait(final String slingId, final String topic, final boolean enable, long timeout)
+            throws ClientException, InterruptedException {
 
-        // save the topic configuration
         enableDisableTopic(slingId, topic, enable);
 
-        OffloadingInstanceConfiguration instance;
-
-        // get the configuration and check if it was applied
-        for (int i = 0; i < waitCount; i++) {
-            Thread.sleep(1000);
-            instance = getInstance(slingId);
-            // if the enabled topic shows as enabled, return
-            if (enable && instance.topics.contains(topic))
-                return;
-            // if the disabled topic shows as disabled, return
-            if (!enable && !instance.topics.contains(topic))
-                return;
+        // wait for the action to be registered
+        try {
+            new Polling() {
+                @Override
+                public Boolean call() throws Exception {
+                    OffloadingInstanceConfiguration instance = getInstance(slingId);
+                    return (enable && instance.topics.contains(topic)) || (!enable && !instance.topics.contains(topic));
+                }
+            }.poll(timeout, 100);
+        } catch (TimeoutException e) {
+            throw new ClientException(enable ? "Enabling" : "Disabling"
+                    + " the topic did not register in the Offloading Browser.");
         }
-
-        // if the action was not registered, throw a client exception
-        throw new ClientException(enable ? "Enabling" : "Disabling" + " the topic did not register in the Offloading Browser!");
     }
 
     private Set<OffloadingInstanceConfiguration> instancesFromJSONArray(JsonNode instancesNode, String topicName) {

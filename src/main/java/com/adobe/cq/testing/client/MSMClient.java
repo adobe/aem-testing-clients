@@ -70,7 +70,7 @@ public class MSMClient extends CQClient {
     /**
      * Rollout Configuration
      */
-    private static final String ROLLOUTCONFIG_FOLDER = "/etc/msm/rolloutconfigs";
+    private static final String ROLLOUTCONFIG_FOLDER = "/libs/msm/wcm/rolloutconfigs";
 
     public static final String ROLLOUTCONFIG_DEFAULT = ROLLOUTCONFIG_FOLDER + "/default";
     public static final String ROLLOUTCONFIG_ACTIVATE = ROLLOUTCONFIG_FOLDER + "/activate";
@@ -80,7 +80,7 @@ public class MSMClient extends CQClient {
     /**
      * BluePrint location
      */
-    public final static String ETC_BLUEPRINT = "/etc/blueprints";
+    public final static String BLUEPRINT_ROOT = "/libs/msm";
 
     /**
      * RolloutConfiguration ResourceType
@@ -122,7 +122,7 @@ public class MSMClient extends CQClient {
     public SlingHttpResponse createBluePrint(String name, String title, String sitePath, int... expectedStatus)
             throws ClientException {
         // create blueprint
-        String blueprintPath = createPage(name, title, "/etc/blueprints", "/libs/wcm/msm/templates/blueprint",
+        String blueprintPath = createPage(name, title, BLUEPRINT_ROOT, "/libs/wcm/msm/templates/blueprint",
                 expectedStatus).getSlingPath();
 
         // define blueprint site path, aka source path
@@ -244,11 +244,11 @@ public class MSMClient extends CQClient {
     public String createRolloutConfig(String name, String above, String trigger, String... liveActions)
             throws ClientException {
 
-        String path = createPage(name, null, ROLLOUTCONFIG_FOLDER, null, SC_OK).getSlingPath();
-        ArrayList<NameValuePair> props = new ArrayList<>(2);
-        props.add(new BasicNameValuePair("sling:resourceType", RT_ROLLUTCONFIG));
+        String path = ROLLOUTCONFIG_FOLDER + "/" + name;
+        ArrayList<NameValuePair> props = new ArrayList<>();
+        props.add(new BasicNameValuePair("jcr:primaryType", "cq:RolloutConfig"));
         props.add(new BasicNameValuePair(PN_TRIGGER, trigger));
-        adaptTo(JsonClient.class).setPageProperties(path, props, 200);
+        doPost(path,FormEntityBuilder.create().addAllParameters(props).build(), SC_OK, SC_CREATED);
 
         if (above != null) {
             UrlEncodedFormEntity entity = FormEntityBuilder.create().addParameter(":order", "before " + above).build();
@@ -256,15 +256,12 @@ public class MSMClient extends CQClient {
         }
 
         if (liveActions != null) {
-            FormEntityBuilder entityBuilder = FormEntityBuilder.create();
             for (String liveAction : liveActions) {
-                entityBuilder.addParameter(":name", liveAction);
+                String liveActionPath = path + "/" + liveAction;
+                createNode(liveActionPath, "cq:LiveSyncAction");
             }
-            entityBuilder.addParameter("./"  + JCR_PRIMARYTYPE, NT_LIVE_SNCCONFIG);
-            doPost(path + "/" + JCR_CONTENT + "/", entityBuilder.build(), SC_CREATED);
         }
 
         return path;
     }
-
 }

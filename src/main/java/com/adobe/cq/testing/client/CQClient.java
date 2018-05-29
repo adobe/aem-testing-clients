@@ -231,7 +231,7 @@ public class CQClient extends SlingClient {
      * Moves one or more CQ pages to a specified location.<br>
      * <br>
      * Setting {@code integrity} to false and list of referrers in {@code adjusts} to null equals
-     * a drag'n'drop move in the site admin. the server then performs an auto adjustment on referring pages.<br>
+     * a drag'n'drop move in the site admin. The server then performs an auto adjustment on referring pages.<br>
      * <br>
      * Passing a list of referrers and setting integrity flag to {@code true} is the same as the
      * {@code Move...} command in the site admin.
@@ -256,6 +256,38 @@ public class CQClient extends SlingClient {
             throws ClientException {
         return wcmCommands.movePage(srcPaths, destName, destParentPath, before, shallow,
                 integrity, adjusts, HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+    }
+
+    /**
+     * Moves one or more CQ pages to a specified location.<br>
+     * <br>
+     * Setting {@code integrity} to false and list of referrers in {@code adjusts} to null equals
+     * a drag'n'drop move in the site admin. The server then performs an auto adjustment on referring pages.<br>
+     * <br>
+     * Passing a list of referrers and setting integrity flag to {@code true} is the same as the
+     * {@code Move...} command in the site admin.
+     *
+     * @param srcPaths list of pages to copy
+     * @param destName name given to the moved page at new location. Only works for single page copy, otherwise
+     *                 the operation fails.
+     * @param destPath destination of copy operation. Can be used instead of destParentPath + destName. Only
+     *                 works for single page copy, otherwise the operation fails.
+     * @param destParentPath target location of the move operation
+     * @param before if true, the copied page will be ordered before the page with this label (Name)
+     * @param shallow if true, the only the page itself gets copied
+     * @param integrity if true, no auto adjustment of referred pages will be done
+     * @param adjusts list of referrer page paths that need adjusting
+     * @param publishes list of page paths that need to be published
+     * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed
+     * @return the response
+     * @throws ClientException if something fails during the request/response cycle
+     */
+    public SlingHttpResponse movePage(String[] srcPaths, String destName, String destPath, String destParentPath,
+                                      String before, boolean shallow, boolean integrity, String[] adjusts,
+                                      String[] publishes, int... expectedStatus)
+            throws ClientException {
+        return wcmCommands.movePage(srcPaths, destName, destParentPath, before, shallow,
+                integrity, adjusts, publishes, HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
     }
 
     /**

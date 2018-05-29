@@ -16,6 +16,7 @@
 
 package com.adobe.cq.testing.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
@@ -125,8 +126,9 @@ public class WCMCommands {
     }
 
 
-    public SlingHttpResponse movePage(String[] srcPaths, String destName, String destParentPath, String before, boolean shallow,
-                                      boolean integrity, String[] adjusts, int... expectedStatus) throws ClientException {
+    public SlingHttpResponse movePage(String[] srcPaths, String destName, String destParentPath, String before,
+                                      boolean shallow, boolean integrity, String[] adjusts, int... expectedStatus)
+            throws ClientException {
 
         FormEntityBuilder feb = FormEntityBuilder.create()
                 .addParameter("cmd", CMD_MOVE_PAGE)
@@ -143,6 +145,33 @@ public class WCMCommands {
         if (adjusts != null)
             for (String val : adjusts)
                 feb.addParameter("adjust", val);
+
+        return executeWCMCommand(CMD_MOVE_PAGE, feb, expectedStatus);
+    }
+
+
+    public SlingHttpResponse movePage(String[] srcPaths, String destName, String destParentPath, String before,
+                                      boolean shallow, boolean integrity, String[] adjusts, String[] publishes,
+                                      int... expectedStatus)
+            throws ClientException {
+
+        FormEntityBuilder feb = FormEntityBuilder.create()
+                .addParameter("cmd", CMD_MOVE_PAGE)
+                .addParameter("destName", destName)
+                .addParameter("destParentPath", destParentPath)
+                .addParameter("before", before)
+                .addParameter("shallow", Boolean.valueOf(shallow).toString())
+                .addParameter("integrity", Boolean.valueOf(integrity).toString());
+
+        if (srcPaths != null)
+            for (String val : srcPaths)
+                feb.addParameter("srcPath", val);
+
+        if (adjusts != null)
+            feb.addParameter("adjust", "[\"".concat(StringUtils.join(adjusts, "\",\"")).concat("\"]"));
+
+        if (publishes != null)
+            feb.addParameter("publish", "[\"".concat(StringUtils.join(publishes, "\",\"")).concat("\"]"));
 
         return executeWCMCommand(CMD_MOVE_PAGE, feb, expectedStatus);
     }

@@ -29,9 +29,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git@git.corp.adobe.com:CQ/cq-testing-clients.git</connection>
-        <developerConnection>scm:git:git@git.corp.adobe.com:CQ/cq-testing-clients.git</developerConnection>
-        <url>https://git.corp.adobe.com/CQ/integration-testing/cq-testing-clients</url>
+        <connection>scm:git:https://github.com/adobe/aem-testing-clients.git</connection>
+        <developerConnection>scm:git:https://github.com/adobe/aem-testing-clients.git</developerConnection>
+        <url>https://github.com/adobe/aem-testing-clients</url>
         <tag>HEAD</tag>
     </scm>
 

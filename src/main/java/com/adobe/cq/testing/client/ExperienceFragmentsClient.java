@@ -43,7 +43,7 @@ public class ExperienceFragmentsClient extends CQClient {
     private static final Gson GSON = new Gson();
     private static final Type LIST_STRING_TYPE = new TypeToken<List<String>>() {}.getType();
 
-    private static final String WEB_TEMPLATE_PATH      = "/libs/settings/experience-fragments/templates/experience-fragment-template";
+    private static final String WEB_TEMPLATE_PATH = "/libs/settings/experience-fragments/templates/experience-fragment-template";
     private static final String FACEBOOK_TEMPLATE_PATH = "/libs/settings/experience-fragments/templates/experience-fragment-template-facebook";
     private static final String PINTEREST_TEMPLATE_PATH = "/libs/settings/experience-fragments/templates/experience-fragment-template-pinterest";
     //private static final String POS_TEMPLATE_PATH = "/libs/settings/experience-fragments/templates/experience-fragment-template-pos";
@@ -66,6 +66,7 @@ public class ExperienceFragmentsClient extends CQClient {
     public static final String DEFAULT_XF_PARENT_PATH = "/content/experience-fragments";
 
     private static final String REFERENCES_SERVLET = "/libs/cq/experience-fragments/content/commons/reference.json";
+    private static final String CONFIGURATOR = "/libs/cq/experience-fragments/content/dialogs/configdialog/configurator.html";
 
     /**
      * Interface with methods that all predefined XF templates from the XF_TEMPLATE must implement
@@ -296,7 +297,7 @@ public class ExperienceFragmentsClient extends CQClient {
 
             @Override
             public List<String> tags() {
-                return Arrays.asList(XF_TAG.WEB.tagID());
+                return Collections.singletonList(XF_TAG.WEB.tagID());
             }
 
             @Override
@@ -322,7 +323,7 @@ public class ExperienceFragmentsClient extends CQClient {
 
             @Override
             public List<String> tags() {
-                return Arrays.asList(XF_TAG.FACEBOOK.tagID());
+                return Collections.singletonList(XF_TAG.FACEBOOK.tagID());
             }
 
             @Override
@@ -348,7 +349,7 @@ public class ExperienceFragmentsClient extends CQClient {
 
             @Override
             public List<String> tags() {
-                return Arrays.asList(XF_TAG.PINTEREST.tagID());
+                return Collections.singletonList(XF_TAG.PINTEREST.tagID());
             }
 
             @Override
@@ -639,6 +640,24 @@ public class ExperienceFragmentsClient extends CQClient {
 
     public SlingHttpResponse getVariantProperitesPageHTML(String variantPath, int... expectedStatus) throws ClientException {
         return doGet(PROPERTIES_PATH_PREFIX + variantPath, HttpUtils.getExpectedStatus(HttpStatus.SC_OK, expectedStatus));
+    }
+
+    /**
+     * Get the current Configuration for Experience Fragments
+     * @return the current configuration
+     * @throws ClientException if the configuration cannot be retrieved
+     */
+    public ExperienceFragmentsConfiguration getCurrentConfiguration() throws ClientException {
+        return new ExperienceFragmentsConfiguration(this);
+    }
+
+    /**
+     * Create a new Experience Fragments configuration builder
+     * @return the builder
+     * @throws ClientException if the builder cannot be created
+     */
+    public ExperienceFragementsConfigurationBuilder configurationBuilder() throws ClientException {
+        return new ExperienceFragementsConfigurationBuilder(this);
     }
 
     private List<String> getPageReferences(String pagePath) throws ClientException {
@@ -1496,6 +1515,93 @@ public class ExperienceFragmentsClient extends CQClient {
 
         public SlingHttpResponse unpublish(int... expectedStatus) throws ClientException {
             return client.unpublishXFVariant(variantPath, expectedStatus);
+        }
+    }
+
+
+    /**
+     * Representation the configuration of the Experience Fragments Feature, as it can be done from the UI
+     * NOTE: All properties are cached. If any change is made in the repository you need to call
+     * {@code ExperienceFragmentsConfiguration.update()}.
+     */
+    public static class ExperienceFragmentsConfiguration {
+        private static final String ALLOWED_TEMPLATES_PROP = "cq:allowedTemplates";
+        private ExperienceFragmentsClient client;
+        private List<String> allowedTemplates;
+
+        public ExperienceFragmentsConfiguration(ExperienceFragmentsClient client) throws ClientException {
+            this.client = client;
+            buildConfiguration();
+        }
+
+        private void buildConfiguration() throws ClientException {
+            SlingHttpResponse response = client.doGet(ExperienceFragmentsClient.DEFAULT_XF_PARENT_PATH + ".json");
+            JsonObject folderProperties = GSON.fromJson(response.getContent(), JsonObject.class);
+            JsonArray allowedTemplatesJson = folderProperties.get(ALLOWED_TEMPLATES_PROP).getAsJsonArray();
+            allowedTemplates = new ArrayList<>();
+            for(JsonElement allowedTemplateJson : allowedTemplatesJson) {
+                allowedTemplates.add(allowedTemplateJson.getAsString());
+            }
+        }
+
+        public List<String> getAllowedTemplates() {
+            return allowedTemplates;
+        }
+
+        public void update() throws ClientException {
+            buildConfiguration();
+        }
+    }
+
+    /**
+     * Experience Fragments configuration builder as it can be done from the UI
+     */
+    public static class ExperienceFragementsConfigurationBuilder {
+        private static final String ALLOWED_TEMPLATES_PARAM = "cq:allowedTemplates";
+        private ExperienceFragmentsClient client;
+        private ExperienceFragmentsConfiguration configuration;
+
+        private List<String> allowedTemplates;
+
+        /**
+         * Constructor
+         * @param client client to be used
+         * @throws ClientException if the builder cannot be created
+         */
+        public ExperienceFragementsConfigurationBuilder(ExperienceFragmentsClient client) throws ClientException {
+            this.client = client;
+            configuration = new ExperienceFragmentsConfiguration(client);
+        }
+
+        /**
+         * Set the allowed templates
+         * @param allowedTemplates the complete list of allowed templates.
+         * @return this
+         */
+        public ExperienceFragementsConfigurationBuilder withAllowedTemplates(List<String> allowedTemplates) {
+            this.allowedTemplates = allowedTemplates;
+            return this;
+        }
+
+        /**
+         * Do the configuration
+         * @return The new configuration
+         * @throws ClientException if the configuration can not be created
+         */
+        public ExperienceFragmentsConfiguration configure() throws ClientException {
+            FormEntityBuilder feb = FormEntityBuilder.create();
+            /*
+             * The UI contains all the values already configured. If someone doesn't configure something in the builder,
+             * we need to keep the existing ones otherwise those entries are deleted.
+             */
+            List<String> allowedTemplatesResolved = allowedTemplates != null ? allowedTemplates : configuration.getAllowedTemplates();
+
+            for(String allowedTemplate : allowedTemplatesResolved) {
+                feb.addParameter(ALLOWED_TEMPLATES_PARAM, allowedTemplate);
+            }
+
+            client.doPost(CONFIGURATOR, feb.build(), HttpStatus.SC_OK);
+            return new ExperienceFragmentsConfiguration(client);
         }
     }
 }

@@ -410,10 +410,10 @@ public class ExperienceFragmentsClient extends CQClient {
         }
     }
 
-    private static final String XF_CREATE_WIZARD = "/libs/cq/experience-fragments/content/experience-fragments/createxfwizard/_jcr_content";
+    private static final String XF_CREATE_WIZARD = "/libs/cq/experience-fragments/content/v2/experience-fragments/createxfwizard/_jcr_content";
     private static final String XF_VARIANT_CREATE_WIZARD = "/libs/cq/experience-fragments/content/dialogs/createvariation/creator";
 
-    private static final String CONVERT_TO_XF = "/libs/cq/experience-fragments/content/conversion/converter";
+    private static final String CONVERT_TO_XF = "/libs/cq/experience-fragments/content/v2/conversion/converter";
 
     public ExperienceFragmentsClient(CloseableHttpClient http, SlingClientConfig config) throws ClientException {
         super(http, config);

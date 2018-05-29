@@ -22,6 +22,7 @@ import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.indexing.IndexingClient;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
+import org.apache.sling.testing.clients.util.poller.Polling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_OK;
 
@@ -68,11 +68,11 @@ public class User extends AbstractAuthorizable {
      * @param expectedStatus list of allowed HTTP Status to be returned.
      * @param <T> user type
      * @return Sling response
-     * @throws ClientException
-     *          If something fails during request/response cycle
+     * @throws ClientException if something fails during request/response cycle
+     * @throws InterruptedException if waiting was interrupted
      */
     public <T extends User> SlingHttpResponse addImpersonators(T[] authorizables, int... expectedStatus) throws
-            ClientException {
+            ClientException, InterruptedException {
         if (authorizables == null) {
             throw new IllegalArgumentException("List of authorizables may not be null!");
         }
@@ -84,62 +84,36 @@ public class User extends AbstractAuthorizable {
             formEntry.addParameter(Authorizable.PARAM_ADD_IMPERSONATORS, encodeURI(authorizable.getId()));
         }
 
-        // send the request
-        return doPostAndWaitForAsync(formEntry, HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
-    }
+        class PostPolling extends Polling {
+            private final FormEntityBuilder entity;
+            private final int[] expectedStatus;
+            private SlingHttpResponse response;
 
-    /**
-     * <p>
-     * Perform a {@link #doPost(FormEntityBuilder, int...)} and keeps performing it for at most
-     * {@link #MAX_ASYNC_WAIT_MILLIS} for as long as it didn't receive the
-     * {@code expectedStatus} response from the server.
-     * </p>
-     *
-     * <p>
-     * Useful when dealing with post requests that perform queries against asynchronous indexes and
-     * therefore should give it the time to update itself before failing.
-     * </p>
-     *
-     * @param entity form to be submitted. Cannot be null.
-     * @param expectedStatus the expected HTTP status from the call
-     * @return an instance of the response
-     * @throws ClientException if the request failed
-     */
-    public SlingHttpResponse doPostAndWaitForAsync(final FormEntityBuilder entity, final int... expectedStatus)
-            throws ClientException {
-        checkNotNull(entity);
-        LOG.info("entering doPostAndWaitForAsync()");
-
-        SlingHttpResponse exec;
-        int totalSleptSoFar = 0;
-        int sleepMillis = 100;
-        int count = 1;
-
-        do {
-            if (count > 1) {
-                try {
-                    LOG.info(
-                        "doPostAndWaitForAsync() - Sleeping for {}. Attempt: {}. Slept so far: {}",
-                        sleepMillis, count, totalSleptSoFar);
-                    Thread.sleep(sleepMillis);
-                } catch (InterruptedException e) {
-                    LOG.error("Error while sleeping", e);
-                }
-
-                // we wait at most 5000ms with a capped time wait of 500ms for each iteration
-                totalSleptSoFar += sleepMillis;
-                sleepMillis = Math.min(sleepMillis * 2, 500);
+            public PostPolling(final FormEntityBuilder entity, final int... expectedStatus) {
+                super();
+                this.entity = entity;
+                this.expectedStatus = expectedStatus;
             }
 
-            count++;
-            exec = doPost(entity, expectedStatus);
-            if (exec == null) {
-                LOG.error("doPostAndWaitForAsync() - Null HTTPResponse. Not waiting.");
-                return null;
+            @Override
+            public Boolean call() throws Exception {
+                response = doPost(entity, expectedStatus);
+                return true;
             }
-        } while(totalSleptSoFar < MAX_ASYNC_WAIT_MILLIS);
 
-        return exec;
+            public SlingHttpResponse getResponse() {
+                return response;
+            }
+        }
+
+        PostPolling polling = new PostPolling(formEntry, expectedStatus);
+        try {
+            polling.poll(MAX_ASYNC_WAIT_MILLIS, 100);
+        } catch (TimeoutException e) {
+            throw new ClientException("Failed to add impersonators.", e);
+        }
+
+        return polling.getResponse();
     }
 
     /**

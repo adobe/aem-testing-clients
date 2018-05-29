@@ -239,7 +239,7 @@ public class TagClient extends CQClient {
     /**
      * Removes a tag.
      *
-     * @param tagPath path to the tag to delete. E.g. /etc/tags/stockphotography/animals/birds/
+     * @param tagPath path to the tag to delete. E.g. /content/cq:tags/stockphotography/animals/birds/
      * @param expectedStatus list of allowed HTTP Status to be returned. If not set, http status 200 (OK) is assumed.
      * @return Sling response
      * @throws ClientException If something fails during request/response cycle
@@ -562,7 +562,7 @@ public class TagClient extends CQClient {
         params.add("suggestByTitle", query);
 
         // build the request
-        return doGet("/etc/tags.tags.json", params.getList(), HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+        return doGet("/content/cq:tags.tags.json", params.getList(), HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
     }
 
 

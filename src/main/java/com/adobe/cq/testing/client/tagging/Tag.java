@@ -32,7 +32,7 @@ public class Tag {
 
     public static final String PRIMARY_TYPE = "cq:Tag";
     public static final String RESOURCE_TYPE = "cq/tagging/components/tag";
-    public static final String TAG_ROOT_PATH = "/etc/tags/";
+    public static final String TAG_ROOT_PATH = "/content/cq:tags/";
     public static final String TAG_DEFAULT_NAMESPACE_PATH = TAG_ROOT_PATH + "default/";
 
     public static final String TAG_PROP_TITLE = "jcr:title";

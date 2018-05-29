@@ -17,7 +17,6 @@
 package com.adobe.cq.testing.junit.rules;
 
 import com.adobe.cq.testing.client.CQClient;
-import com.adobe.cq.testing.util.Constants;
 import org.apache.commons.io.IOUtils;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.util.ResourceUtil;

@@ -12,7 +12,7 @@ Add the following dependency to your tests project to start writing integration 
 ```xml
 <dependency>
     <groupId>com.adobe.cq</groupId>
-    <artifactId>cq-testing-clients-63</artifactId>
+    <artifactId>cq-testing-clients-64</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>
 ```

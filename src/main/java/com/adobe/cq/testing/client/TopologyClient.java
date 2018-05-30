@@ -114,15 +114,15 @@ public class TopologyClient extends CQClient {
      * This method waits and retries until the topology is current
      * @param baseUrl base url
      * @param connectorPath connector path
-     * @param retryCount number of retries before throwing an exception
+     * @param timeout time (in milliseconds) to wait before throwing an exception
      * @return true
      * @throws ClientException if the topology could not be joined
      * @throws InterruptedException if interrupted while waiting for the server
      */
-    public boolean joinTopologyWithWait(String baseUrl, String connectorPath, int retryCount) throws ClientException, InterruptedException {
+    public boolean joinTopologyWithWait(String baseUrl, String connectorPath, long timeout) throws ClientException, InterruptedException {
         Set<String> newConnectorUrlsList = AddConnUrl(baseUrl, connectorPath);
         // Write the configuration with the new values
-        setConnectorUrlsWithWait(newConnectorUrlsList, retryCount);
+        setConnectorUrlsWithWait(newConnectorUrlsList, timeout);
 
         return true;
     }
@@ -131,13 +131,13 @@ public class TopologyClient extends CQClient {
      * Join a topology by adding the connector url to the discovery configuration.
      * This method waits and retries until the topology is current
      * @param baseUrl base url
-     * @param retryCount number of retries before throwing an exception
+     * @param timeout time (in milliseconds) to wait before throwing an exception
      * @return true
      * @throws ClientException if the topology could not be joined
      * @throws InterruptedException if interrupted while waiting for the server
      */
-    public boolean joinTopologyWithWait(String baseUrl, int retryCount) throws ClientException, InterruptedException {
-        return joinTopologyWithWait(baseUrl, DEFAULT_CONNECTOR_PATH, retryCount);
+    public boolean joinTopologyWithWait(String baseUrl, long timeout) throws ClientException, InterruptedException {
+        return joinTopologyWithWait(baseUrl, DEFAULT_CONNECTOR_PATH, timeout);
     }
 
     /**
@@ -194,16 +194,16 @@ public class TopologyClient extends CQClient {
      *
      * @param baseUrl base url
      * @param connectorPath connector path
-     * @param retryCount the number of retries. There is a 1 second wait between retries
+     * @param timeout time (in milliseconds) to wait before throwing an exception
      * @return true
      * @throws ClientException if it could not leave the topology
      * @throws InterruptedException if interrupted while waiting for the server
      */
-    public boolean leaveTopologyWithWait(String baseUrl, String connectorPath, int retryCount) throws ClientException, InterruptedException {
+    public boolean leaveTopologyWithWait(String baseUrl, String connectorPath, long timeout) throws ClientException, InterruptedException {
         Set<String> newConnectorUrlsList = removeConnUrl(baseUrl, connectorPath);
 
         // Write the configuration with the new values
-        setConnectorUrlsWithWait(newConnectorUrlsList, retryCount);
+        setConnectorUrlsWithWait(newConnectorUrlsList, timeout);
         return true;
     }
 
@@ -212,13 +212,13 @@ public class TopologyClient extends CQClient {
      * This method waits and retries until the topology is current
      *
      * @param baseUrl base url
-     * @param retryCount the number of retries. There is a 1 second wait between retries
+     * @param timeout time (in milliseconds) to wait before throwing an exception
      * @return true
      * @throws ClientException if it could not leave the topology
      * @throws InterruptedException if interrupted while waiting for the server
      */
-    public boolean leaveTopologyWithWait(String baseUrl, int retryCount) throws ClientException, InterruptedException {
-        return leaveTopologyWithWait(baseUrl, DEFAULT_CONNECTOR_PATH, retryCount);
+    public boolean leaveTopologyWithWait(String baseUrl, long timeout) throws ClientException, InterruptedException {
+        return leaveTopologyWithWait(baseUrl, DEFAULT_CONNECTOR_PATH, timeout);
     }
 
 
@@ -237,12 +237,12 @@ public class TopologyClient extends CQClient {
      * Get the set of connector URLs configured for the discovery service.
      * The method retries to get the list until the configuration is saved and the topology is current
      *
-     * @param timeout the number of retries. There is a 1 second wait between retries
+     * @param timeout time to wait (in milliseconds) before giving up
      * @return set of connector URLs
      * @throws ClientException if the topology could not be joined
      * @throws InterruptedException if interrupted while waiting for the server
      */
-    public Set<String> getConnectorUrlsWithWait(int timeout) throws ClientException, InterruptedException {
+    public Set<String> getConnectorUrlsWithWait(long timeout) throws ClientException, InterruptedException {
         class TopologyPoller extends Polling {
             public JsonNode json = null;
             public Set<String> connectorUrls = null;
@@ -263,7 +263,7 @@ public class TopologyClient extends CQClient {
         try {
             poller.poll(timeout, 1000);
         } catch (TimeoutException e) {
-            throw new ClientException("Failed to retrieve connector urls in " + poller.getWaited() +" ms", e);
+            throw new ClientException("Failed to retrieve connector urls in " + poller.getWaited() + " ms", e);
         }
 
         return poller.connectorUrls;
@@ -312,13 +312,14 @@ public class TopologyClient extends CQClient {
      * The method retries until the configuration was saved and the topology is current
      *
      * @param connectorUrlsList list of connector urls
-     * @param retryCount the number of retries. There is a 1 second wait between retries
+     * @param timeout time (in milliseconds) to wait before throwing an exception
      * @throws ClientException if the request failed
      * @throws InterruptedException to mark this method as "waiting"
      */
-    public void setConnectorUrlsWithWait(Set<String> connectorUrlsList, int retryCount) throws ClientException, InterruptedException {
+    public void setConnectorUrlsWithWait(Set<String> connectorUrlsList, long timeout)
+            throws ClientException, InterruptedException {
         setConnectorUrls(connectorUrlsList);
-        getConnectorUrlsWithWait(retryCount);
+        getConnectorUrlsWithWait(timeout);
     }
 
     /**

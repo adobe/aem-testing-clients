@@ -7,8 +7,8 @@ Add the following dependency to your tests project to start writing integration 
 <dependencies>
     <dependency>
         <groupId>com.adobe.cq</groupId>
-        <artifactId>cq-testing-clients-64</artifactId>
-        <version>0.1.0</version>
+        <artifactId>cq-testing-clients-65</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
     </dependency>
 </dependencies>
 
@@ -39,7 +39,6 @@ For an example of a test module, check the [aem-test-samples](https://github.com
 * Check the [wiki](https://github.com/adobe/aem-testing-clients/wiki)
 * Read the README from [sling.testing.clients](https://github.com/apache/sling-org-apache-sling-testing-clients) and
 [sling.testing.rules](https://github.com/apache/sling-org-apache-sling-testing-rules)
-* Check the [javadoc](http://adobe.github.io/aem-testing-clients/apidocs/cq-testing-clients-64/0.1.0/index.html)
 
 ## Development
 For building from sources, clone the repository and use maven:

@@ -33,6 +33,12 @@ public class GraniteBackwardsCompatibility {
             }
         }
 
+        // it.logintokenauth was initially named granite.it.logintokenauth
+        String loginTokenAuth = System.getProperty("granite.it.logintokenauth");
+        if (loginTokenAuth != null && System.getProperty("it.logintokenauth") == null) {
+            System.setProperty("it.logintokenauth", loginTokenAuth);
+        }
+
         // Special handling of granite.it.author.url and granite.it.publish.url
         String authorUrl = System.getProperty("granite.it.author.url");
         if (authorUrl != null && !isInstanceAlreadyConfigured(authorUrl, "author")) {

@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-64.svg?style=svg)](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-64)
+
 # AEM testing clients
 HTTP testing clients and utilities for AEM, based on [sling.testing.clients](https://github.com/apache/sling-org-apache-sling-testing-clients).
 
@@ -8,28 +10,9 @@ Add the following dependency to your tests project to start writing integration 
     <dependency>
         <groupId>com.adobe.cq</groupId>
         <artifactId>cq-testing-clients-65</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </dependency>
 </dependencies>
-
-```
-
-You will also need to add the adobe public repository to your pom to access the artifacts:
-```xml
-<repositories>
-    <repository>
-        <id>adobe-public-releases</id>
-        <name>Adobe Public Repository</name>
-        <url>https://repo.adobe.com/nexus/content/groups/public</url>
-        <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-        </releases>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-</repositories>
 
 ```
 

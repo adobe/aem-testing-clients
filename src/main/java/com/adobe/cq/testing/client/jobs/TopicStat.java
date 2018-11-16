@@ -74,4 +74,37 @@ public class TopicStat {
         this.avgProcessingTime = topicJson.get("avg_processing_time").getLongValue();
         this.avgWaitingTime = topicJson.get("avg_waiting_time").getLongValue();
     }
+
+    public String getTopicName() {
+        return topicName;
+    }
+
+    public long getLastActivated() {
+        return lastActivated;
+    }
+
+    public long getLastFinished() {
+        return lastFinished;
+    }
+
+    public int getFinishedJobs() {
+        return finishedJobs;
+    }
+
+    public int getFailedJobs() {
+        return failedJobs;
+    }
+
+    public int getCancelledJobs() {
+        return cancelledJobs;
+    }
+
+    public long getAvgProcessingTime() {
+        return avgProcessingTime;
+    }
+
+    public long getAvgWaitingTime() {
+        return avgWaitingTime;
+    }
+
 }

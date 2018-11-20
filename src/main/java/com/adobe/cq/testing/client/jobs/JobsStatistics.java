@@ -18,6 +18,8 @@ package com.adobe.cq.testing.client.jobs;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 /**
  * POJO that describes active jobs statistics and topic statistics in sling
  */
@@ -33,8 +35,25 @@ public class JobsStatistics {
         this.jobQueues = jobQueues;
     }
 
+    @Nonnull
     public List<TopicStat> getTopics() {
         return topics;
+    }
+
+    /**
+     * Get a specific topic statistic
+     *
+     * @param topic string representation of the job topic
+     * @return null if topic statistic is not found
+     */
+    public TopicStat getTopic(@Nonnull String topic) {
+        TopicStat foundTopicStat = null;
+        for (TopicStat topicStat : this.getTopics()) {
+            if (topic.equals(topicStat.getTopicName())) {
+                foundTopicStat = topicStat;
+            }
+        }
+        return foundTopicStat;
     }
 
     public void setTopics(List<TopicStat> topics) {
@@ -61,4 +80,5 @@ public class JobsStatistics {
     public void addTopicStat(TopicStat stats) {
         this.topics.add(stats);
     }
+
 }

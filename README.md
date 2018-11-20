@@ -14,6 +14,7 @@ Add the following dependency to your tests project to start writing integration 
     </dependency>
 </dependencies>
 
+
 ```
 
 For an example of a test module, check the [aem-test-samples](https://github.com/adobe/aem-test-samples)

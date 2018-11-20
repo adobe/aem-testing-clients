@@ -14,6 +14,7 @@ Add the following dependency to your tests project to start writing integration 
     </dependency>
 </dependencies>
 
+
 ```
 
 You will also need to add the adobe public repository to your pom to access the artifacts:

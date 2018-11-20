@@ -10,31 +10,15 @@ Add the following dependency to your tests project to start writing integration 
     <dependency>
         <groupId>com.adobe.cq</groupId>
         <artifactId>cq-testing-clients-64</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
     </dependency>
 </dependencies>
 
 
 ```
 
-You will also need to add the adobe public repository to your pom to access the artifacts:
-```xml
-<repositories>
-    <repository>
-        <id>adobe-public-releases</id>
-        <name>Adobe Public Repository</name>
-        <url>https://repo.adobe.com/nexus/content/groups/public</url>
-        <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-        </releases>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-</repositories>
-
-```
+The artifact is available on [Maven Central](https://mvnrepository.com/repos/central) 
+and it is discoverable in any default maven installation.
 
 For an example of a test module, check the [aem-test-samples](https://github.com/adobe/aem-test-samples)
 

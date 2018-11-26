@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-63.svg?style=svg)](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-63)
+[![codecov](https://img.shields.io/codecov/c/github/adobe/aem-testing-clients/cq-63.svg)](https://codecov.io/gh/adobe/aem-testing-clients/branch/cq-63)
 
 # AEM testing clients
 HTTP testing clients and utilities for AEM, based on [sling.testing.clients](https://github.com/apache/sling-org-apache-sling-testing-clients).

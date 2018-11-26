@@ -45,8 +45,9 @@ jobs:
         path: target/surefire-reports
 
     # Upload to codecov.io
-    - run: bash <(curl -s https://codecov.io/bash)
-
+    - run:
+        name: codecov.io
+        command: bash <(curl -s https://codecov.io/bash)
 
 workflows:
   version: 2

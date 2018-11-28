@@ -26,9 +26,9 @@ jobs:
     # Download and cache dependencies
     - restore_cache:
         keys:
-        - v1-dependencies-{{ checksum "pom.xml" }}
+        - v2-dependencies-{{ checksum "pom.xml" }}
         # fallback to using the latest cache if no exact match is found
-        - v1-dependencies-
+        - v2-dependencies-
 
     # run tests!
     - run: mvn integration-test
@@ -36,7 +36,7 @@ jobs:
     - save_cache:
         paths:
         - ~/.m2
-        key: v1-dependencies-{{ checksum "pom.xml" }}
+        key: v2-dependencies-{{ checksum "pom.xml" }}
 
     # Upload the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
     - store_test_results:

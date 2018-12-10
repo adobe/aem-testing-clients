@@ -16,6 +16,7 @@
 
 package com.adobe.cq.testing.junit.rules;
 
+import org.apache.sling.testing.clients.Constants;
 import org.apache.sling.testing.junit.rules.instance.Instance;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
@@ -49,7 +50,12 @@ public class CQAuthorPublishClassRule implements TestRule {
         cqClassRule = new CQClassRule();
         authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
         publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
-        defaultReplicationAgentsRule = new DefaultReplicationAgents(authorRule, publishRule);
+        defaultReplicationAgentsRule = new DefaultReplicationAgents(authorRule, publishRule) {
+            @Override
+            protected boolean configure() {
+                return Boolean.getBoolean(Constants.CONFIG_PROP_PREFIX + "configure.default.replication.agents");
+            }
+        };
         ruleChain = RuleChain.outerRule(cqClassRule)
                 .around(authorRule)
                 .around(publishRule)

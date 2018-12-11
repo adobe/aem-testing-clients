@@ -27,6 +27,7 @@ import static com.adobe.cq.testing.junit.rules.CQClassRule.DEFAULT_AUTHOR_CONFIG
 import static com.adobe.cq.testing.junit.rules.CQClassRule.DEFAULT_PUBLISH_CONFIG;
 
 public class CQAuthorPublishClassRule implements TestRule {
+
     /** Granite rules to be executed at class level */
     public final CQClassRule cqClassRule;
 
@@ -53,7 +54,8 @@ public class CQAuthorPublishClassRule implements TestRule {
         defaultReplicationAgentsRule = new DefaultReplicationAgents(authorRule, publishRule) {
             @Override
             protected boolean configure() {
-                return Boolean.getBoolean(Constants.CONFIG_PROP_PREFIX + "configure.default.replication.agents");
+                final String key = Constants.CONFIG_PROP_PREFIX + "configure.default.replication.agents";
+                return Boolean.parseBoolean(System.getProperty(key, "true"));
             }
         };
         ruleChain = RuleChain.outerRule(cqClassRule)

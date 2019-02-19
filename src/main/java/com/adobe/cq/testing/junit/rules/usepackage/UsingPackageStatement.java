@@ -17,9 +17,7 @@ package com.adobe.cq.testing.junit.rules.usepackage;
 
 import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.PackageManagerClient;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.junit.runners.model.Statement;
 
 import java.io.File;
@@ -27,24 +25,34 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Iterator;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collections;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 public class UsingPackageStatement extends Statement {
-    
+
     private Statement base;
 
     private UsePackageRule rule;
-    
+
     public UsingPackageStatement(UsePackageRule rule, Statement base) {
         this.base = base;
         this.rule = rule;
     }
-    
+
     @Override
     public void evaluate() throws Throwable {
         PackageManagerClient.Package uploadedPackage = null;
@@ -64,53 +72,53 @@ public class UsingPackageStatement extends Statement {
                 uploadedPackage.unInstall();
                 uploadedPackage.delete();
             }
-        }                
-    }
-
-    
-    private File generatePackage(String resourceFolder) throws IOException {
-        URL res = getClass().getResource(resourceFolder);
-        String srcPath = null;
-        if (res.toString().startsWith("jar:")) {
-            // extract jar in temp folder
-            // TODO
-        } else {
-            // resource is not in jar
-            srcPath = res.toString();
-            if (srcPath.startsWith("file:")) {
-                srcPath = srcPath.substring(5);
-            }
         }
-
-        return buildJarFromFolder(srcPath);
     }
 
-    private File buildJarFromFolder(String srcPath) throws IOException {
+
+    private File generatePackage(final String resourceFolder) throws IOException, URISyntaxException {
         File generatedPackage = File.createTempFile("temp-package-", ".zip");
         generatedPackage.deleteOnExit();
 
-        Manifest man = new Manifest();
+        addResourcesToPackage(resourceFolder, initPackage(generatedPackage));
 
+        return generatedPackage;
+    }
+
+    private JarOutputStream initPackage(File generatedPackage) throws IOException {
+        Manifest man = new Manifest();
         Attributes atts = man.getMainAttributes();
         atts.put(Attributes.Name.MANIFEST_VERSION, "1.0");
         atts.putValue("Build-Jdk", ManagementFactory.getRuntimeMXBean().getVmVersion());
 
-        JarOutputStream outJar = new JarOutputStream(new FileOutputStream(generatedPackage), man);
-        
-        Iterator<File> fileIter = FileUtils.iterateFilesAndDirs(new File(srcPath), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-        while (fileIter.hasNext()) {
-            File currFile = fileIter.next();
-            if (currFile.isDirectory()) continue;
-            String entryName = currFile.getAbsolutePath().substring(srcPath.length()+1);
-            JarEntry je = new JarEntry(entryName);
-            je.setTime(currFile.lastModified());
-            je.setSize(currFile.length());
-            outJar.putNextEntry(je);
-            IOUtils.copy(new FileInputStream(currFile), outJar);
-            outJar.closeEntry();
+        return new JarOutputStream(new FileOutputStream(generatedPackage), man);
+    }
+
+    private void addResourcesToPackage(final String resourceFolder, final JarOutputStream outJar) throws URISyntaxException, IOException {
+        URI uri = getClass().getResource(resourceFolder).toURI();
+        URL urlRoot = getClass().getResource("/");
+        final String rootPath = urlRoot != null ? urlRoot.getPath() : "/";
+
+        // Map jar scheme into new FileSystem in order for Paths.get(uri) to resolve it as for local filesystem.
+        try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap()) : null)) {
+            final Path myPath = Paths.get(uri);
+            Files.walkFileTree(myPath, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (!attrs.isDirectory() && attrs.isRegularFile()) {
+                        String rootRelatedPath = file.toString().substring(rootPath.length() - 1);
+                        JarEntry je = new JarEntry(rootRelatedPath.substring(resourceFolder.length() + 1));
+                        je.setTime(attrs.lastModifiedTime().toMillis());
+                        je.setSize(attrs.size());
+                        outJar.putNextEntry(je);
+                        IOUtils.copy(getClass().getResourceAsStream(rootRelatedPath.toString()), outJar);
+                        outJar.closeEntry();
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
         }
         outJar.close();
-        return generatedPackage;
     }
 
 }

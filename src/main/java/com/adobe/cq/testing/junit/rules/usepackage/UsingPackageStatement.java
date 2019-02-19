@@ -43,16 +43,16 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 public class UsingPackageStatement extends Statement {
-    
+
     private Statement base;
 
     private UsePackageRule rule;
-    
+
     public UsingPackageStatement(UsePackageRule rule, Statement base) {
         this.base = base;
         this.rule = rule;
     }
-    
+
     @Override
     public void evaluate() throws Throwable {
         PackageManagerClient.Package uploadedPackage = null;
@@ -72,10 +72,10 @@ public class UsingPackageStatement extends Statement {
                 uploadedPackage.unInstall();
                 uploadedPackage.delete();
             }
-        }                
+        }
     }
 
-    
+
     private File generatePackage(final String resourceFolder) throws IOException, URISyntaxException {
         File generatedPackage = File.createTempFile("temp-package-", ".zip");
         generatedPackage.deleteOnExit();
@@ -98,6 +98,8 @@ public class UsingPackageStatement extends Statement {
         URI uri = getClass().getResource(resourceFolder).toURI();
         URL urlRoot = getClass().getResource("/");
         final String rootPath = urlRoot != null ? urlRoot.getPath() : "/";
+
+        // Map jar scheme into new FileSystem in order for Paths.get(uri) to resolve it as for local filesystem.
         try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap()) : null)) {
             final Path myPath = Paths.get(uri);
             Files.walkFileTree(myPath, new SimpleFileVisitor<Path>() {

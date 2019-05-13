@@ -526,6 +526,7 @@ public class PackageManagerClient extends CQClient {
     public Package uploadPackage(InputStream is, String fileName) throws ClientException {
         HttpEntity mpe = MultipartEntityBuilder.create()
                 .addPart("package", new InputStreamBody(is, fileName))
+                .addTextBody("force", "true")
                 .addTextBody("_charset_", "UTF-8")
                 .build();
 

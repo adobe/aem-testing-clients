@@ -19,7 +19,7 @@
 
     <groupId>com.adobe.cq</groupId>
     <artifactId>cq-testing-clients-65</artifactId>
-    <version>0.1.3</version>
+    <version>0.1.4-SNAPSHOT</version>
 
     <name>CQ Testing Clients</name>
     <description>CQ related clients and testing utilities</description>
@@ -51,7 +51,7 @@
         <connection>scm:git:git@git.corp.adobe.com:QE/aem-testing-clients.git</connection>
         <developerConnection>scm:git:git@git.corp.adobe.com:QE/aem-testing-clients.git</developerConnection>
         <url>https://git.corp.adobe.com/QE/aem-testing-clients</url>
-        <tag>cq-testing-clients-65-0.1.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>

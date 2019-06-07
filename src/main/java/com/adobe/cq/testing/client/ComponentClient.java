@@ -61,6 +61,13 @@ import java.util.HashMap;
 
 public class ComponentClient extends CQClient {
 
+    /**
+     * The key name for the default 'relativeLocation' component property
+     *
+     * <p>Used as a default for the {@link AbstractComponent#getLocation()} method.</p>
+     */
+    private static final String CONFIG_KEY_RELATIVE_LOCATION = "componentDefaultRelativeLocation";
+
     public static final String ORDER_FIRST = "first";
     public static final String ORDER_LAST = "last";
     public static final String ORDER_BEFORE_PREFIX = "before ";
@@ -120,9 +127,8 @@ public class ComponentClient extends CQClient {
     }
 
     /**
-     * Adds a new, empty component to a CQ page. The component is added at
-     * {@link com.adobe.cq.testing.client.components.AbstractComponent#DEFAULT_LOCATION}
-     * inside the page.
+     * Adds a new, empty component to a CQ page. The component is added at the default
+     * location in the page inside the page.
      *
      * @param componentClass the {@link com.adobe.cq.testing.client.components.AbstractComponent}
      *                       subclass to be created
@@ -140,9 +146,8 @@ public class ComponentClient extends CQClient {
     }
 
     /**
-     * Adds a new, empty component to a CQ page. The component is added at {@link
-     * com.adobe.cq.testing.client.components.AbstractComponent#DEFAULT_LOCATION}
-     * inside the page.
+     * Adds a new, empty component to a CQ page. The component is added at the default
+     * location in the page inside the page.
      *
      * @param componentClass the {@link com.adobe.cq.testing.client.components.AbstractComponent}
      *                       subclass to be created
@@ -183,6 +188,10 @@ public class ComponentClient extends CQClient {
     public <T extends AbstractComponent> T addComponent(Class<T> componentClass, String pagePath,
                                                         String location, String nameHint, String order,
                                                         int... expectedStatus) throws ClientException, InterruptedException {
+        if ( location == null ) {
+            location = getValue(CONFIG_KEY_RELATIVE_LOCATION);
+        }
+
         T component;
         try {
             // get the constructor for the component subclass
@@ -332,5 +341,21 @@ public class ComponentClient extends CQClient {
     public void deleteComponent(String componentPath) throws ClientException {
         HttpEntity entity = FormEntityBuilder.create().addParameter(":operation","delete").build();
         doPost(componentPath, entity);
+    }
+
+    /**
+     * @return the value of the component's default relative location, possibly <code>null</code>
+     */
+    public String getDefaultComponentRelativeLocation() {
+        return getValue(CONFIG_KEY_RELATIVE_LOCATION);
+    }
+
+    /**
+     * Sets a new value for the component's default relative location
+     *
+     * @param defaultComponentRelativeLocation the new value for the default component relative location
+     */
+    public void setDefaultComponentRelativeLocation(String defaultComponentRelativeLocation) {
+        getValues().put(CONFIG_KEY_RELATIVE_LOCATION, defaultComponentRelativeLocation);
     }
 }

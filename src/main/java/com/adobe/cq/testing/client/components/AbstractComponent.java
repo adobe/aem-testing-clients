@@ -40,7 +40,9 @@ public abstract class AbstractComponent {
 
     /**
      * The default location inside a CQ page where the component gets added
+     * @deprecated - use the component's {@link #getLocation()} method as this value is not applicable to all websites
      */
+    @Deprecated
     public static final String DEFAULT_LOCATION = "/jcr:content/par/";
 
     /**

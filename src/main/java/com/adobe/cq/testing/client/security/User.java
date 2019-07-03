@@ -19,7 +19,6 @@ import com.adobe.cq.testing.client.SecurityClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.Constants;
 import org.apache.sling.testing.clients.SlingHttpResponse;
-import org.apache.sling.testing.clients.indexing.IndexingClient;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.poller.Polling;
@@ -182,30 +181,6 @@ public class User extends AbstractAuthorizable {
     public static <T extends SecurityClient> User createUser(T client, String userId, String password,
                                                              String intermediatePath, Map<String, String> profileMap,
                                                              int... expectedStatus) throws ClientException, InterruptedException {
-        return createUser(client, userId, password, intermediatePath, profileMap, true, expectedStatus);
-    }
-
-    /**
-     * Creates a new user.
-     *
-     * @param client           any class implementing the {@link SecurityClient}.
-     * @param userId           the user ID for the new user.
-     * @param password         the password to be assigned.
-     * @param intermediatePath the root path user will be created.
-     * @param profileMap       profile properties to be set for the new user.
-     * @param waitForIndex     Whether or not to wait for indexing to be complete before returning
-     * @param expectedStatus   list of allowed HTTP Status to be returned. If not set,
-     *                         http status 201 (CREATED) is assumed.
-     * @param <T>              client type
-     * @return {@code User}
-     * @throws ClientException
-     *          If something fails during request/response cycle
-     * @throws InterruptedException to mark this method as "waiting"
-     */
-    public static <T extends SecurityClient> User createUser(T client, String userId, String password,
-                                                             String intermediatePath, Map<String, String> profileMap,
-                                                             boolean waitForIndex,
-                                                             int... expectedStatus) throws ClientException, InterruptedException {
         if (client == null || userId == null) {
             throw new IllegalArgumentException("Client and userId may not be null!");
         }
@@ -237,8 +212,35 @@ public class User extends AbstractAuthorizable {
         // Create the user
         client.getManager().doPost(feb, HttpUtils.getExpectedStatus(SC_CREATED, expectedStatus));
 
-        // wait for user and get Authorizable
-        // new User is blocking until the user is found on the instance
+        // create Authorizable
         return new User(client, userId);
+    }
+
+    /**
+     * Creates a new user.
+     *
+     * @param client           any class implementing the {@link SecurityClient}.
+     * @param userId           the user ID for the new user.
+     * @param password         the password to be assigned.
+     * @param intermediatePath the root path user will be created.
+     * @param profileMap       profile properties to be set for the new user.
+     * @param waitForIndex     Whether or not to wait for indexing to be complete before returning
+     * @param expectedStatus   list of allowed HTTP Status to be returned. If not set,
+     *                         http status 201 (CREATED) is assumed.
+     * @param <T>              client type
+     * @return {@code User}
+     * @throws ClientException
+     *          If something fails during request/response cycle
+     * @throws InterruptedException to mark this method as "waiting"
+     *
+     * @deprecated waitForIndex parameter is not needed. Use {@link #createUser(SecurityClient, String, String, String, Map, int...)}
+     */
+    @Deprecated
+    public static <T extends SecurityClient> User createUser(T client, String userId, String password,
+                                                             String intermediatePath, Map<String, String> profileMap,
+                                                             boolean waitForIndex,
+                                                             int... expectedStatus) throws ClientException, InterruptedException {
+
+        return createUser(client, userId, password, intermediatePath, profileMap, expectedStatus);
     }
 }

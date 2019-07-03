@@ -166,7 +166,13 @@ public class SecurityClient extends CQClient {
                                              Map<String, String> profileMap,
                                              T[] assignedGroups, int... expectedStatus) throws
             ClientException, InterruptedException {
-        return createUser(userId, password, intermediatePath, profileMap, true, assignedGroups, expectedStatus);
+        User user = User.createUser(this, userId, password, intermediatePath, profileMap, expectedStatus);
+        if (assignedGroups != null) {
+            for (T assignedGroup : assignedGroups) {
+                assignedGroup.addMembers(new Authorizable[]{user}, 200);
+            }
+        }
+        return user;
     }
 
     /**
@@ -185,19 +191,16 @@ public class SecurityClient extends CQClient {
      * @throws ClientException
      *          If something fails during request/ response cycle
      * @throws InterruptedException to mark this method as "waiting"
+     *
+     * @deprecated waitForIndexing is not used anymore and it's ignored. Use {@link #createGroup(String, String, String, String, Group[], int...)}.
      */
+    @Deprecated
     public <T extends Group> User createUser(String userId, String password, String intermediatePath,
                                              Map<String, String> profileMap,
                                              boolean waitForIndexing,
                                              T[] assignedGroups, int... expectedStatus) throws
             ClientException, InterruptedException {
-        User user = User.createUser(this, userId, password, intermediatePath, profileMap, waitForIndexing, expectedStatus);
-        if (assignedGroups != null) {
-            for (T assignedGroup : assignedGroups) {
-                assignedGroup.addMembers(new Authorizable[]{user}, 200);
-            }
-        }
-        return user;
+        return createUser(userId, password, intermediatePath, profileMap, assignedGroups, expectedStatus);
     }
 
     /**

@@ -1,5 +1,5 @@
-[![CircleCI](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-65.svg?style=svg)](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-65)
-[![codecov](https://img.shields.io/codecov/c/github/adobe/aem-testing-clients/cq-65.svg)](https://codecov.io/gh/adobe/aem-testing-clients/branch/cq-65)
+[![CircleCI](https://circleci.com/gh/adobe/aem-testing-clients/tree/aem-cloud.svg?style=svg)](https://circleci.com/gh/adobe/aem-testing-clients/tree/aem-cloud)
+[![codecov](https://img.shields.io/codecov/c/github/adobe/aem-testing-clients/aem-cloud.svg)](https://codecov.io/gh/adobe/aem-testing-clients/branch/aem-cloud)
 
 # AEM testing clients
 HTTP testing clients and utilities for AEM, based on [sling.testing.clients](https://github.com/apache/sling-org-apache-sling-testing-clients).
@@ -10,7 +10,7 @@ Add the following dependency to your tests project to start writing integration 
 <dependencies>
     <dependency>
         <groupId>com.adobe.cq</groupId>
-        <artifactId>cq-testing-clients-65</artifactId>
+        <artifactId>aem-cloud-testing-clients</artifactId>
         <version>0.1.0</version>
     </dependency>
 </dependencies>
@@ -31,4 +31,4 @@ For building from sources, clone the repository and use maven:
 mvn clean install
 ```
 
-PRs and issues are welcome, please read our [CONTRIBUTING guideline](CONTRIBUTING.md). 
+PRs and issues are welcome, please reade our [CONTRIBUTING guideline](CONTRIBUTING.md). 

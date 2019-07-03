@@ -19,11 +19,8 @@ import com.adobe.cq.testing.client.SecurityClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.Constants;
 import org.apache.sling.testing.clients.SlingHttpResponse;
-import org.apache.sling.testing.clients.indexing.IndexingClient;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
-
-import java.util.concurrent.TimeoutException;
 
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -188,13 +185,6 @@ public class Group extends AbstractAuthorizable {
         }
 
         client.getManager().doPost(feb, HttpUtils.getExpectedStatus(SC_CREATED, expectedStatus));
-
-
-        try {
-            client.adaptTo(IndexingClient.class).waitForAsyncIndexing();
-        } catch (TimeoutException e) {
-            throw new ClientException("Indexing did not finish in time", e);
-        }
 
         return new Group(client, groupId);
     }

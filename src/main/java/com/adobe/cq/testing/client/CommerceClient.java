@@ -848,7 +848,7 @@ public class CommerceClient extends FormClient {
                 .addParameter("productPath", product)
                 .addParameter("assetReference", asset);
 
-        return this.doPost("/apps/weretail/content/we-retail/product/jcr:content/cq:dialog/content/items/columns/items/column1/items/images/image.create.html", form.build(), SC_OK);
+        return this.doPost("/apps/weretail/content/scaffolding/we-retail/product/jcr:content/cq:dialog/content/items/columns/items/column1/items/images/image.create.html", form.build(), SC_OK);
 
     }
 
@@ -866,7 +866,7 @@ public class CommerceClient extends FormClient {
                 .addParameter("productAssetPath", productAssetPath)
                 .addParameter("assetReference", newAsset);
 
-        return this.doPost("/apps/weretail/content/we-retail/product/jcr:content/cq:dialog/content/items/columns/items/column1/items/images/image.update.html", form.build(), SC_OK);
+        return this.doPost("/apps/weretail/content/scaffolding/we-retail/product/jcr:content/cq:dialog/content/items/columns/items/column1/items/images/image.update.html", form.build(), SC_OK);
 
     }
 
@@ -883,7 +883,7 @@ public class CommerceClient extends FormClient {
                 .addParameter("_charset_", "UTF-8")
                 .addParameter("productAssetPath", productAssetPath);
 
-        return this.doPost("/apps/weretail/content/we-retail/product/jcr:content/cq:dialog/content/items/columns/items/column1/items/images/image.remove.html", form.build(), SC_OK);
+        return this.doPost("/apps/weretail/content/scaffolding/we-retail/product/jcr:content/cq:dialog/content/items/columns/items/column1/items/images/image.remove.html", form.build(), SC_OK);
 
     }
 

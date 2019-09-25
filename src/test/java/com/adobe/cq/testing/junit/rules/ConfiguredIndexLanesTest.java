@@ -17,6 +17,7 @@ package com.adobe.cq.testing.junit.rules;
 
 import com.adobe.cq.testing.client.CQClient;
 import org.apache.sling.testing.clients.ClientException;
+import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.indexing.IndexingClient;
 import org.apache.sling.testing.clients.instance.InstanceConfiguration;
 import org.apache.sling.testing.junit.rules.instance.Instance;
@@ -55,7 +56,28 @@ public class ConfiguredIndexLanesTest {
 
     @Test
     public void basics() throws ClientException {
-        CQClient client = instance.getClient(CQClient.class, "admin", "admin");
+        SlingClient client = instance.getClient(SlingClient.class, "admin", "admin");
+
+        IndexingClient indexingClient = client.adaptTo(IndexingClient.class);
+
+        List<String> laneNames = indexingClient.getLaneNames();
+        Assert.assertEquals("Incorrect number of configured index lanes",
+                EXPECTED_INDEX_LANE_NAMES.length, laneNames.size());
+        Assert.assertThat(laneNames, CoreMatchers.hasItems(EXPECTED_INDEX_LANE_NAMES));
+    }
+
+    @Test
+    public void cachedClient() throws ClientException {
+        // just create a client to create a cache entry.
+        instance.getClient(CQClient.class, "admin", "admin");
+
+        // .... rest of the test is same as basics test
+        basics();
+    }
+
+    @Test
+    public void basicsAdminClient() throws ClientException {
+        SlingClient client = instance.getAdminClient(SlingClient.class);
 
         IndexingClient indexingClient = client.adaptTo(IndexingClient.class);
 

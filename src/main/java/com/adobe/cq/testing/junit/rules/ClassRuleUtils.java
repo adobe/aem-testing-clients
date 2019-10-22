@@ -15,11 +15,6 @@
  */
 package com.adobe.cq.testing.junit.rules;
 
-import org.apache.http.auth.AuthSchemeProvider;
-import org.apache.http.config.Lookup;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.sling.testing.clients.SlingClient;
-import org.apache.sling.testing.clients.interceptors.FormBasedAuthInterceptor;
 import org.apache.sling.testing.junit.rules.instance.Instance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,32 +22,13 @@ import org.slf4j.LoggerFactory;
 public class ClassRuleUtils {
     public static final Logger LOG = LoggerFactory.getLogger(ClassRuleUtils.class);
 
-    // TODO way to make these props homogenous?
-    public static final String LOGIN_TOKEN_AUTH = "it.logintokenauth";
-
-    public static class LoginTokenInstance extends ConfiguredIndexingLaneInstance {
-        @Override
-        public <T extends SlingClient.InternalBuilder> T customize(T builder) {
-            Lookup<AuthSchemeProvider> authSchemeRegistry = RegistryBuilder.<AuthSchemeProvider>create().build();
-            builder.httpClientBuilder().setDefaultAuthSchemeRegistry(authSchemeRegistry);
-            builder.setPreemptiveAuth(false).addInterceptorFirst(new FormBasedAuthInterceptor("login-token"));
-            return builder;
-        }
-    }
-
     /**
      * Create a new {@code Instance} object depending on the default auth mechanism
      * @param forceBasicAuth set to true to always use basic auth
      * @return the instance object
      */
     public static Instance newInstanceRule(boolean forceBasicAuth) {
-        if (!forceBasicAuth && loginTokenAuth()) {
-            LOG.info("Using LoginToken Auth as default");
-            return new LoginTokenInstance();
-        } else {
-            LOG.info("Using Basic Auth as default");
-            return new ConfiguredIndexingLaneInstance();
-        }
+        return new ConfigurableInstance(forceBasicAuth);
     }
 
     /**
@@ -62,14 +38,5 @@ public class ClassRuleUtils {
      */
     public static Instance newInstanceRule() {
         return newInstanceRule(false);
-    }
-
-    /**
-     * Should default login be with login-token?
-     *
-     * @return true if login token auth is configured
-     */
-    public static boolean loginTokenAuth() {
-        return Boolean.getBoolean(LOGIN_TOKEN_AUTH);
     }
 }

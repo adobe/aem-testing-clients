@@ -36,19 +36,30 @@ import java.util.List;
 public class ConfiguredIndexLanesTest {
     private static final String[] EXPECTED_INDEX_LANE_NAMES = new String[]{"async", "fulltext-async"};
 
-    public ConfiguredIndexLanesTest(boolean useBasicAuth, String runMode, InstanceConfiguration defaultConfig) {
-        instance = ClassRuleUtils.newInstanceRule(useBasicAuth)
-                .withRunMode(runMode).orDefault(defaultConfig);
-    }
-
     @Parameterized.Parameters (name = "{index}: {1} with basicAuth {0}")
     public static Collection input() {
         return Arrays.asList(new Object[][]{
-                {true, "author", CQClassRule.DEFAULT_AUTHOR_CONFIG},
-                {false, "author", CQClassRule.DEFAULT_AUTHOR_CONFIG},
-                {true, "publish", CQClassRule.DEFAULT_PUBLISH_CONFIG},
-                {false, "publish", CQClassRule.DEFAULT_PUBLISH_CONFIG},
+                {true, "author"},
+                {false, "author"},
+                {true, "publish"},
+                {false, "publish"},
         });
+    }
+
+    public ConfiguredIndexLanesTest(boolean useBasicAuth, String runMode) {
+        boolean isAuthor = !"publish".equals(runMode);
+
+        InstanceConfiguration defaultConfig;
+        if (isAuthor) {
+            //non-publish implies author
+            runMode = "author";
+            defaultConfig = CQClassRule.DEFAULT_AUTHOR_CONFIG;
+        } else {
+            runMode = "publish";
+            defaultConfig = CQClassRule.DEFAULT_PUBLISH_CONFIG;
+        }
+        instance = ClassRuleUtils.newInstanceRule(useBasicAuth)
+                .withRunMode(runMode).orDefault(defaultConfig);
     }
 
     @Rule

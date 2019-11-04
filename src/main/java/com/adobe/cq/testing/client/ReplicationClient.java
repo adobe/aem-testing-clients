@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.apache.http.HttpStatus.SC_CREATED;
@@ -264,7 +265,7 @@ public class ReplicationClient extends CQClient {
 
         EmptyReplicationQueuePoller polling = new EmptyReplicationQueuePoller(this, agentPath);
         try {
-            polling.poll(2000, 100);
+            polling.poll(TimeUnit.MINUTES.toMillis(1), 100);
         } catch (TimeoutException e) {
             throw new ClientException("The queue for replication agent " + agentPath +
                     "was not empty after " + polling.getWaited() + "." +

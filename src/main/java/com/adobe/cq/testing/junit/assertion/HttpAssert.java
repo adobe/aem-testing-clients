@@ -29,7 +29,7 @@ public class HttpAssert {
     public static void assertContentTypeEquals(HttpResponse response) {
         Header contentType = response.getFirstHeader("Content-Type");
 
-        // since wie accept html as reponse the <tt>Content-Type</tt> header should be set to <tt>text/html</tt>.
+        // since wie accept html as reponse the <code>Content-Type</code> header should be set to <code>text/html</code>.
         Assert.assertEquals("Response Header 'Content-Type' is not properly set!", "text/html;charset=utf-8",
                 contentType.getValue().replace(" ", "").toLowerCase());
     }

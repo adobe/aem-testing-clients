@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>FileVaultPackageUtil Test Package</comment>
+<entry key="createdBy">Adobe Systems Incorporated</entry>
+<entry key="name">com.adobe.cq.testing</entry>
+<entry key="artifactId">com.adobe.cq.testing.filevaultpackageutil</entry>
+<entry key="path">/etc/packages/day/cq60/product/com.adobe.cq.testing.filevaultpackageutil.zip</entry>
+<entry key="acHandling">overwrite</entry>
+<entry key="version">1.0</entry>
+<entry key="requiresRoot">true</entry>
+<entry key="description"/>
+<entry key="group">day/cq60/product</entry>
+</properties>

@@ -17,6 +17,7 @@ package com.adobe.cq.testing.junit.rules.usepackage;
 
 import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.PackageManagerClient;
+import com.adobe.cq.testing.util.FileVaultPackageUtil;
 import org.apache.commons.io.IOUtils;
 import org.junit.runners.model.Statement;
 
@@ -58,7 +59,7 @@ public class UsingPackageStatement extends Statement {
         PackageManagerClient.Package uploadedPackage = null;
         try {
             //Before:
-            File packFile = generatePackage(rule.getSrcPath());
+            File packFile = FileVaultPackageUtil.getInstance().generatePackage(rule.getSrcPath());
             CQClient adminAuthor = rule.getInstance().getAdminClient(CQClient.class);
             PackageManagerClient packClient =  adminAuthor.adaptTo(PackageManagerClient.class);
             uploadedPackage = packClient.uploadPackage(new FileInputStream(packFile), packFile.getName());
@@ -73,52 +74,6 @@ public class UsingPackageStatement extends Statement {
                 uploadedPackage.delete();
             }
         }
-    }
-
-
-    private File generatePackage(final String resourceFolder) throws IOException, URISyntaxException {
-        File generatedPackage = File.createTempFile("temp-package-", ".zip");
-        generatedPackage.deleteOnExit();
-
-        addResourcesToPackage(resourceFolder, initPackage(generatedPackage));
-
-        return generatedPackage;
-    }
-
-    private JarOutputStream initPackage(File generatedPackage) throws IOException {
-        Manifest man = new Manifest();
-        Attributes atts = man.getMainAttributes();
-        atts.put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        atts.putValue("Build-Jdk", ManagementFactory.getRuntimeMXBean().getVmVersion());
-
-        return new JarOutputStream(new FileOutputStream(generatedPackage), man);
-    }
-
-    private void addResourcesToPackage(final String resourceFolder, final JarOutputStream outJar) throws URISyntaxException, IOException {
-        URI uri = getClass().getResource(resourceFolder).toURI();
-        URL urlRoot = getClass().getResource("/");
-        final String rootPath = urlRoot != null ? urlRoot.getPath() : "/";
-
-        // Map jar scheme into new FileSystem in order for Paths.get(uri) to resolve it as for local filesystem.
-        try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap()) : null)) {
-            final Path myPath = Paths.get(uri);
-            Files.walkFileTree(myPath, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (!attrs.isDirectory() && attrs.isRegularFile()) {
-                        String rootRelatedPath = file.toString().substring(rootPath.length() - 1);
-                        JarEntry je = new JarEntry(rootRelatedPath.substring(resourceFolder.length() + 1));
-                        je.setTime(attrs.lastModifiedTime().toMillis());
-                        je.setSize(attrs.size());
-                        outJar.putNextEntry(je);
-                        IOUtils.copy(getClass().getResourceAsStream(rootRelatedPath.toString()), outJar);
-                        outJar.closeEntry();
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        }
-        outJar.close();
     }
 
 }

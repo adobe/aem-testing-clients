@@ -234,17 +234,11 @@ public class User extends AbstractAuthorizable {
             }
         }
 
+        // Create the user
         client.getManager().doPost(feb, HttpUtils.getExpectedStatus(SC_CREATED, expectedStatus));
 
-        if (waitForIndex) {
-            try {
-                client.adaptTo(IndexingClient.class).waitForAsyncIndexing();
-            } catch (TimeoutException e) {
-                throw new ClientException("Waiting for async index update failed (" + userId +")");
-            }
-        }
-
-        // create Authorizable
+        // wait for user and get Authorizable
+        // new User is blocking until the user is found on the instance
         return new User(client, userId);
     }
 }

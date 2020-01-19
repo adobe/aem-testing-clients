@@ -46,9 +46,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
     /**
      * Servlet providing JSON description of authorizables, and key-names within the JSON.
      */
-    private static final String AUTHORIZABLE_SEARCH_SERVLET = "/libs/granite/security/search/authorizables.json";
     private static final String AUTHORIZABLES = "authorizables";
-    private static final int MAX_NUM_RETRY = 5;
     private static final String HOME = "home";
     private static final int TIMEOUT = 60000; // in milliseconds
     private static final int DELAY = 500;  // in milliseconds
@@ -72,6 +70,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @throws ClientException if the details of the authorizables cannot be retrieved
      * @throws InterruptedException to mark this method as "waiting"
      */
+    // TODO: Refactor all of this!
     public <T extends SecurityClient> AbstractAuthorizable(T client, String authorizableId) throws ClientException, InterruptedException {
         if (client == null) {
             throw new IllegalArgumentException("Client must not be null!");
@@ -111,7 +110,12 @@ public abstract class AbstractAuthorizable implements Authorizable {
     }
 
     public boolean exists() throws ClientException {
-        return client.exists(getHomePath());
+        return exists(getQuery(this.authorizableId));
+    }
+
+    public boolean exists(String query) throws ClientException {
+        JsonNode authorizables = getAuthorizables(query);
+        return authorizables != null && authorizables.size() != 0;
     }
 
     public SlingHttpResponse delete(int... expectedStatus) throws ClientException {
@@ -218,7 +222,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @throws ClientException if the request failed
      */
     private String getAuthorizablePath(String authorizableId) throws ClientException, InterruptedException {
-        return getAuthorizableNode(authorizableId).get(HOME).getTextValue();
+        return getAuthorizableNodeWithRetry(authorizableId).get(HOME).getTextValue();
     }
 
     /**
@@ -228,7 +232,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @return type as String: "user" or "group"
      */
     private String getAuthorizableType(String authorizableId) throws ClientException, InterruptedException {
-        return getAuthorizableNode(authorizableId).get(Authorizable.TYPE).getTextValue();
+        return getAuthorizableNodeWithRetry(authorizableId).get(Authorizable.TYPE).getTextValue();
     }
 
     private JsonNode getAutorizablesWithRetry(final String query) throws ClientException, InterruptedException {
@@ -236,15 +240,16 @@ public abstract class AbstractAuthorizable implements Authorizable {
             new Polling() {
                 @Override
                 public Boolean call() throws Exception {
-                    String authorizablesJson = client.getManager().getAuthorizablesJson(query);
-                    JsonNode authorizables = JsonUtils.getJsonNodeFromString(authorizablesJson).get(AUTHORIZABLES);
-                    return authorizables != null && authorizables.size() != 0;
+                    return exists(query);
                 }
             }.poll(TIMEOUT, DELAY);
         } catch (TimeoutException e) {
             throw new ClientException("Failed to retrieve authorizables in " + TIMEOUT + " ms", e);
         }
+        return getAuthorizables(query);
+    }
 
+    private JsonNode getAuthorizables(final String query) throws ClientException {
         final String authorizablesJson = client.getManager().getAuthorizablesJson(query);
         return JsonUtils.getJsonNodeFromString(authorizablesJson).get(AUTHORIZABLES);
     }
@@ -256,8 +261,8 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @return authorizable node
      * @throws ClientException if the request failed
      */
-    private JsonNode getAuthorizableNode(String authorizableId) throws ClientException, InterruptedException {
-        String query = "\"condition\":[{\"named\":\"" + StringEscapeUtils.escapeJson(authorizableId) + "\"}]";
+    private JsonNode getAuthorizableNodeWithRetry(String authorizableId) throws ClientException, InterruptedException {
+        String query = getQuery(authorizableId);
 
         final JsonNode authorizables = getAutorizablesWithRetry(query);
 
@@ -265,6 +270,27 @@ public abstract class AbstractAuthorizable implements Authorizable {
             throw new ClientException("Authorizable " + authorizableId + " not found!");
         }
         return authorizables.get(0);
+    }
+
+    /**
+     * Get the authorizable json node from the search servlet
+     *
+     * @param authorizableId id of authorizable node
+     * @return authorizable node
+     * @throws ClientException if the request failed
+     */
+    private JsonNode getAuthorizableNode(String authorizableId) throws ClientException {
+        final String query = getQuery(authorizableId);
+        final JsonNode authorizables = getAuthorizables(query);
+
+        if (authorizables == null || authorizables.size() != 1) {
+            throw new ClientException("Authorizable " + authorizableId + " not found!");
+        }
+        return authorizables.get(0);
+    }
+
+    private String getQuery(String authorizableId) {
+        return "\"condition\":[{\"named\":\"" + StringEscapeUtils.escapeJson(authorizableId) + "\"}]";
     }
 
     /**

@@ -124,8 +124,9 @@ public interface Authorizable {
      *
      * @return true if the authorizable exists
      * @throws ClientException if the request failed
+     * @throws InterruptedException if interrupted
      */
-    public boolean exists() throws ClientException;
+    public boolean exists() throws ClientException, InterruptedException;
 
     /**
      * String representation of authorizable

@@ -191,7 +191,7 @@ public class CQClient extends SlingClient {
             @Override
             public Boolean call() throws ClientException {
                 response = deletePage(new String[] {pagePath}, force, shallow, expectedStatus);
-                return !exists(pagePath);
+                return !pageExists(pagePath);
             }
         }
 
@@ -203,6 +203,63 @@ public class CQClient extends SlingClient {
         }
 
         return deletePagePolling.response;
+    }
+
+    /**
+     * Returns whether a CQ page exists or not
+     * @param pagePath The path of the page
+     * @throws ClientException If the request failed
+     * @return whether the CQ page exists
+     */
+    public boolean pageExists(String pagePath) throws ClientException {
+        SlingHttpResponse response = getAuthorSitesPage(pagePath);
+        final int status = response.getStatusLine().getStatusCode();
+            return status == SC_OK;
+    }
+
+    /**
+     * Polls on whether a CQ page exists or not
+     * @param pagePath The path of the page
+     * @param timeout Timeout in milliseconds for the poller
+     * @throws InterruptedException if interrupted
+     * @return whether the CQ page exists
+     */
+    public boolean pageExistsWithRetry(String pagePath, int timeout) throws InterruptedException {
+        try {
+            new Polling(() -> pageExists(pagePath)).poll(timeout, 500);
+        } catch (TimeoutException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Polls on whether a CQ page exists or not after 1 second
+     * @param pagePath The path of the page
+     * @throws InterruptedException if interrupted
+     * @return whether the CQ page exists
+     */
+    public boolean pageExistsWithRetry(String pagePath) throws InterruptedException {
+        return pageExistsWithRetry(pagePath, 1000);
+    }
+
+    /**
+     * Get a CQ Page (.html extension)
+     * @param pagePath The path of the page
+     * @param expectedStatus An array of expected HTTP status codes for the response
+     * @return the http response
+     * @throws ClientException if the request failed
+     */
+    public SlingHttpResponse getAuthorSitesPage(String pagePath, int... expectedStatus) throws ClientException {
+        final String uriPath = getPageAbsoluteUri(pagePath).toString();
+            return this.doGet(uriPath, expectedStatus);
+    }
+
+    private URI getPageAbsoluteUri(String pagePath) {
+        final String path = pagePath.endsWith(".html") 
+                ? pagePath 
+                : pagePath.replaceFirst("/*$", "").concat(".html");
+        return this.getUrl(path);
     }
 
     /**

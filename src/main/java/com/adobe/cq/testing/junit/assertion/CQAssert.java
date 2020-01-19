@@ -35,11 +35,11 @@ import java.util.concurrent.TimeoutException;
 public class CQAssert {
 
     /**
-     * Tests if the page at <tt>path</tt> exists on the server connected by <tt>client</tt> and is
+     * Tests if the page at  {code}path{code} exists on the server connected by  {code}client{code} and is
      * a valid CQ Page. It does this by requesting the JSON tree of the page node, verifying if it
      * has all needed properties and subnodes of CQ Page.<br>
      * <br>
-     * To do this it tries to reach the page for <tt>timeout</tt> milliseconds with <tt>waitInterval</tt>
+     * To do this it tries to reach the page for  {code}timeout{code} milliseconds with  {code}waitInterval{code}
      * milliseconds pause between each request.
      *
      * @param client The client used for requesting the page.
@@ -87,7 +87,7 @@ public class CQAssert {
     }
 
     /**
-     * Tests if a folder exists at the location <tt>path</tt> with named <tt>folderTitle</tt>.
+     * Tests if a folder exists at the location  {code}path{code} with named  {code}folderTitle{code}.
      * It verifies by requesting the json output of the node and verifying that all nodes and properties
      * are properly created.
      *
@@ -134,7 +134,7 @@ public class CQAssert {
     }
 
     /**
-     * Tests if a File exists at the location <tt>path</tt>. It verifies by requesting the json output
+     * Tests if a File exists at the location  {code}path{code}. It verifies by requesting the json output
      * of the node and verifying that all nodes and properties are properly created.<br>
      * <br>
      * It also makes a binary compare between the original file data and the requested file.
@@ -200,16 +200,16 @@ public class CQAssert {
     }
 
     /**
-     * Tests if a Asset exists at the location <tt>path</tt>. It verifies by requesting the json output
+     * Tests if a Asset exists at the location  {code}path{code}. It verifies by requesting the json output
      * of the node and verifying that all nodes and properties are properly created.<br>
      * <br>
      * It also makes a binary compare between the original file data and the requested rendition named
-     * <tt>original</tt>.<br>
+     *  {code}original{code}.<br>
      * <br>
      * NOTE: This assert makes no assumptions about the type of the uploaded file (image, pdf, etc)
-     * so it only verifies if the <tt>Metadata</tt> node and <tt>renditions</tt> folder was created.
+     * so it only verifies if the  {code}Metadata{code} node and  {code}renditions{code} folder was created.
      * It does not verify extracted Metadata or check what renditions have been created. The
-     * only rendition verified is the one named <tt>original</tt> through binary compare with the original
+     * only rendition verified is the one named  {code}original{code} through binary compare with the original
      * file.
      *
      * @param client   The client used to request the json for the folder node.
@@ -294,11 +294,11 @@ public class CQAssert {
      * Verifies if a page is really a CQ page by checking for specific nodes
      * and properties:<br>
      * <ul>
-     * <li><tt>jcr:primaryType</tt> is set to <tt>cq:Page</tt></li>
-     * <li><tt>jcr:content</tt> node exists</li>
-     * <li><tt>jcr:primaryType</tt> is set to <tt>cq:PageContent</tt> in <tt>jcr:content</tt> node</li>
-     * <li><tt>sling:resourceType</tt> is set in <tt>jcr:content</tt> node</li>
-     * <li><tt>cq:template</tt> is set in <tt>jcr:content</tt> node</li>
+     * <li> {code}jcr:primaryType{code} is set to  {code}cq:Page{code}</li>
+     * <li> {code}jcr:content{code} node exists</li>
+     * <li> {code}jcr:primaryType{code} is set to  {code}cq:PageContent{code} in  {code}jcr:content{code} node</li>
+     * <li> {code}sling:resourceType{code} is set in  {code}jcr:content{code} node</li>
+     * <li> {code}cq:template{code} is set in  {code}jcr:content{code} node</li>
      * </ul>
      *
      * @param client The client used to doGet the JSON of the page

@@ -212,7 +212,8 @@ public class User extends AbstractAuthorizable {
         // Create the user
         client.getManager().doPost(feb, HttpUtils.getExpectedStatus(SC_CREATED, expectedStatus));
 
-        // create Authorizable
+        // wait for user and get Authorizable
+        // new User is blocking until the user is found on the instance
         return new User(client, userId);
     }
 

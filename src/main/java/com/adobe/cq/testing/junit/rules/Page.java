@@ -46,7 +46,7 @@ public class Page extends ExternalResource {
 
     private static final String SITE_ROOT_PATH = "/content/test-site";
     private static final String TEMPLATE_ROOT_PATH = "/conf/test-site";
-            private static final String TEMPLATE_PATH = "/conf/test-site/settings/wcm/templates/content-page";
+    private static final String TEMPLATE_PATH = "/conf/test-site/settings/wcm/templates/content-page";
 
     private final Callable<CQClient> clientCallable;
 

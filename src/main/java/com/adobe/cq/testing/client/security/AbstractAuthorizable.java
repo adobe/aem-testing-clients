@@ -281,7 +281,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
     /**
      * Get the authorizable json node from the search servlet
      *
-     * @param authorizableId it of authorizable node
+     * @param authorizableId id of authorizable node
      * @return authorizable node
      * @throws ClientException if the request failed
      */

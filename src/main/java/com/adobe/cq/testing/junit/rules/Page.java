@@ -17,6 +17,8 @@
 package com.adobe.cq.testing.junit.rules;
 
 import com.adobe.cq.testing.client.CQClient;
+import com.adobe.cq.testing.client.security.CreateUserRule;
+import com.adobe.cq.testing.client.security.UserRule;
 import org.apache.commons.io.IOUtils;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.util.ResourceUtil;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 import static org.apache.http.HttpStatus.SC_CREATED;
 
@@ -43,9 +46,9 @@ public class Page extends ExternalResource {
 
     private static final String SITE_ROOT_PATH = "/content/test-site";
     private static final String TEMPLATE_ROOT_PATH = "/conf/test-site";
-    private static final String TEMPLATE_PATH = "/conf/test-site/settings/wcm/templates/content-page";
+            private static final String TEMPLATE_PATH = "/conf/test-site/settings/wcm/templates/content-page";
 
-    private final Instance quickstartRule;
+    private final Callable<CQClient> clientCallable;
 
     private ThreadLocal<String> parentPath = new ThreadLocal<String>() {
         @Override
@@ -67,8 +70,16 @@ public class Page extends ExternalResource {
     };
 
     public Page(Instance quickstartRule) {
+        this((Callable<CQClient>) () -> quickstartRule.getAdminClient().adaptTo(CQClient.class));
+    }
+
+    public Page(UserRule userRule) {
+        this((Callable<CQClient>) () -> userRule.getClient());
+    }
+
+    public Page(Callable<CQClient> clientCallable) {
         super();
-        this.quickstartRule = quickstartRule;
+        this.clientCallable = clientCallable;
     }
 
     @Override
@@ -126,7 +137,11 @@ public class Page extends ExternalResource {
      * @throws ClientException if the client cannot be retrieved
      */
     protected CQClient getClient() throws ClientException {
-        return quickstartRule.getAdminClient(CQClient.class);
+        try {
+            return this.clientCallable.call();
+        } catch (Exception e) {
+            throw new ClientException("Cannot create client", e);
+        }
     }
 
     /**

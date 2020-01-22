@@ -206,6 +206,26 @@ public class CQClient extends SlingClient {
     }
 
     /**
+     * Returns whether a CQ page exists or not
+     */
+    public boolean exists(String pagePath) throws ClientException {
+        SlingHttpResponse response = getAuthorSitesPage(pagePath);
+        final int status = response.getStatusLine().getStatusCode();
+        return status == SC_OK;
+    }
+
+    /**
+     * Get a CQ Page under {code}/sites.html/{code} on author
+     * @param pagePath
+     * @return
+     * @throws ClientException
+     */
+    public SlingHttpResponse getAuthorSitesPage(String pagePath, int... expectedStatus) throws ClientException {
+        final String uriPath = this.getUrl("/sites.html/").resolve(URI.create("/").relativize(URI.create(pagePath))).toString();
+        return this.doGet(uriPath, expectedStatus);
+    }
+
+    /**
      * Copies one or more CQ pages to a specified location in the repository.
      *
      * @param srcPaths list of pages to copy

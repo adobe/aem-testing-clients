@@ -15,7 +15,6 @@
  */
 package com.adobe.cq.testing.client.security;
 
-import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.SecurityClient;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.NameValuePair;

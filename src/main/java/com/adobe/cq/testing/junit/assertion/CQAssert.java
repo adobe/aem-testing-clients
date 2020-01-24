@@ -296,9 +296,6 @@ public class CQAssert {
      * <ul>
      * <li> {code}jcr:primaryType{code} is set to  {code}cq:Page{code}</li>
      * <li> {code}jcr:content{code} node exists</li>
-     * <li> {code}jcr:primaryType{code} is set to  {code}cq:PageContent{code} in  {code}jcr:content{code} node</li>
-     * <li> {code}sling:resourceType{code} is set in  {code}jcr:content{code} node</li>
-     * <li> {code}cq:template{code} is set in  {code}jcr:content{code} node</li>
      * </ul>
      *
      * @param client The client used to doGet the JSON of the page
@@ -320,22 +317,6 @@ public class CQAssert {
 
         // check if jcr:content node exists
         Assert.assertTrue("No jcr:content node found below " + path + "!", !rootNode.path("jcr:content").isMissingNode());
-
-        // doGet the content node
-        JsonNode contentNode = rootNode.path("jcr:content");
-
-        // check if jcr:primaryType is set to cq:PageContent
-        Assert.assertEquals("jcr:primaryType of jcr:content node below " + path +
-                " is not set to cq:PageContent!",
-                "cq:PageContent", contentNode.get("jcr:primaryType").getTextValue());
-
-        // check if cq:template is set
-        Assert.assertNotNull("cq:template property is not set in jcr:content node below " +
-                path + "!", contentNode.get("cq:template"));
-
-        // check if sling:resourceType is set
-        Assert.assertNotNull("sling:resourceType is not set in jcr:content node below " +
-                path + "!", contentNode.get("sling:resourceType"));
     }
 
 

@@ -17,11 +17,12 @@
 package com.adobe.cq.testing.junit.rules;
 
 import com.adobe.cq.testing.client.CQClient;
-import com.adobe.cq.testing.client.security.CreateUserRule;
 import com.adobe.cq.testing.client.security.UserRule;
 import org.apache.commons.io.IOUtils;
 import org.apache.sling.testing.clients.ClientException;
+import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.util.ResourceUtil;
+import org.apache.sling.testing.clients.util.poller.Polling;
 import org.apache.sling.testing.junit.rules.instance.Instance;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
@@ -32,23 +33,21 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 import static org.apache.http.HttpStatus.SC_CREATED;
 
 /**
- * Create a new page. This rule can be sub-classed to specify the parent page and the template of the newly created
+ * Create a new page. This rule can be sub-classed to specify the parent page of the newly created
  * page. Subclasses can also specify which client to use or which server to target when a new page is created.
  */
-
 public class Page extends ExternalResource {
 
+    private static final String SITE_ROOT_PATH = "/content";
     private Logger logger = LoggerFactory.getLogger(Page.class);
 
-    private static final String SITE_ROOT_PATH = "/content/test-site";
-    private static final String TEMPLATE_ROOT_PATH = "/conf/test-site";
-    private static final String TEMPLATE_PATH = "/conf/test-site/settings/wcm/templates/content-page";
-
-    private final Callable<CQClient> clientCallable;
+    private final Supplier<SlingClient> clientSupplier;
 
     private ThreadLocal<String> parentPath = new ThreadLocal<String>() {
         @Override
@@ -62,36 +61,33 @@ public class Page extends ExternalResource {
             return initialName();
         }
     };
-    private ThreadLocal<String> templatePath = new ThreadLocal<String>() {
-        @Override
-        protected String initialValue() {
-            return initialTemplatePath();
-        }
-    };
 
+    /**
+     * @deprecated
+     * @param quickstartRule An {code}Instance{code} object pointing to the remote test instance
+     */
     public Page(Instance quickstartRule) {
-        this((Callable<CQClient>) () -> quickstartRule.getAdminClient().adaptTo(CQClient.class));
+        this(() -> quickstartRule.getAdminClient());
     }
 
-    public Page(UserRule userRule) {
-        this((Callable<CQClient>) () -> userRule.getClient());
-    }
-
-    public Page(Callable<CQClient> clientCallable) {
+    /**
+     *
+     * @param clientSupplier {code}Supplier{code} that returns an http client pointing to a remote test instance
+     */
+    public Page(Supplier<SlingClient> clientSupplier) {
         super();
-        this.clientCallable = clientCallable;
+        this.clientSupplier = clientSupplier;
     }
 
     @Override
-    protected void before() throws ClientException {
-        prepare();
-        getClient().createPage(getName(), getTitle(), getParentPath(), getTemplatePath());
+    protected void before() throws ClientException, InterruptedException {
+        getClient().createPageWithRetry(getName(), getTitle(), getParentPath(), "", 2000, 500);
     }
 
     @Override
     protected void after() {
         try {
-            getClient().deletePage(new String[]{getPath()}, true, false);
+            getClient().deletePageWithRetry(getPath(), true, false, 2000, 500);
         } catch (Exception e) {
             logger.error("Unable to delete the page", e);
         }
@@ -118,16 +114,6 @@ public class Page extends ExternalResource {
         return "testpage_" + UUID.randomUUID();
     }
 
-    /**
-     * The initial template path to be used when creating the page
-     * This implementation returns {@value TEMPLATE_PATH}
-     * You can override this with dynamic names for each threads
-     *
-     * @return the template path used to create the page
-     */
-    protected String initialTemplatePath() {
-        return TEMPLATE_PATH;
-    }
 
     /**
      * The client to use to create and delete this page. The default implementation creates a {@link CQClient}.
@@ -138,43 +124,9 @@ public class Page extends ExternalResource {
      */
     protected CQClient getClient() throws ClientException {
         try {
-            return this.clientCallable.call();
+            return this.clientSupplier.get().adaptTo(CQClient.class);
         } catch (Exception e) {
             throw new ClientException("Cannot create client", e);
-        }
-    }
-
-    /**
-     * Method to be called before creating the page.
-     * You can override this to perform custom operations before creating the page.
-     * This implementation creates, if needed, the test template and site.
-     *
-     * @throws ClientException if the content cannot be created
-     */
-    protected void prepare() throws ClientException {
-        if (getClient().exists(SITE_ROOT_PATH)) {
-            logger.debug("Site already present, skipping installation");
-            return;
-        }
-
-        try {
-            InputStream templateStream =
-                    ResourceUtil.getResourceAsStream("/com/adobe/cq/testing/junit/rules/template.json");
-            String template = IOUtils.toString(templateStream, StandardCharsets.UTF_8);
-            getClient().importContent(TEMPLATE_ROOT_PATH, "json", template, SC_CREATED);
-            logger.info("Created test template in {}", TEMPLATE_ROOT_PATH);
-        } catch (IOException e) {
-            throw new ClientException("Failed to create test template.", e);
-        }
-
-        try {
-            InputStream siteStream =
-                    ResourceUtil.getResourceAsStream("/com/adobe/cq/testing/junit/rules/site.json");
-            String site = IOUtils.toString(siteStream, StandardCharsets.UTF_8);
-            getClient().importContent(SITE_ROOT_PATH, "json", site, SC_CREATED);
-            logger.info("Created test site {}", SITE_ROOT_PATH);
-        } catch (IOException e) {
-            throw new ClientException("Failed to create test site.", e);
         }
     }
 
@@ -203,15 +155,6 @@ public class Page extends ExternalResource {
      */
     public String getParentPath() {
         return parentPath.get();
-    }
-
-    /**
-     * The path of the template of this page. The default implementation returns the value {@link #initialTemplatePath()}
-     *
-     * @return The parent path of this page. The path must be a valid template path.
-     */
-    public String getTemplatePath() {
-        return templatePath.get();
     }
 
     /**

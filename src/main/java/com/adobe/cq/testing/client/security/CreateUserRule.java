@@ -17,18 +17,20 @@ import java.util.function.Supplier;
  * Create and cleanup at the end a user belonging to the Authors group
  */
 public class CreateUserRule extends ExternalResource implements UserRule {
-    private final CQSecurityClient adminAuthor;
+    private Instance instanceRule;
+    private CQSecurityClient adminAuthor;
     private final String[] groups;
     private ThreadLocal<CQClient> userClient = new ThreadLocal<>();
     private ThreadLocal<User> user = new ThreadLocal<>();
 
     public CreateUserRule(Instance instanceRule, String... groups) {
-        adminAuthor = instanceRule.getAdminClient(CQSecurityClient.class);
+        this.instanceRule = instanceRule;
         this.groups = groups;
     }
 
     @Override
     protected void before() throws Throwable {
+        adminAuthor = instanceRule.getAdminClient(CQSecurityClient.class);
         String username = "testuser-" + UUID.randomUUID() ;
         final String password = randomPass(30);
         user.set(adminAuthor.createUser(

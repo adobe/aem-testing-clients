@@ -63,7 +63,7 @@ public class Page extends ExternalResource {
     };
 
     /**
-     * @deprecated
+     * @deprecated use {{public Page(Supplier<SlingClient> clientSupplier)}} instead.
      * @param quickstartRule An {code}Instance{code} object pointing to the remote test instance
      */
     public Page(Instance quickstartRule) {

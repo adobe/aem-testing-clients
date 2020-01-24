@@ -52,15 +52,6 @@ public class EmptyPage extends ExternalResource {
     };
 
     /**
-     * @deprecated use {{public Page(Supplier<SlingClient> clientSupplier)}} instead.
-     * @param quickstartRule An {code}Instance{code} object pointing to the remote test instance
-     */
-    @Deprecated
-    public EmptyPage(Instance quickstartRule) {
-        this(() -> quickstartRule.getAdminClient());
-    }
-
-    /**
      *
      * @param clientSupplier {code}Supplier{code} that returns an http client pointing to a remote test instance
      */

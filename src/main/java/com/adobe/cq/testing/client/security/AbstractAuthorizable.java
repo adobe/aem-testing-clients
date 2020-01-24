@@ -109,13 +109,8 @@ public abstract class AbstractAuthorizable implements Authorizable {
         return client.doGet(getHomePath() + SELECTOR_USERPROPERTIES + ".json", expectedStatus).getContent();
     }
 
-    public boolean exists() {
-        try {
-            return exists(getQuery(this.authorizableId));
-        } catch (ClientException e) {
-            LOG.error("Cannot find authorizable", e);
-            return false;
-        }
+    public boolean exists() throws ClientException {
+        return exists(getQuery(this.authorizableId));
     }
 
     public boolean exists(String query) throws ClientException {

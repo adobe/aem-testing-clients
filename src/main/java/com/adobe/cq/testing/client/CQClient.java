@@ -240,16 +240,11 @@ public class CQClient extends SlingClient {
      * @return whether the CQ page exists
      */
     public boolean pageExistsWithRetry(String pagePath) throws InterruptedException {
-        try {
-            new Polling(() -> pageExists(pagePath)).poll(1000, 500);
-        } catch (TimeoutException e) {
-            return false;
-        }
-        return true;
+        return pageExistsWithRetry(pagePath, 1000);
     }
 
     /**
-     * Get a CQ Page under {code}/sites.html/{code} on author
+     * Get a CQ Page (.html extension)
      * @param pagePath The path of the page
      * @param expectedStatus An array of expected HTTP status codes for the response
      * @return the http response

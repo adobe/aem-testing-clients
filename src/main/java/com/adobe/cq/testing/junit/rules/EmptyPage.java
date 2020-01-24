@@ -17,35 +17,24 @@
 package com.adobe.cq.testing.junit.rules;
 
 import com.adobe.cq.testing.client.CQClient;
-import com.adobe.cq.testing.client.security.UserRule;
-import org.apache.commons.io.IOUtils;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
-import org.apache.sling.testing.clients.util.ResourceUtil;
-import org.apache.sling.testing.clients.util.poller.Polling;
 import org.apache.sling.testing.junit.rules.instance.Instance;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
-
-import static org.apache.http.HttpStatus.SC_CREATED;
 
 /**
  * Create a new page. This rule can be sub-classed to specify the parent page of the newly created
  * page. Subclasses can also specify which client to use or which server to target when a new page is created.
  */
-public class Page extends ExternalResource {
+public class EmptyPage extends ExternalResource {
 
     private static final String SITE_ROOT_PATH = "/content";
-    private Logger logger = LoggerFactory.getLogger(Page.class);
+    private Logger logger = LoggerFactory.getLogger(EmptyPage.class);
 
     private final Supplier<SlingClient> clientSupplier;
 
@@ -67,7 +56,7 @@ public class Page extends ExternalResource {
      * @param quickstartRule An {code}Instance{code} object pointing to the remote test instance
      */
     @Deprecated
-    public Page(Instance quickstartRule) {
+    public EmptyPage(Instance quickstartRule) {
         this(() -> quickstartRule.getAdminClient());
     }
 
@@ -75,7 +64,7 @@ public class Page extends ExternalResource {
      *
      * @param clientSupplier {code}Supplier{code} that returns an http client pointing to a remote test instance
      */
-    public Page(Supplier<SlingClient> clientSupplier) {
+    public EmptyPage(Supplier<SlingClient> clientSupplier) {
         super();
         this.clientSupplier = clientSupplier;
     }

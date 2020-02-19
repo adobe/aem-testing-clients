@@ -102,6 +102,10 @@ public class ConfigurableInstance extends ExistingInstance {
      * @return true if login token auth is configured
      */
     private static boolean loginTokenAuth() {
-        return Boolean.getBoolean(LOGIN_TOKEN_AUTH);
+        if (System.getProperties().contains(LOGIN_TOKEN_AUTH)) {
+            return Boolean.getBoolean(LOGIN_TOKEN_AUTH);
+        } else {
+            return true;
+        }
     }
 }

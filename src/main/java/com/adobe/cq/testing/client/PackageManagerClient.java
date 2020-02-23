@@ -528,9 +528,10 @@ public class PackageManagerClient extends CQClient {
                 .addPart("package", new InputStreamBody(is, fileName))
                 .addTextBody("force", "true")
                 .addTextBody("_charset_", "UTF-8")
+                .addTextBody("cmd", "upload")
+                .addTextBody("jsonInTextarea", "true")
                 .build();
-
-        SlingHttpResponse exec = doPost("/crx/packmgr/service/exec.json?cmd=upload&jsonInTextarea=true", mpe, SC_OK);
+        SlingHttpResponse exec = doPost("/crx/packmgr/service/exec.json", mpe, SC_OK);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root;
         try {
@@ -561,9 +562,10 @@ public class PackageManagerClient extends CQClient {
                 .addParameter("_charset_", "utf-8")
                 .addParameter("packageName", packageName)
                 .addParameter("packageVersion", packageVersion)
+                .addParameter("cmd", "create")
                 .addParameter("groupName", groupName);
 
-        return doPost("/crx/packmgr/service/exec.json?cmd=create", feb.build(), HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+        return doPost("/crx/packmgr/service/exec.json", feb.build(), HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
     }
 
     /**
@@ -742,12 +744,13 @@ public class PackageManagerClient extends CQClient {
      */
     public SlingHttpResponse uploadPackage(String resourcePath, String fileName, int... expectedStatus)
             throws ClientException {
-        String postURL = "/crx/packmgr/service/exec.json?cmd=upload";
+        String postURL = "/crx/packmgr/service/exec.json";
         HttpEntity multiPartEntity = MultipartEntityBuilder.create()
                 .addBinaryBody("package", ResourceUtil.getResourceAsStream(resourcePath),
                         ContentType.create("application/x-zip-compressed"), fileName)
                 .addTextBody("force", "true")
                 .addTextBody("_charset_", "UTF-8")
+                .addTextBody("cmd", "upload")
                 .build();
         return doPost(postURL, multiPartEntity, HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
     }

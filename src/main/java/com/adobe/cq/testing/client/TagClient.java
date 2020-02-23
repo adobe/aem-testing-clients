@@ -17,8 +17,10 @@ package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.tagging.Tag;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
@@ -574,14 +576,15 @@ public class TagClient extends CQClient {
             return null;
         } else {
 
-            URLParameterBuilder params = URLParameterBuilder.create();
-            params.add("apply", "true");
-            params.add("action", "ajaxConfigManager");
-            params.add("propertylist", TAG_GARBAGE_COLLECTOR_CRON_EXPRESSION_PROP);
-            params.add(TAG_GARBAGE_COLLECTOR_CRON_EXPRESSION_PROP, cronExpression);
+            HttpEntity entity = MultipartEntityBuilder.create()
+                .addTextBody("apply", "true")
+                .addTextBody("action", "ajaxConfigManager")
+                .addTextBody("propertylist", TAG_GARBAGE_COLLECTOR_CRON_EXPRESSION_PROP)
+                .addTextBody(TAG_GARBAGE_COLLECTOR_CRON_EXPRESSION_PROP, cronExpression)
+                .build();
 
             // build the request
-            return doPost(TAG_GARBAGE_COLLECTOR_CONFIG_PATH + "?" + params.getURLParameters(), null, expectedStatus);
+            return doPost(TAG_GARBAGE_COLLECTOR_CONFIG_PATH, entity, expectedStatus);
         }
     }
 

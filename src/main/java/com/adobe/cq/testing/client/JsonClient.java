@@ -56,8 +56,11 @@ public class JsonClient extends CQClient {
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode getPages(String parentPath) throws ClientException {
-        String path = parentPath + ".pages.json?tidy=true&predicate=page";
-        SlingHttpResponse exec = doGet(path, SC_OK);
+        URLParameterBuilder params = URLParameterBuilder.create()
+                .add("tidy","true")
+                .add("predicate", "page");
+        String path = parentPath + ".pages.json";
+        SlingHttpResponse exec = doGet(path, params.getList(), SC_OK);
         return JsonUtils.getJsonNodeFromString(exec.getContent());
     }
 

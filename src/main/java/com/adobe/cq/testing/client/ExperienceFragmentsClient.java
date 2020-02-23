@@ -30,6 +30,7 @@ import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
+import org.apache.sling.testing.clients.util.URLParameterBuilder;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -61,7 +62,7 @@ public class ExperienceFragmentsClient extends CQClient {
     //private static final String POS_XF_VARIANT_TYPE = "pos";
     private static final String CUSTOM_XF_VARIANT_TYPE = "custom";
 
-    private static final String PROPERTIES_PATH_PREFIX = "/mnt/overlay/wcm/core/content/sites/properties.html?item=";
+    private static final String PROPERTIES_PATH_PREFIX = "/mnt/overlay/wcm/core/content/sites/properties.html";
 
     public static final String DEFAULT_XF_PARENT_PATH = "/content/experience-fragments";
 
@@ -635,11 +636,13 @@ public class ExperienceFragmentsClient extends CQClient {
     }
 
     public SlingHttpResponse getXFPropertiesPageHTHML(String xfPath, int... expectedStatus) throws ClientException {
-        return doGet(PROPERTIES_PATH_PREFIX + xfPath, HttpUtils.getExpectedStatus(HttpStatus.SC_OK, expectedStatus));
+        URLParameterBuilder params = URLParameterBuilder.create().add("item", xfPath);
+        return doGet(PROPERTIES_PATH_PREFIX, params.getList(), HttpUtils.getExpectedStatus(HttpStatus.SC_OK, expectedStatus));
     }
 
     public SlingHttpResponse getVariantProperitesPageHTML(String variantPath, int... expectedStatus) throws ClientException {
-        return doGet(PROPERTIES_PATH_PREFIX + variantPath, HttpUtils.getExpectedStatus(HttpStatus.SC_OK, expectedStatus));
+        URLParameterBuilder params = URLParameterBuilder.create().add("item", variantPath);
+        return doGet(PROPERTIES_PATH_PREFIX, params.getList(), HttpUtils.getExpectedStatus(HttpStatus.SC_OK, expectedStatus));
     }
 
     /**

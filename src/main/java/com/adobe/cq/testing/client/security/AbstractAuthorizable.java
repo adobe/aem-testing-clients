@@ -236,17 +236,20 @@ public abstract class AbstractAuthorizable implements Authorizable {
     }
 
     private JsonNode getAutorizablesWithRetry(final String query) throws ClientException, InterruptedException {
+        final JsonNode[] jsonNode = new JsonNode[1];
         try {
             new Polling() {
                 @Override
                 public Boolean call() throws Exception {
-                    return exists(query);
+                final JsonNode authorizables = getAuthorizables(query);
+                jsonNode[0] = authorizables;
+                return authorizables != null && authorizables.size() == 1;
                 }
             }.poll(TIMEOUT, DELAY);
         } catch (TimeoutException e) {
             throw new ClientException("Failed to retrieve authorizables in " + TIMEOUT + " ms", e);
         }
-        return getAuthorizables(query);
+        return jsonNode[0];
     }
 
     private JsonNode getAuthorizables(final String query) throws ClientException {
@@ -265,23 +268,6 @@ public abstract class AbstractAuthorizable implements Authorizable {
         String query = getQuery(authorizableId);
 
         final JsonNode authorizables = getAutorizablesWithRetry(query);
-
-        if (authorizables == null || authorizables.size() != 1) {
-            throw new ClientException("Authorizable " + authorizableId + " not found!");
-        }
-        return authorizables.get(0);
-    }
-
-    /**
-     * Get the authorizable json node from the search servlet
-     *
-     * @param authorizableId id of authorizable node
-     * @return authorizable node
-     * @throws ClientException if the request failed
-     */
-    private JsonNode getAuthorizableNode(String authorizableId) throws ClientException {
-        final String query = getQuery(authorizableId);
-        final JsonNode authorizables = getAuthorizables(query);
 
         if (authorizables == null || authorizables.size() != 1) {
             throw new ClientException("Authorizable " + authorizableId + " not found!");

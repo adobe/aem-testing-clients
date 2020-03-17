@@ -236,20 +236,23 @@ public abstract class AbstractAuthorizable implements Authorizable {
     }
 
     private JsonNode getAutorizablesWithRetry(final String query) throws ClientException, InterruptedException {
-        final JsonNode[] jsonNode = {null};
-        try {
-            new Polling() {
-                @Override
-                public Boolean call() throws Exception {
-                final JsonNode authorizables = getAuthorizables(query);
-                jsonNode[0] = authorizables;
+        class AuthorizablesPolling extends Polling {
+            public JsonNode authorizables;
+
+            @Override
+            public Boolean call() throws Exception {
+                authorizables = getAuthorizables(query);
                 return authorizables != null && authorizables.size() == 1;
-                }
-            }.poll(TIMEOUT, DELAY);
+            }
+        }
+
+        try {
+            AuthorizablesPolling polling  = new AuthorizablesPolling();
+            polling.poll(TIMEOUT, DELAY);
+            return polling.authorizables;
         } catch (TimeoutException e) {
             throw new ClientException("Failed to retrieve authorizables in " + TIMEOUT + " ms", e);
         }
-        return jsonNode[0];
     }
 
     private JsonNode getAuthorizables(final String query) throws ClientException {

@@ -236,7 +236,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
     }
 
     private JsonNode getAutorizablesWithRetry(final String query) throws ClientException, InterruptedException {
-        final JsonNode[] jsonNode = new JsonNode[1];
+        final JsonNode[] jsonNode = {null};
         try {
             new Polling() {
                 @Override

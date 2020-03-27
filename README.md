@@ -11,7 +11,7 @@ Add the following dependency to your tests project to start writing integration 
     <dependency>
         <groupId>com.adobe.cq</groupId>
         <artifactId>aem-cloud-testing-clients</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.1</version>
     </dependency>
 </dependencies>
 

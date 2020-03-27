@@ -11,7 +11,7 @@ Add the following dependency to your tests project to start writing integration 
     <dependency>
         <groupId>com.adobe.cq</groupId>
         <artifactId>cq-testing-clients-65</artifactId>
-        <version>0.1.0</version>
+        <version>1.1.1</version>
     </dependency>
 </dependencies>
 

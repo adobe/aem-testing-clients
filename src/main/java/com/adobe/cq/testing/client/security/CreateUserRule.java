@@ -2,8 +2,6 @@ package com.adobe.cq.testing.client.security;
 
 import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.CQSecurityClient;
-import org.apache.http.HttpStatus;
-import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.util.poller.Polling;
 import org.apache.sling.testing.junit.rules.instance.Instance;
@@ -12,7 +10,6 @@ import org.junit.rules.ExternalResource;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 /**

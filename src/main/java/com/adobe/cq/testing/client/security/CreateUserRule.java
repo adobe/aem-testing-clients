@@ -2,6 +2,8 @@ package com.adobe.cq.testing.client.security;
 
 import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.CQSecurityClient;
+import org.apache.http.HttpStatus;
+import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.util.poller.Polling;
 import org.apache.sling.testing.junit.rules.instance.Instance;
@@ -33,11 +35,15 @@ public class CreateUserRule extends ExternalResource implements UserRule {
         adminAuthor = instanceRule.getAdminClient(CQSecurityClient.class);
         String username = "testuser-" + UUID.randomUUID() ;
         final String password = randomPass(30);
-        user.set(adminAuthor.createUser(
-                username,
-                password,
-                Arrays.stream(groups).map(this::getGroup).toArray(Group[]::new)
-        ));
+
+        new Polling(() -> {
+            user.set(adminAuthor.createUser(
+                    username,
+                    password,
+                    Arrays.stream(groups).map(this::getGroup).toArray(Group[]::new)
+            ));
+            return true;
+        }).poll(10000, 1000);
         Thread.sleep(500);
         new Polling(() -> user.get().exists()).poll(5000, 500);
         userClient.set(new CQClient(adminAuthor.getUrl(), username, password));

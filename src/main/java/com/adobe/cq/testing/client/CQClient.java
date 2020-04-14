@@ -24,6 +24,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.*;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
@@ -69,11 +70,10 @@ public class CQClient extends SlingClient {
     /**
      * Constructor used by Builders and adaptTo(). <b>Should never be called directly from the code.</b>
      *
-     * @param http the underlying HttpClient to be used
+     * @param http   the underlying HttpClient to be used
      * @param config sling specific configs
      * @throws ClientException if the client could not be created
-     *
-     * @see AbstractSlingClient#AbstractSlingClient(CloseableHttpClient, SlingClientConfig)
+     * {@link AbstractSlingClient#AbstractSlingClient(CloseableHttpClient, SlingClientConfig)}
      */
     public CQClient(CloseableHttpClient http, SlingClientConfig config) throws ClientException {
         super(http, config);
@@ -86,8 +86,8 @@ public class CQClient extends SlingClient {
      *
      * <p>For constructing clients with the same configuration, but a different class, use {@link #adaptTo(Class)}</p>
      *
-     * @param url url of the server (including context path)
-     * @param user username for basic authentication
+     * @param url      url of the server (including context path)
+     * @param user     username for basic authentication
      * @param password password for basic authentication
      * @throws ClientException never, kept for uniformity with the other constructors
      */
@@ -98,10 +98,10 @@ public class CQClient extends SlingClient {
     /**
      * Creates a CQ page in the repository.
      *
-     * @param pageName name of the page
-     * @param pageTitle title of the page
-     * @param parentPath path to the parent page
-     * @param templatePath path to the template
+     * @param pageName       name of the page
+     * @param pageTitle      title of the page
+     * @param parentPath     path to the parent page
+     * @param templatePath   path to the template
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return a {@link SlingHttpResponse}
      * @throws ClientException if something fails during the request/response cycle
@@ -114,15 +114,15 @@ public class CQClient extends SlingClient {
     /**
      * Tries to create a CQ page until the request succeeds or timeout is reached
      *
-     * @param pageName name of the page
-     * @param pageTitle title of the page
-     * @param parentPath path to the parent page
-     * @param templatePath path to the template definition
-     * @param timeout max execution time, in milliseconds
-     * @param delay time to wait between retries, in milliseconds
+     * @param pageName       name of the page
+     * @param pageTitle      title of the page
+     * @param parentPath     path to the parent page
+     * @param templatePath   path to the template definition
+     * @param timeout        max execution time, in milliseconds
+     * @param delay          time to wait between retries, in milliseconds
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return a {@link SlingHttpResponse}
-     * @throws ClientException if something fails during the request/response cycle
+     * @throws ClientException      if something fails during the request/response cycle
      * @throws InterruptedException to mark this method as waiting
      */
     public SlingHttpResponse createPageWithRetry(final String pageName, final String pageTitle,
@@ -153,9 +153,9 @@ public class CQClient extends SlingClient {
      * <p>Deletes an array of pages.</p>
      * <p>The caller must ensure that the paths can be deleted</p>
      *
-     * @param pagePaths array of paths to be deleted
-     * @param force force param passed to wcmCommands
-     * @param shallow shallow param passed to wcmCommands
+     * @param pagePaths      array of paths to be deleted
+     * @param force          force param passed to wcmCommands
+     * @param shallow        shallow param passed to wcmCommands
      * @param expectedStatus list of expected HTTP status to be returned
      * @return the response
      * @throws ClientException if one of the pages fails to delete
@@ -168,14 +168,14 @@ public class CQClient extends SlingClient {
     /**
      * Tries to deletes a CQ page multiple times if the request fails
      *
-     * @param pagePath the path to delete
-     * @param force passed to wcmCommands
-     * @param shallow passed to wcmCommands
+     * @param pagePath       the path to delete
+     * @param force          passed to wcmCommands
+     * @param shallow        passed to wcmCommands
      * @param expectedStatus list of expected HTTP status to be returned
-     * @param timeout max execution time, in milliseconds
-     * @param delay time to wait between retries, in milliseconds
+     * @param timeout        max execution time, in milliseconds
+     * @param delay          time to wait between retries, in milliseconds
      * @return the response
-     * @throws ClientException if the page(s) wre not deleted
+     * @throws ClientException      if the page(s) wre not deleted
      * @throws InterruptedException if the method was interrupted
      */
     public SlingHttpResponse deletePageWithRetry(final String pagePath, final boolean force, final boolean shallow,
@@ -190,7 +190,7 @@ public class CQClient extends SlingClient {
 
             @Override
             public Boolean call() throws ClientException {
-                response = deletePage(new String[] {pagePath}, force, shallow, expectedStatus);
+                response = deletePage(new String[]{pagePath}, force, shallow, expectedStatus);
                 return !pageExists(pagePath);
             }
         }
@@ -207,22 +207,24 @@ public class CQClient extends SlingClient {
 
     /**
      * Returns whether a CQ page exists or not
+     *
      * @param pagePath The path of the page
-     * @throws ClientException If the request failed
      * @return whether the CQ page exists
+     * @throws ClientException If the request failed
      */
     public boolean pageExists(String pagePath) throws ClientException {
         SlingHttpResponse response = getAuthorSitesPage(pagePath);
         final int status = response.getStatusLine().getStatusCode();
-            return status == SC_OK;
+        return status == SC_OK;
     }
 
     /**
      * Polls on whether a CQ page exists or not
+     *
      * @param pagePath The path of the page
-     * @param timeout Timeout in milliseconds for the poller
-     * @throws InterruptedException if interrupted
+     * @param timeout  Timeout in milliseconds for the poller
      * @return whether the CQ page exists
+     * @throws InterruptedException if interrupted
      */
     public boolean pageExistsWithRetry(String pagePath, int timeout) throws InterruptedException {
         try {
@@ -235,9 +237,10 @@ public class CQClient extends SlingClient {
 
     /**
      * Polls on whether a CQ page exists or not after 1 second
+     *
      * @param pagePath The path of the page
-     * @throws InterruptedException if interrupted
      * @return whether the CQ page exists
+     * @throws InterruptedException if interrupted
      */
     public boolean pageExistsWithRetry(String pagePath) throws InterruptedException {
         return pageExistsWithRetry(pagePath, 1000);
@@ -245,19 +248,20 @@ public class CQClient extends SlingClient {
 
     /**
      * Get a CQ Page (.html extension)
-     * @param pagePath The path of the page
+     *
+     * @param pagePath       The path of the page
      * @param expectedStatus An array of expected HTTP status codes for the response
      * @return the http response
      * @throws ClientException if the request failed
      */
     public SlingHttpResponse getAuthorSitesPage(String pagePath, int... expectedStatus) throws ClientException {
         final String uriPath = getPageAbsoluteUri(pagePath).toString();
-            return this.doGet(uriPath, expectedStatus);
+        return this.doGet(uriPath, expectedStatus);
     }
 
     private URI getPageAbsoluteUri(String pagePath) {
-        final String path = pagePath.endsWith(".html") 
-                ? pagePath 
+        final String path = pagePath.endsWith(".html")
+                ? pagePath
                 : pagePath.replaceFirst("/*$", "").concat(".html");
         return this.getUrl(path);
     }
@@ -265,14 +269,14 @@ public class CQClient extends SlingClient {
     /**
      * Copies one or more CQ pages to a specified location in the repository.
      *
-     * @param srcPaths list of pages to copy
-     * @param destName name given to the copied page at new location. Only works for single page copy, otherwise
-     *                 the operation fails.
-     * @param destPath destination of copy operation. Can be used instead of destParentPath + destName.
-     *                 Works only for single page copy, otherwise the operation fails.
+     * @param srcPaths       list of pages to copy
+     * @param destName       name given to the copied page at new location. Only works for single page copy, otherwise
+     *                       the operation fails.
+     * @param destPath       destination of copy operation. Can be used instead of destParentPath + destName.
+     *                       Works only for single page copy, otherwise the operation fails.
      * @param destParentPath target location of the copy operation
-     * @param before if true, the copied page will be ordered before the page with this label (Name)
-     * @param shallow if true, the only the page itself gets copied
+     * @param before         if true, the copied page will be ordered before the page with this label (Name)
+     * @param shallow        if true, the only the page itself gets copied
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return the http response
      * @throws ClientException if something fails during the request/response cycle
@@ -293,16 +297,16 @@ public class CQClient extends SlingClient {
      * Passing a list of referrers and setting integrity flag to {@code true} is the same as the
      * {@code Move...} command in the site admin.
      *
-     * @param srcPaths list of pages to copy
-     * @param destName name given to the moved page at new location. Only works for single page copy, otherwise
-     *                 the operation fails.
-     * @param destPath destination of copy operation. Can be used instead of destParentPath + destName. Only
-     *                 works for single page copy, otherwise the operation fails.
+     * @param srcPaths       list of pages to copy
+     * @param destName       name given to the moved page at new location. Only works for single page copy, otherwise
+     *                       the operation fails.
+     * @param destPath       destination of copy operation. Can be used instead of destParentPath + destName. Only
+     *                       works for single page copy, otherwise the operation fails.
      * @param destParentPath target location of the move operation
-     * @param before if true, the copied page will be ordered before the page with this label (Name)
-     * @param shallow if true, the only the page itself gets copied
-     * @param integrity if true, no auto adjustment of referred pages will be done
-     * @param adjusts List of referrer page paths that need adjusting
+     * @param before         if true, the copied page will be ordered before the page with this label (Name)
+     * @param shallow        if true, the only the page itself gets copied
+     * @param integrity      if true, no auto adjustment of referred pages will be done
+     * @param adjusts        List of referrer page paths that need adjusting
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -324,17 +328,17 @@ public class CQClient extends SlingClient {
      * Passing a list of referrers and setting integrity flag to {@code true} is the same as the
      * {@code Move...} command in the site admin.
      *
-     * @param srcPaths list of pages to copy
-     * @param destName name given to the moved page at new location. Only works for single page copy, otherwise
-     *                 the operation fails.
-     * @param destPath destination of copy operation. Can be used instead of destParentPath + destName. Only
-     *                 works for single page copy, otherwise the operation fails.
+     * @param srcPaths       list of pages to copy
+     * @param destName       name given to the moved page at new location. Only works for single page copy, otherwise
+     *                       the operation fails.
+     * @param destPath       destination of copy operation. Can be used instead of destParentPath + destName. Only
+     *                       works for single page copy, otherwise the operation fails.
      * @param destParentPath target location of the move operation
-     * @param before if true, the copied page will be ordered before the page with this label (Name)
-     * @param shallow if true, the only the page itself gets copied
-     * @param integrity if true, no auto adjustment of referred pages will be done
-     * @param adjusts list of referrer page paths that need adjusting
-     * @param publishes list of page paths that need to be published
+     * @param before         if true, the copied page will be ordered before the page with this label (Name)
+     * @param shallow        if true, the only the page itself gets copied
+     * @param integrity      if true, no auto adjustment of referred pages will be done
+     * @param adjusts        list of referrer page paths that need adjusting
+     * @param publishes      list of page paths that need to be published
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -350,7 +354,7 @@ public class CQClient extends SlingClient {
     /**
      * Locks a CQ page so it can only be edited by the person who locked it.
      *
-     * @param path path of the page to lock
+     * @param path           path of the page to lock
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -362,7 +366,7 @@ public class CQClient extends SlingClient {
     /**
      * Unlocks a previously locked CQ page.
      *
-     * @param path path of the page to unlock
+     * @param path           path of the page to unlock
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -374,9 +378,9 @@ public class CQClient extends SlingClient {
     /**
      * Sets a single page property on a CQ page.
      *
-     * @param pagePath path of the page to be edited
-     * @param propName name of the property to be edited
-     * @param propValue value to be set
+     * @param pagePath       path of the page to be edited
+     * @param propName       name of the property to be edited
+     * @param propValue      value to be set
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -391,8 +395,8 @@ public class CQClient extends SlingClient {
     /**
      * Sets multiple page properties on a CQ page with one request.
      *
-     * @param pagePath path of the page to be edited
-     * @param props list of name/value string pairs to be set
+     * @param pagePath       path of the page to be edited
+     * @param props          list of name/value string pairs to be set
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -410,10 +414,10 @@ public class CQClient extends SlingClient {
     /**
      * Sets the teaser image of a content page.
      *
-     * @param pagePath path to the page to be edited
-     * @param mimeType MIME type of the image getting uploaded
-     * @param fileName file name of the image
-     * @param resourcePath defines the path to the resource
+     * @param pagePath       path to the page to be edited
+     * @param mimeType       MIME type of the image getting uploaded
+     * @param fileName       file name of the image
+     * @param resourcePath   defines the path to the resource
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -441,10 +445,10 @@ public class CQClient extends SlingClient {
      * To upload a file that is not to be handled as an asset use {@link #uploadFileCQStyle} instead.<br>
      * To upload a file directly using sling use {@link #upload(java.io.File, String, String, boolean, int...)}.
      *
-     * @param fileName file name
-     * @param resourcePath defines the path to the resource
-     * @param mimeType MIME type of the image getting uploaded
-     * @param parentPath parent page (folder) that will contain the file
+     * @param fileName       file name
+     * @param resourcePath   defines the path to the resource
+     * @param mimeType       MIME type of the image getting uploaded
+     * @param parentPath     parent page (folder) that will contain the file
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -470,10 +474,10 @@ public class CQClient extends SlingClient {
      * To upload a file that is to be handled as an Asset use {@link #uploadAsset}  instead.<br>
      * To upload a file directly using sling use {@link #upload(java.io.File, String, String, boolean, int...) upload}.
      *
-     * @param fileName file name. The file name will become part of the URL to the file.
-     * @param resourcePath defines the path to the resource
-     * @param mimeType MIME type of the image getting uploaded
-     * @param parentPath parent page (folder) that will contain the file
+     * @param fileName       file name. The file name will become part of the URL to the file.
+     * @param resourcePath   defines the path to the resource
+     * @param mimeType       MIME type of the image getting uploaded
+     * @param parentPath     parent page (folder) that will contain the file
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 201 is assumed.
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -496,9 +500,9 @@ public class CQClient extends SlingClient {
      * Creates a Version for a CQ page. See {@code Version} tab in the sidekick of a page when opened on
      * an author instance.
      *
-     * @param pagePath path of the page we want to create a version of
-     * @param comment comment to be set for this version
-     * @param label Version label to be set
+     * @param pagePath       path of the page we want to create a version of
+     * @param comment        comment to be set for this version
+     * @param label          Version label to be set
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -513,8 +517,8 @@ public class CQClient extends SlingClient {
      * Restores a specified version of a CQ page. See {@code Version} tab in the sidekick of a page when opened
      * on an author instance.
      *
-     * @param versionIds version Id of the current page and/or version ids of sub pages of {@code pagePath}
-     * @param pagePath path to the page we want to restore the version
+     * @param versionIds     version Id of the current page and/or version ids of sub pages of {@code pagePath}
+     * @param pagePath       path to the page we want to restore the version
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -528,9 +532,9 @@ public class CQClient extends SlingClient {
     /**
      * Restores a sub page in path to the version that existed at the given date.
      *
-     * @param path path of the root page of the tree
-     * @param date the date to restore
-     * @param preserveNVP whether to preserve NVP or not
+     * @param path           path of the root page of the tree
+     * @param date           the date to restore
+     * @param preserveNVP    whether to preserve NVP or not
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -543,9 +547,9 @@ public class CQClient extends SlingClient {
     /**
      * Creates language copies af a master site.
      *
-     * @param sitePath path to the site with the master content
-     * @param relPaths list of string pairs, first being the relative path to be created, second the language
-     *                 shortcut to be copied from e.g. {fr/products/circle,en}
+     * @param sitePath       path to the site with the master content
+     * @param relPaths       list of string pairs, first being the relative path to be created, second the language
+     *                       shortcut to be copied from e.g. {fr/products/circle,en}
      * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
@@ -558,12 +562,12 @@ public class CQClient extends SlingClient {
     /**
      * Rolls out changes to the livecopy
      *
-     * @param srcPath the blue print path
-     * @param targetPaths the live copy paths
-     * @param deep if set to false, page is the fallback
-     * @param reset reset
+     * @param srcPath          the blue print path
+     * @param targetPaths      the live copy paths
+     * @param deep             if set to false, page is the fallback
+     * @param reset            reset
      * @param useBackgroundJob if set to true background jobs are used for rollout
-     * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed
+     * @param expectedStatus   list of expected HTTP Status to be returned, if not set, 200 is assumed
      * @return Sling response
      * @throws ClientException If something fails during request/response cycle
      */
@@ -649,7 +653,6 @@ public class CQClient extends SlingClient {
     public void resetPageStatistics(String pagePath) throws ClientException {
         deletePath(STATISTICS_ROOT + pagePath);
     }
-
 
 
     // Builders

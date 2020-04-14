@@ -18,6 +18,7 @@ package com.adobe.cq.testing.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.SlingHttpResponse;
@@ -109,7 +110,7 @@ public class WCMCommands {
 
 
     public SlingHttpResponse copyPage(String[] srcPaths, String destName, String destParentPath, String before,
-              boolean shallow, int... expectedStatus) throws ClientException {
+                                      boolean shallow, int... expectedStatus) throws ClientException {
 
         FormEntityBuilder feb = FormEntityBuilder.create()
                 .addParameter("cmd", CMD_COPY_PAGE)
@@ -232,8 +233,8 @@ public class WCMCommands {
 
     /**
      * Lock a page
-     * 
-     * @param path Path of the page to lock
+     *
+     * @param path           Path of the page to lock
      * @param expectedStatus list of expected http status codes
      * @return the http response
      * @throws ClientException if the request fails
@@ -248,8 +249,8 @@ public class WCMCommands {
 
     /**
      * Unlock a page
-     * 
-     * @param path Path of the page to unlock
+     *
+     * @param path           Path of the page to unlock
      * @param expectedStatus list of expected http status codes
      * @return the http response
      * @throws ClientException if the request fails
@@ -264,27 +265,18 @@ public class WCMCommands {
 
     /**
      * Create liveCopy
-     * 
-     * @param label
-     *            label of the liveCopy
-     * @param title
-     *            title of the liveCopy
-     * @param destPath
-     *            destination path for the liveCopy
-     * @param srcPath
-     *            source path of the liveCopy
-     * @param shallow
-     *            if set to true subpages are excluded
-     * @param rolloutConfigs
-     *            rollout configuration
-     * @param missingPages
-     *            pages which are not rolled out yet
-     * @param excludeSubPages
-     *            if set to true subpages of missing pages are excluded
-     * @param expectedStatus list of expected http status codes
+     *
+     * @param label           label of the liveCopy
+     * @param title           title of the liveCopy
+     * @param destPath        destination path for the liveCopy
+     * @param srcPath         source path of the liveCopy
+     * @param shallow         if set to true subpages are excluded
+     * @param rolloutConfigs  rollout configuration
+     * @param missingPages    pages which are not rolled out yet
+     * @param excludeSubPages if set to true subpages of missing pages are excluded
+     * @param expectedStatus  list of expected http status codes
      * @return the http response
-     * @throws ClientException
-     *             if livecopy cannot be created
+     * @throws ClientException if livecopy cannot be created
      */
     public SlingHttpResponse createLiveCopy(String label, String title, String destPath, String srcPath, boolean shallow,
                                             String[] rolloutConfigs, String[] missingPages, boolean excludeSubPages, int... expectedStatus)
@@ -314,29 +306,19 @@ public class WCMCommands {
 
     /**
      * Creates an new site
-     * 
-     * @param label
-     *            Label of the new site
-     * @param title
-     *            Title of the new site
-     * @param destPath
-     *            Location where the new site gets created
-     * @param isLiveCopy
-     *            If the new site works as a liveCopy
-     * @param languages
-     *            What languages to copy
-     * @param chapterPages
-     *            What chapters to copy
-     * @param bluePrintPath
-     *            Whats the blueprint used
-     * @param rolloutConfigs
-     *            Whats the rollout configuration for the liveCopy
-     * @param siteOwner
-     *            Who is the site owner
+     *
+     * @param label          Label of the new site
+     * @param title          Title of the new site
+     * @param destPath       Location where the new site gets created
+     * @param isLiveCopy     If the new site works as a liveCopy
+     * @param languages      What languages to copy
+     * @param chapterPages   What chapters to copy
+     * @param bluePrintPath  Whats the blueprint used
+     * @param rolloutConfigs Whats the rollout configuration for the liveCopy
+     * @param siteOwner      Who is the site owner
      * @param expectedStatus list of expected http status codes
      * @return the http response
-     * @throws ClientException
-     *             if site cannot be created
+     * @throws ClientException if site cannot be created
      */
     public SlingHttpResponse createSite(String label, String title, String destPath, boolean isLiveCopy, String[] languages,
                                         String[] chapterPages, String bluePrintPath, String[] rolloutConfigs, String siteOwner,
@@ -347,8 +329,7 @@ public class WCMCommands {
         // the commmand used
         feb.addParameter("cmd", CMD_CREATE_SITE);
         // the charset of the form content
-        feb.addParameter(org.apache.sling.testing.clients.Constants.PARAMETER_CHARSET,
-                org.apache.sling.testing.clients.Constants.CHARSET_UTF8);
+        feb.addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8);
         // location where site gets created
         feb.addParameter("destPath", destPath);
         // title of the new site
@@ -388,7 +369,7 @@ public class WCMCommands {
 
     public SlingHttpResponse moderateComment(String commentPath, boolean approve, int... expectedStatus) throws ClientException {
         FormEntityBuilder feb = FormEntityBuilder.create().addParameter("cmd", CMD_MODERATE_COMMENT).addParameter("path", commentPath)
-                        .addParameter("approve", Boolean.valueOf(approve).toString());
+                .addParameter("approve", Boolean.valueOf(approve).toString());
 
         return executeWCMCommand(CMD_MODERATE_COMMENT, feb, expectedStatus);
     }
@@ -396,7 +377,7 @@ public class WCMCommands {
 
     public SlingHttpResponse markCommentAsSpam(String commentPath, boolean spam, int... expectedStatus) throws ClientException {
         FormEntityBuilder feb = FormEntityBuilder.create().addParameter("cmd", CMD_MARK_COMMENT_AS_SPAM).addParameter("path", commentPath)
-                        .addParameter("spam", Boolean.valueOf(spam).toString());
+                .addParameter("spam", Boolean.valueOf(spam).toString());
         return executeWCMCommand(CMD_MARK_COMMENT_AS_SPAM, feb, expectedStatus);
     }
 
@@ -410,21 +391,15 @@ public class WCMCommands {
 
     /**
      * type deep, delete, page (=deep)
-     * 
-     * @param sourcePaths
-     *            the blue print paths
-     * @param targetPaths
-     *            the live copy paths
-     * @param paragraphPaths
-     *            the paragraph paths
-     * @param type
-     *            the type of rollout - deep / shallow
-     * @param reset
-     *            whether to reset or not the job
-     * @param useBackgroundJob
-     *            if true use a background job, otherwise do not use a
-     *            background job
-     * @param expectedStatus list of expected http status codes
+     *
+     * @param sourcePaths      the blue print paths
+     * @param targetPaths      the live copy paths
+     * @param paragraphPaths   the paragraph paths
+     * @param type             the type of rollout - deep / shallow
+     * @param reset            whether to reset or not the job
+     * @param useBackgroundJob if true use a background job, otherwise do not use a
+     *                         background job
+     * @param expectedStatus   list of expected http status codes
      * @return the response
      * @throws ClientException if the request fails
      */
@@ -445,16 +420,16 @@ public class WCMCommands {
     /**
      * Creates a new launch copy.
      *
-     * @param title  Title of the new launch section
-     * @param srcPath the root page to be copied from
-     * @param liveDate  the date the launch section should go live
-     * @param ignoreSubPages    if sub pages should be copied with
-     * @param isLiveCopy    if the launch section is connected to the source via live copy
-     * @param template a template if the launch should be created with a different template, null otherwise
-     * @param sourceRolloutConfigs Rollout configs used for the launch live copy
+     * @param title                 Title of the new launch section
+     * @param srcPath               the root page to be copied from
+     * @param liveDate              the date the launch section should go live
+     * @param ignoreSubPages        if sub pages should be copied with
+     * @param isLiveCopy            if the launch section is connected to the source via live copy
+     * @param template              a template if the launch should be created with a different template, null otherwise
+     * @param sourceRolloutConfigs  Rollout configs used for the launch live copy
      * @param promoteRolloutConfigs Rollout configs used on launch promotion
-     * @param expectedStatus list of expected http status codes
-     * @return  the http response
+     * @param expectedStatus        list of expected http status codes
+     * @return the http response
      * @throws ClientException if anything goes wrong
      */
     public SlingHttpResponse createLaunch(String title, String srcPath, Calendar liveDate, boolean ignoreSubPages,
@@ -466,35 +441,35 @@ public class WCMCommands {
         ArrayList<Boolean> ignoreSubPagesList = new ArrayList<>();
         ignoreSubPagesList.add(ignoreSubPages);
         return createLaunch(title, srcPathList, liveDate, ignoreSubPagesList, isLiveCopy, template,
-            sourceRolloutConfigs, promoteRolloutConfigs);
+                sourceRolloutConfigs, promoteRolloutConfigs);
     }
 
     /**
      * Creates a new launch copy.
      *
-     * @param title  Title of the new launch section
-     * @param srcPathList list of the root page to be copied from
-     * @param liveDate  the date the launch section should go live
+     * @param title                 Title of the new launch section
+     * @param srcPathList           list of the root page to be copied from
+     * @param liveDate              the date the launch section should go live
      * @param ignoreSubPagesList    list specifying if sub pages should be copied with
-     * @param isLiveCopy    if the launch section is connected to the source via live copy
-     * @param template a template if the launch should be created with a different template, null otherwise
-     * @param sourceRolloutConfigs Rollout configs used for the launch live copy
+     * @param isLiveCopy            if the launch section is connected to the source via live copy
+     * @param template              a template if the launch should be created with a different template, null otherwise
+     * @param sourceRolloutConfigs  Rollout configs used for the launch live copy
      * @param promoteRolloutConfigs Rollout configs used on launch promotion
      * @return the http response
      * @throws ClientException if anything goes wrong
      */
     public SlingHttpResponse createLaunch(String title, ArrayList<String> srcPathList, Calendar liveDate,
-        ArrayList<Boolean> ignoreSubPagesList, boolean isLiveCopy, String template, String[] sourceRolloutConfigs,
-        String[] promoteRolloutConfigs)
+                                          ArrayList<Boolean> ignoreSubPagesList, boolean isLiveCopy, String template, String[] sourceRolloutConfigs,
+                                          String[] promoteRolloutConfigs)
             throws ClientException {
 
         FormEntityBuilder feb = FormEntityBuilder.create();
 
         // the command
-        feb.addParameter("cmd",CMD_CREATE_LAUNCH);
+        feb.addParameter("cmd", CMD_CREATE_LAUNCH);
 
         // title of new launch section
-        feb.addParameter("title",title);
+        feb.addParameter("title", title);
 
         // where to copy from
         for (String srcPath : srcPathList) {
@@ -527,9 +502,9 @@ public class WCMCommands {
 
         return executeWCMCommand(CMD_CREATE_LAUNCH, feb);
     }
-    
+
     public SlingHttpResponse editLaunch(String launchPath, ArrayList<String> srcPathList,
-        ArrayList<Boolean> ignoreSubPagesList) throws ClientException {
+                                        ArrayList<Boolean> ignoreSubPagesList) throws ClientException {
 
         FormEntityBuilder feb = FormEntityBuilder.create();
 
@@ -551,14 +526,13 @@ public class WCMCommands {
         }
         return executeWCMCommand(CMD_EDIT_LAUNCH, feb);
     }
-    
+
     /**
      * Deletes a launch section
      *
-     * @param path complete path to the launch sections root page handle
+     * @param path           complete path to the launch sections root page handle
      * @param expectedStatus list of expected http status codes
      * @return the sling http response
-     *
      * @throws ClientException If anything goes wrong
      */
     public SlingHttpResponse deleteLaunch(String path, int... expectedStatus) throws ClientException {
@@ -578,19 +552,19 @@ public class WCMCommands {
     /**
      * Clones an existing launch section
      *
-     * @param orgPath   path to the root page of launch section to copy
+     * @param orgPath        path to the root page of launch section to copy
      * @param expectedStatus list of expected http status codes
      * @return the sling http response
-     * @throws ClientException  if anything goes wrong
+     * @throws ClientException if anything goes wrong
      */
     public SlingHttpResponse cloneLaunch(String orgPath, int... expectedStatus) throws ClientException {
         FormEntityBuilder feb = FormEntityBuilder.create();
 
         // the command
-        feb.addParameter("cmd",CMD_CLONE_LAUNCH);
+        feb.addParameter("cmd", CMD_CLONE_LAUNCH);
 
         // title of new launch section
-        feb.addParameter("path",orgPath);
+        feb.addParameter("path", orgPath);
 
         return executeWCMCommand(CMD_CLONE_LAUNCH, feb, expectedStatus);
     }
@@ -598,32 +572,31 @@ public class WCMCommands {
     /**
      * Promotes a launch section
      *
-     * @param path path to the root page of the launch section to promote
-     * @param promoteSubPages   true if sub pages should be promoted as well
-     * @param target the path to a target launch or null to promote to production
-     * @param workflowPackage   path to the workflow package or null
-     * @param expectedStatus list of expected http status codes
-
+     * @param path            path to the root page of the launch section to promote
+     * @param promoteSubPages true if sub pages should be promoted as well
+     * @param target          the path to a target launch or null to promote to production
+     * @param workflowPackage path to the workflow package or null
+     * @param expectedStatus  list of expected http status codes
      * @return the http response
-     * @throws ClientException  If anything goes wrong
+     * @throws ClientException If anything goes wrong
      */
     public SlingHttpResponse promoteLaunch(String path, boolean promoteSubPages, String target, String workflowPackage,
                                            int... expectedStatus)
-            throws ClientException{
+            throws ClientException {
 
         FormEntityBuilder feb = FormEntityBuilder.create();
 
         // the command
-        feb.addParameter("cmd",CMD_PROMOTE_LAUNCH);
+        feb.addParameter("cmd", CMD_PROMOTE_LAUNCH);
 
         // title of new launch section
-        feb.addParameter("path",path);
+        feb.addParameter("path", path);
 
         // check if sub pages need promotion as well
-        if (promoteSubPages){
-            feb.addParameter("promotionScope","deep");
+        if (promoteSubPages) {
+            feb.addParameter("promotionScope", "deep");
         } else {
-            feb.addParameter("promotionScope","resource");
+            feb.addParameter("promotionScope", "resource");
         }
 
         if (target != null) {
@@ -632,7 +605,7 @@ public class WCMCommands {
 
         // if they should be put into a workflow package
         if (workflowPackage != null) {
-            feb.addParameter("workflowPackage",workflowPackage);
+            feb.addParameter("workflowPackage", workflowPackage);
         }
 
         return executeWCMCommand(CMD_PROMOTE_LAUNCH, feb, expectedStatus);
@@ -641,10 +614,10 @@ public class WCMCommands {
     /**
      * Creates a catalog from a blueprint
      *
-     * @param source path to the blueprint
-     * @param dest destination path to the catalog
-     * @param label label of the catalog
-     * @param title title of the catalog
+     * @param source         path to the blueprint
+     * @param dest           destination path to the catalog
+     * @param label          label of the catalog
+     * @param title          title of the catalog
      * @param expectedStatus expected HTTP response status codes
      * @return the http response
      * @throws ClientException if the request could not be executed
@@ -666,9 +639,9 @@ public class WCMCommands {
     /**
      * Rolls out a section
      *
-     * @param source path to blueprint
-     * @param dest destination path to the catalog
-     * @param force whether the rollout should be forced
+     * @param source         path to blueprint
+     * @param dest           destination path to the catalog
+     * @param force          whether the rollout should be forced
      * @param expectedStatus expected HTTP response status code
      * @return the http response
      * @throws ClientException if the request could not be executed

@@ -17,7 +17,7 @@ package com.adobe.cq.testing.client.components.foundation;
 
 import com.adobe.cq.testing.client.ComponentClient;
 import org.apache.sling.testing.clients.ClientException;
-import org.apache.sling.testing.clients.Constants;
+import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;

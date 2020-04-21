@@ -25,7 +25,10 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.sling.testing.Constants;
-import org.apache.sling.testing.clients.*;
+import org.apache.sling.testing.clients.ClientException;
+import org.apache.sling.testing.clients.SlingClient;
+import org.apache.sling.testing.clients.SlingClientConfig;
+import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
@@ -36,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -69,11 +72,11 @@ public class CQClient extends SlingClient {
 
     /**
      * Constructor used by Builders and adaptTo(). <b>Should never be called directly from the code.</b>
+     * See AbstractSlingClient#AbstractSlingClient(CloseableHttpClient, SlingClientConfig)
      *
      * @param http   the underlying HttpClient to be used
      * @param config sling specific configs
      * @throws ClientException if the client could not be created
-     * {@link AbstractSlingClient#AbstractSlingClient(CloseableHttpClient, SlingClientConfig)}
      */
     public CQClient(CloseableHttpClient http, SlingClientConfig config) throws ClientException {
         super(http, config);
@@ -428,7 +431,7 @@ public class CQClient extends SlingClient {
         HttpEntity entity = MultipartEntityBuilder.create()
                 .addBinaryBody("./image/file", ResourceUtil.getResourceAsStream(resourcePath),
                         ContentType.create(mimeType), fileName)
-                .setCharset(Charset.forName(Constants.CHARSET_UTF8))
+                .setCharset(StandardCharsets.UTF_8)
                 .build();
 
         // send the request with the multipart entity as content
@@ -436,42 +439,11 @@ public class CQClient extends SlingClient {
     }
 
     /**
-     * Uploads an <b>Asset</b> to the repository. Same as using {@code New File...} in the DAM admin or when
-     * uploading a file below {@code Digital Assets} in the Site Admin.<br>
-     * <br>
-     * This will upload the file and store it in a node typed {@code dam:Asset}. This will trigger all
-     * DAM related workflows for generating rendition nodes, extract metadata etc.<br>
-     * <br>
-     * To upload a file that is not to be handled as an asset use {@link #uploadFileCQStyle} instead.<br>
-     * To upload a file directly using sling use {@link #upload(java.io.File, String, String, boolean, int...)}.
-     *
-     * @param fileName       file name
-     * @param resourcePath   defines the path to the resource
-     * @param mimeType       MIME type of the image getting uploaded
-     * @param parentPath     parent page (folder) that will contain the file
-     * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
-     * @return the response
-     * @throws ClientException if something fails during the request/response cycle
-     */
-    public SlingHttpResponse uploadAsset(String fileName, String resourcePath, String mimeType,
-                                         String parentPath, int... expectedStatus) throws ClientException {
-        HttpEntity entity = MultipartEntityBuilder.create()
-                .addBinaryBody("file",
-                        ResourceUtil.getResourceAsStream(resourcePath), ContentType.create(mimeType), fileName)
-                .addTextBody("fileName", fileName)
-                .setCharset(Charset.forName(Constants.CHARSET_UTF8))
-                .build();
-
-        return doPost(parentPath + ".createasset.html", entity,
-                HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
-    }
-
-    /**
      * Uploads an <b>File</b> to the repository. Same as using {@code New File...} in the Site Admin outside of the
      * {@code Digital Assets} folder.<br>
      * <br>
      * This will create a folder with the file name and upload the file below it in a node typed {@code nt:file}.<br>
-     * To upload a file that is to be handled as an Asset use {@link #uploadAsset}  instead.<br>
+     * To upload a file that is to be handled as an Asset use {@link CQAssetsClient#uploadAsset}  instead.<br>
      * To upload a file directly using sling use {@link #upload(java.io.File, String, String, boolean, int...) upload}.
      *
      * @param fileName       file name. The file name will become part of the URL to the file.
@@ -490,7 +462,7 @@ public class CQClient extends SlingClient {
                 .addBinaryBody("file", ResourceUtil.getResourceAsStream(resourcePath),
                         ContentType.create(mimeType), fileName)
                 .addTextBody("fileName", fileName)
-                .setCharset(Charset.forName(Constants.CHARSET_UTF8))
+                .setCharset(StandardCharsets.UTF_8)
                 .build();
 
         return doPost(filePath, entity, HttpUtils.getExpectedStatus(SC_CREATED, expectedStatus));

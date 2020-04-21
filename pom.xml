@@ -19,7 +19,7 @@
 
     <groupId>com.adobe.cq</groupId>
     <artifactId>aem-cloud-testing-clients</artifactId>
-    <version>0.2.5-SNAPSHOT</version>
+    <version>0.3.1-SNAPSHOT</version>
 
     <name>AEM Cloud Testing Clients</name>
     <description>AEM related clients and testing utilities for AEM as a Cloud Service</description>

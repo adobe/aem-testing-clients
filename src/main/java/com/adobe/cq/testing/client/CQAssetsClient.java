@@ -25,13 +25,16 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
+import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.ResourceUtil;
 import org.apache.sling.testing.clients.util.poller.Polling;
@@ -43,11 +46,14 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
+
+import static org.apache.http.HttpStatus.SC_OK;
 
 public class CQAssetsClient extends CQClient {
 
@@ -115,7 +121,7 @@ public class CQAssetsClient extends CQClient {
             return uploadAssetDBA(fileName, resourcePath, mimeType, parentPath);
         } else {
             LOG.info("Using the Create Asset Servlet for upload");
-            return super.uploadAsset(fileName, resourcePath, mimeType, parentPath, expectedStatus);
+            return uploadAssetViaServlet(fileName, resourcePath, mimeType, parentPath, expectedStatus);
         }
     }
 
@@ -399,6 +405,32 @@ public class CQAssetsClient extends CQClient {
                 .setCharset(StandardCharsets.UTF_8)
                 .build();
         return doPost(completeUri, entity, HttpStatus.SC_OK);
+    }
+
+
+
+    /**
+     * Uploads an <b>Asset</b> using the {@code createasset.html} servlet (classic way)
+     *
+     * @param fileName       file name
+     * @param resourcePath   defines the path to the resource
+     * @param mimeType       MIME type of the image getting uploaded
+     * @param parentPath     parent page (folder) that will contain the file
+     * @param expectedStatus list of expected HTTP Status to be returned, if not set, 200 is assumed.
+     * @return the response
+     * @throws ClientException if something fails during the request/response cycle
+     */
+    private SlingHttpResponse uploadAssetViaServlet(String fileName, String resourcePath, String mimeType,
+                                         String parentPath, int... expectedStatus) throws ClientException {
+        HttpEntity entity = MultipartEntityBuilder.create()
+                .addBinaryBody("file",
+                        ResourceUtil.getResourceAsStream(resourcePath), ContentType.create(mimeType), fileName)
+                .addTextBody("fileName", fileName)
+                .setCharset(Charset.forName(Constants.CHARSET_UTF8))
+                .build();
+
+        return doPost(parentPath + ".createasset.html", entity,
+                HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
     }
 
 }

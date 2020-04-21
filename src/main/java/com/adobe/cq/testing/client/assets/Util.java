@@ -96,19 +96,6 @@ public class Util {
     }
 
     /**
-     * Retrieve the text value of a field
-     *
-     * @param parent Parent node
-     * @param fieldName Field to retrieve
-     * @return Text value in field or null if the field doesn't exist
-     */
-    // TODO: Contribute to org.apache.sling.testing.clients.util.JsonUtils
-    public static String getJsonTextValue(JsonNode parent, String fieldName) {
-        JsonNode field = parent.get(fieldName);
-        return field != null ? field.getTextValue() : null;
-    }
-
-    /**
      * Retrieve the long value of a field
      *
      * @param parent Parent node

@@ -62,9 +62,17 @@ public class CQAssetsClient extends CQClient {
     private static final String DAM_ASSET_STATE = "dam:assetState";
     private static final String DAM_ASSET_STATE_PROCESSED = "processed";
     private static final String DBA_CONTENT_DAM_INITIATE_UPLOAD = "/content/dam.initiateUpload.json";
-    private static final long ASSET_PROCESSED_TIMEOUT = 30000;
-    private static final long ASSET_PROCESSED_DELAY = 500;
     private final DirectBinaryAccessSupport binaryAccessSupport = new DirectBinaryAccessSupport();
+
+    /**
+     * The default timeout for asset processing, {@value #ASSET_PROCESSED_TIMEOUT} milliseconds.
+     */
+    protected static final long ASSET_PROCESSED_TIMEOUT = 30000;
+
+    /**
+     * The default delay between polling for asset processing status, {@value #ASSET_PROCESSED_DELAY} milliseconds.
+     */
+    protected static final long ASSET_PROCESSED_DELAY = 500;
 
     /**
      * Check if Direct Binary Access is enabled
@@ -101,7 +109,8 @@ public class CQAssetsClient extends CQClient {
      * @return the response
      * @throws ClientException if something fails during the request/response cycle
      */
-    public SlingHttpResponse uploadAsset(String fileName, String resourcePath, String mimeType, String parentPath, int... expectedStatus) throws ClientException {
+    public SlingHttpResponse uploadAsset(String fileName, String resourcePath, String mimeType, String parentPath, int... expectedStatus) 
+            throws ClientException {
         if (isDirectBinaryAccessSupported()) {
             LOG.info("Using Direct Binary Access for upload");
             return uploadAssetDBA(fileName, resourcePath, mimeType, parentPath);
@@ -112,7 +121,8 @@ public class CQAssetsClient extends CQClient {
     }
 
     /**
-     * Wait for an asset to complete processing
+     * Wait for an asset to complete processing.  The total timeout is {@value #ASSET_PROCESSED_TIMEOUT} milliseconds.
+     * Polling the asset status occurs every {@value #ASSET_PROCESSED_DELAY} milliseconds.
      *
      * @param assetPath Path to an asset
      * @throws ClientException if something fails during the request/response cycle, or if the asset failed to process
@@ -120,7 +130,22 @@ public class CQAssetsClient extends CQClient {
      * @throws InterruptedException if the wait is interrupted
      */
     public void waitAssetProcessed(String assetPath) throws ClientException, TimeoutException, InterruptedException {
-        // wait for the asset to be processed
+        waitAssetProcessed(assetPath, ASSET_PROCESSED_TIMEOUT, ASSET_PROCESSED_DELAY);
+    }
+
+    /**
+     * Wait for an asset to complete processing. The asset state will be checked at least once. If the timeout is 0 or 
+     * less, then the asset state will be executed exactly once.
+     *
+     * @param assetPath Path to an asset
+     * @param timeout total time to wait, in milliseconds
+     * @param delay time to wait between polls of asset status, in milliseconds
+     * @throws ClientException if something fails during the request/response cycle, or if the asset failed to process
+     * @throws TimeoutException if the wait times out
+     * @throws InterruptedException if the wait is interrupted
+     */
+    public void waitAssetProcessed(String assetPath, long timeout, long delay) 
+            throws ClientException, TimeoutException, InterruptedException {
         Polling p = new Polling() {
             private String assetStatus;
 
@@ -139,7 +164,7 @@ public class CQAssetsClient extends CQClient {
                 return "Asset " + assetPath + " has not been processed after %1$d ms";
             }
         };
-        p.poll(ASSET_PROCESSED_TIMEOUT, ASSET_PROCESSED_DELAY);
+        p.poll(timeout, delay);
 
         // check if there are any failures
         String failures = getAssetProcessingFailures(assetPath);
@@ -232,8 +257,8 @@ public class CQAssetsClient extends CQClient {
         JsonNode root = JsonUtils.getJsonNodeFromString(response.getContent());
         JsonNode createLink = Util.getJsonChildNode(root, ACP_LINKS, ACP_REL_CREATE);
         if (createLink != null) {
-            String href = Util.getJsonTextValue(createLink, ACP_LINK_HREF);
-            String type = Util.getJsonTextValue(createLink, ACP_LINK_TYPE);
+            String href = createLink.path(ACP_LINK_HREF).getTextValue();
+            String type = createLink.path(ACP_LINK_TYPE).getTextValue();
             return DBA_CONTENT_DAM_INITIATE_UPLOAD.equals(href) && ACP_LINK_TYPE_DIRECT.equals(type);
         } else {
             return false;

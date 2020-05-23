@@ -280,7 +280,7 @@ public class CQAssert {
 
         // check if jcr:mimeType is set correctly
         Assert.assertEquals("jcr:mimeType is not set to " + mimeType,
-                mimeType, node.get("jcr:mimeType").getTextValue());
+                mimeType, node.path("jcr:mimeType").getTextValue());
 
         try {
             Assert.assertTrue("The original file and the requested file are not the same",

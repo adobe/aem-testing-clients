@@ -183,12 +183,12 @@ public class CQAssert {
 
         // check if jcr:mimeType is set correctly
         Assert.assertEquals("jcr:mimeType is not set to " + mimeType,
-                mimeType, node.get("jcr:mimeType").getTextValue());
+                mimeType, node.path("jcr:mimeType").getTextValue());
 
         // check if jcr:primaryType is set to nt:resource
         Assert.assertEquals("jcr:primaryType of jcr:content node below " + path +
                 " is not set to nt:resource!",
-                "nt:resource", node.get("jcr:primaryType").getTextValue());
+                "nt:resource", node.path("jcr:primaryType").getTextValue());
 
         try {
             InputStream in = client.doStreamGet(path, null, null).getEntity().getContent();

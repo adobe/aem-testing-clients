@@ -22,9 +22,6 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import static com.adobe.cq.testing.junit.rules.CQClassRule.DEFAULT_AUTHOR_CONFIG;
-
-
 public class CQAuthorClassRule implements TestRule {
     /** Granite rules to be executed at class level */
     public final CQClassRule cqClassRule;
@@ -42,7 +39,7 @@ public class CQAuthorClassRule implements TestRule {
         super();
         cqClassRule = new CQClassRule();
         authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuth)
-                .withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
+                .withRunMode("author");
 
         ruleChain = RuleChain.outerRule(cqClassRule)
                 .around(authorRule);

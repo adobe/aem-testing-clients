@@ -45,8 +45,8 @@ public class CQAuthorPublishClassRule implements TestRule {
     public CQAuthorPublishClassRule(boolean forceBasicAuth) {
         super();
         cqClassRule = new CQClassRule();
-        authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("author").orDefault(DEFAULT_AUTHOR_CONFIG);
-        publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
+        authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("author");
+        publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("publish");
 
         ruleChain = RuleChain.outerRule(cqClassRule)
                 .around(authorRule)

@@ -42,7 +42,7 @@ public class CQPublishClassRule implements TestRule {
         super();
         cqClassRule = new CQClassRule();
         publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuth)
-                .withRunMode("publish").orDefault(DEFAULT_PUBLISH_CONFIG);
+                .withRunMode("publish");
 
         ruleChain = RuleChain.outerRule(cqClassRule)
                 .around(publishRule);

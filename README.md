@@ -1,5 +1,7 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.adobe.cq/cq-testing-clients-65/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.adobe.cq/cq-testing-clients-65)
 [![CircleCI](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-65.svg?style=svg)](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-65)
 [![codecov](https://img.shields.io/codecov/c/github/adobe/aem-testing-clients/cq-65.svg)](https://codecov.io/gh/adobe/aem-testing-clients/branch/cq-65)
+[![javadoc](https://javadoc.io/badge2/com.adobe.cq/cq-testing-clients-65/javadoc.svg)](https://javadoc.io/doc/com.adobe.cq/cq-testing-clients-65)
 
 # AEM testing clients
 HTTP testing clients and utilities for AEM, based on [sling.testing.clients](https://github.com/apache/sling-org-apache-sling-testing-clients).

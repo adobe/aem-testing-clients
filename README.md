@@ -1,5 +1,7 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.adobe.cq/cq-testing-clients-63/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.adobe.cq/cq-testing-clients-63)
 [![CircleCI](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-63.svg?style=svg)](https://circleci.com/gh/adobe/aem-testing-clients/tree/cq-63)
 [![codecov](https://img.shields.io/codecov/c/github/adobe/aem-testing-clients/cq-63.svg)](https://codecov.io/gh/adobe/aem-testing-clients/branch/cq-63)
+[![javadoc](https://javadoc.io/badge2/com.adobe.cq/cq-testing-clients-63/javadoc.svg)](https://javadoc.io/doc/com.adobe.cq/cq-testing-clients-63)
 
 # AEM testing clients
 HTTP testing clients and utilities for AEM, based on [sling.testing.clients](https://github.com/apache/sling-org-apache-sling-testing-clients).
@@ -11,7 +13,7 @@ Add the following dependency to your tests project to start writing integration 
     <dependency>
         <groupId>com.adobe.cq</groupId>
         <artifactId>cq-testing-clients-63</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
     </dependency>
 </dependencies>
 

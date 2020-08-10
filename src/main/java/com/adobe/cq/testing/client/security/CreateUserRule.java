@@ -2,59 +2,121 @@ package com.adobe.cq.testing.client.security;
 
 import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.CQSecurityClient;
+import com.adobe.cq.testing.client.SecurityClient;
+import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
+import org.apache.sling.testing.clients.util.config.InstanceConfig;
+import org.apache.sling.testing.clients.util.config.InstanceConfigCache;
+import org.apache.sling.testing.clients.util.config.impl.InstanceConfigCacheImpl;
 import org.apache.sling.testing.clients.util.poller.Polling;
 import org.apache.sling.testing.junit.rules.instance.Instance;
 import org.junit.rules.ExternalResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Random;
-import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
 /**
  * Create and cleanup at the end a user belonging to the Authors group
  */
 public class CreateUserRule extends ExternalResource implements UserRule {
+    private static final Logger LOG = LoggerFactory.getLogger(CreateUserRule.class);
     private Instance instanceRule;
     private CQSecurityClient adminAuthor;
     private final String[] groups;
     private ThreadLocal<CQClient> userClient = new ThreadLocal<>();
-    private ThreadLocal<User> user = new ThreadLocal<>();
+    private ThreadLocal<InstanceConfigCache> usersToDelete = new ThreadLocal<>();
 
     public CreateUserRule(Instance instanceRule, String... groups) {
         this.instanceRule = instanceRule;
         this.groups = groups;
     }
 
+    private class UserCreateCallable implements Callable<Boolean> {
+        private final Group[] assignedGroups;
+        private final InstanceConfigCache userConfigs = new InstanceConfigCacheImpl();
+        private final SecurityClient client;
+        private NewRandomUserInstanceConfig successfulUserConfig;
+
+        public UserCreateCallable(SecurityClient client, Group[] assignedGroups) {
+            this.client = client;
+            this.assignedGroups = assignedGroups;
+        }
+
+        public String getUsername() {
+            return (null != successfulUserConfig) ? successfulUserConfig.getUsername() : null;
+        }
+
+        public String getPassword() {
+            return (null != successfulUserConfig) ? successfulUserConfig.getPassword() : null;
+        }
+
+        public InstanceConfigCache getUserConfigs() {
+            return userConfigs;
+        }
+
+        public NewRandomUserInstanceConfig getSuccessfulUserConfig() {
+            return successfulUserConfig;
+        }
+
+        @Override
+        public Boolean call() throws Exception {
+            final NewRandomUserInstanceConfig config = new NewRandomUserInstanceConfig(client, assignedGroups);
+            userConfigs.add(config);
+            config.save();
+            successfulUserConfig = config;
+            return true;
+        }
+    }
+
     @Override
     protected void before() throws Throwable {
         adminAuthor = instanceRule.getAdminClient(CQSecurityClient.class);
-        String username = "testuser-" + UUID.randomUUID() ;
-        final String password = randomPass(30);
+        Group[] assignedGroups = Arrays.stream(groups).map(this::getGroup).toArray(Group[]::new);
+        UserCreateCallable c = new UserCreateCallable(adminAuthor, assignedGroups);
 
-        new Polling(() -> {
-            user.set(adminAuthor.createUser(
-                    username,
-                    password,
-                    Arrays.stream(groups).map(this::getGroup).toArray(Group[]::new)
-            ));
-            return true;
-        }).poll(10000, 1000);
+        Polling p = new Polling(c);
+        try {
+            p.poll(10000, 1000);
+        } catch (TimeoutException e) {
+            LOG.error("Could not create user. List of exceptions: " + p.getExceptions(), e);
+            usersToDelete.set(c.getUserConfigs());
+            // After is not called by JUnit if before() throws
+            after();
+            throw e;
+        }
+        usersToDelete.set(c.getUserConfigs());
         Thread.sleep(500);
-        new Polling(() -> user.get().exists()).poll(5000, 500);
-        userClient.set(new CQClient(adminAuthor.getUrl(), username, password));
+
+        // Wait until user exists
+        new Polling(() -> c.getSuccessfulUserConfig().getUser().exists()).poll(5000, 500);
+        userClient.set(new CQClient(adminAuthor.getUrl(), c.getUsername(), c.getPassword()));
     }
 
     @Override
     protected void after() {
-        try {
-            new Polling(() -> {
-                adminAuthor.deleteAuthorizables(new Authorizable[]{user.get()});
-                    return !user.get().exists();
-            }).poll(5000, 500);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        // Go through all the attempted users
+        LOG.info("Cleaning up all attempted user creations");
+        for (InstanceConfig userConfig : usersToDelete.get()) {
+            final NewRandomUserInstanceConfig cfg;
+            if (!(userConfig instanceof NewRandomUserInstanceConfig)) {
+                continue;
+            }
+            // TODO: Sling testing clients needs parameter type for InstanceConfig and InstanceConfigCache
+            cfg = (NewRandomUserInstanceConfig) userConfig;
+
+            try {
+                // poll their deletion until it doesn't exist
+                new Polling(() -> {
+                    cfg.restore();
+                    return !User.exists(adminAuthor, cfg.getUsername());
+                }).poll(5000, 500);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -79,13 +141,6 @@ public class CreateUserRule extends ExternalResource implements UserRule {
             }
         }
         return new ClientSupplier(this);
-    }
-
-    private String randomPass(int length) {
-        return new Random().ints(97, 123)
-                .limit(length)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
     }
 
     private Group getGroup(String groupName) {

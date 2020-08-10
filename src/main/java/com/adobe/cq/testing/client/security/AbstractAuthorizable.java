@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.security.Security;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
@@ -109,8 +110,13 @@ public abstract class AbstractAuthorizable implements Authorizable {
         return client.doGet(getHomePath() + SELECTOR_USERPROPERTIES + ".json", expectedStatus).getContent();
     }
 
+    public static boolean exists(SecurityClient client, String authorizableId) throws ClientException {
+        JsonNode authorizables = getAuthorizables(client, getQuery(authorizableId));
+        return authorizables != null && authorizables.size() != 0;
+    }
+
     public boolean exists() throws ClientException {
-        return exists(getQuery(this.authorizableId));
+        return exists(this.client, this.authorizableId);
     }
 
     public boolean exists(String query) throws ClientException {
@@ -255,9 +261,13 @@ public abstract class AbstractAuthorizable implements Authorizable {
         }
     }
 
-    private JsonNode getAuthorizables(final String query) throws ClientException {
+    private static JsonNode getAuthorizables(SecurityClient client, final String query) throws ClientException {
         final String authorizablesJson = client.getManager().getAuthorizablesJson(query);
         return JsonUtils.getJsonNodeFromString(authorizablesJson).get(AUTHORIZABLES);
+    }
+
+    private JsonNode getAuthorizables(final String query) throws ClientException {
+        return getAuthorizables(this.client, query);
     }
 
     /**
@@ -278,7 +288,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
         return authorizables.get(0);
     }
 
-    private String getQuery(String authorizableId) {
+    public static String getQuery(String authorizableId) {
         return "\"condition\":[{\"named\":\"" + StringEscapeUtils.escapeJson(authorizableId) + "\"}]";
     }
 

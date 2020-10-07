@@ -78,6 +78,26 @@ public class ReplicationClient extends CQClient {
                     .build(),
                 HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
     }
+    
+    /**
+     * Activates (publish) a node using a specific agent.
+     *
+     * @param nodePath path of the node to activate
+     * @param expectedStatus list of expected HTTP status to be returned, if not set, 200 is assumed.
+     *
+     * @return the response
+     * @throws ClientException if something fails during the request/response cycle
+     */
+    public SlingHttpResponse activate(String nodePath, String agentId, int... expectedStatus) throws ClientException {
+        return doPost("/bin/replicate.json",
+                FormEntityBuilder.create()
+                    .addParameter("cmd", "Activate")
+                    .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
+                    .addParameter("path", nodePath)
+                    .addParameter("agentId", agentId)
+                    .build(),
+                HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+    }
 
     /**
      * Deactivates (un-publish) a node.
@@ -93,6 +113,25 @@ public class ReplicationClient extends CQClient {
                     .addParameter("cmd", "Deactivate")
                     .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
                     .addParameter("path", pagePath)
+                    .build(),
+                HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+    }
+    
+    /**
+     * Deactivates (un-publish) a node using a specific agent.
+     *
+     * @param pagePath path of the node to deactivate
+     * @param expectedStatus list of expected HTTP status to be returned, if not set, 200 is assumed.
+     * @return the response
+     * @throws ClientException if something fails during the request/response cycle
+     */
+    public SlingHttpResponse deactivate(String pagePath, String agentId, int... expectedStatus) throws ClientException {
+        return doPost("/bin/replicate.json",
+                FormEntityBuilder.create()
+                    .addParameter("cmd", "Deactivate")
+                    .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
+                    .addParameter("path", pagePath)
+                    .addParameter("agentId", agentId)
                     .build(),
                 HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
     }

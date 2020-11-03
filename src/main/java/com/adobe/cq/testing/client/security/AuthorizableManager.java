@@ -208,7 +208,6 @@ public class AuthorizableManager {
         // do search
         URLParameterBuilder params = URLParameterBuilder.create()
                 .add("offset", "0")
-                .add("max", "-1")
                 .add("query", "{" + ((query == null) ? "" : query) +"}");
 
         return client.doGet(AUTHORIZABLES_PATH + ".json", params.getList(), SC_OK).getContent();

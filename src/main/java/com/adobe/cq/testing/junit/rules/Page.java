@@ -137,29 +137,28 @@ public class Page extends ExternalResource {
      * @throws ClientException if the content cannot be created
      */
     protected void prepare() throws ClientException {
-        if (getClient().exists(SITE_ROOT_PATH)) {
-            logger.debug("Site already present, skipping installation");
-            return;
+        if (!getClient().exists(TEMPLATE_ROOT_PATH)) {
+            try {
+                InputStream templateStream =
+                        ResourceUtil.getResourceAsStream("/com/adobe/cq/testing/junit/rules/template.json");
+                String template = IOUtils.toString(templateStream, StandardCharsets.UTF_8);
+                getClient().importContent(TEMPLATE_ROOT_PATH, "json", template, SC_CREATED);
+                logger.info("Created test template in {}", TEMPLATE_ROOT_PATH);
+            } catch (IOException e) {
+                throw new ClientException("Failed to create test template.", e);
+            }
         }
 
-        try {
-            InputStream templateStream =
-                    ResourceUtil.getResourceAsStream("/com/adobe/cq/testing/junit/rules/template.json");
-            String template = IOUtils.toString(templateStream, StandardCharsets.UTF_8);
-            getClient().importContent(TEMPLATE_ROOT_PATH, "json", template, SC_CREATED);
-            logger.info("Created test template in {}", TEMPLATE_ROOT_PATH);
-        } catch (IOException e) {
-            throw new ClientException("Failed to create test template.", e);
-        }
-
-        try {
-            InputStream siteStream =
-                    ResourceUtil.getResourceAsStream("/com/adobe/cq/testing/junit/rules/site.json");
-            String site = IOUtils.toString(siteStream, StandardCharsets.UTF_8);
-            getClient().importContent(SITE_ROOT_PATH, "json", site, SC_CREATED);
-            logger.info("Created test site {}", SITE_ROOT_PATH);
-        } catch (IOException e) {
-            throw new ClientException("Failed to create test site.", e);
+        if (!getClient().exists(SITE_ROOT_PATH)) {
+            try {
+                InputStream siteStream =
+                        ResourceUtil.getResourceAsStream("/com/adobe/cq/testing/junit/rules/site.json");
+                String site = IOUtils.toString(siteStream, StandardCharsets.UTF_8);
+                getClient().importContent(SITE_ROOT_PATH, "json", site, SC_CREATED);
+                logger.info("Created test site {}", SITE_ROOT_PATH);
+            } catch (IOException e) {
+                throw new ClientException("Failed to create test site.", e);
+            }
         }
     }
 

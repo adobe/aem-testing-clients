@@ -5,6 +5,7 @@ target
 .project
 .settings
 .externalToolBuilders
+.vscode
 .java-version
 maven-eclipse.xml
 *.swp

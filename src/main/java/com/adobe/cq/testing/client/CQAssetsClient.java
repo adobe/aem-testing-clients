@@ -24,19 +24,26 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
+import org.apache.sling.testing.clients.SystemPropertiesConfig;
+import org.apache.sling.testing.clients.interceptors.DelayRequestInterceptor;
+import org.apache.sling.testing.clients.interceptors.TestDescriptionInterceptor;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.ResourceUtil;
+import org.apache.sling.testing.clients.util.ServerErrorRetryStrategy;
 import org.apache.sling.testing.clients.util.poller.Polling;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -68,6 +75,7 @@ public class CQAssetsClient extends CQClient {
     private static final String DAM_ASSET_STATE_PROCESSED = "processed";
     private static final String DBA_CONTENT_DAM_INITIATE_UPLOAD = "/content/dam.initiateUpload.json";
     private final DirectBinaryAccessSupport binaryAccessSupport = new DirectBinaryAccessSupport();
+    private final CloseableHttpClient storageClient;
 
     /**
      * The default timeout for asset processing, {@value #ASSET_PROCESSED_TIMEOUT} milliseconds.
@@ -236,6 +244,20 @@ public class CQAssetsClient extends CQClient {
 
     public CQAssetsClient(CloseableHttpClient http, SlingClientConfig config) throws ClientException {
         super(http, config);
+
+        // same settings as SlingClient
+        storageClient = HttpClientBuilder.create()
+            .useSystemProperties()
+            .setUserAgent("Java")
+            // Connection
+            .setMaxConnPerRoute(10)
+            .setMaxConnTotal(100)
+            // Interceptors
+            .addInterceptorLast(new TestDescriptionInterceptor())
+            .addInterceptorLast(new DelayRequestInterceptor(SystemPropertiesConfig.getHttpDelay()))
+            // HTTP request strategy
+            .setServiceUnavailableRetryStrategy(new ServerErrorRetryStrategy())
+            .build();
     }
 
     /**
@@ -377,9 +399,26 @@ public class CQAssetsClient extends CQClient {
             request.setEntity(new InputStreamEntity(assetStream, size));
             List<Header> headers = new ArrayList<>();
             headers.add(new BasicHeader(HttpHeaders.CONTENT_TYPE, mimeType));
-            doRequest(request, headers, HttpStatus.SC_CREATED);
+
+            // use separate client for requests to Azure/S3 blob storage without AEM authorization header
+            doStorageClientRequest(request, HttpStatus.SC_CREATED);
+
         } catch (IOException e) {
             throw new ClientException("Unable to read resource: " + resourcePath, e);
+        }
+    }
+
+    private void doStorageClientRequest(HttpUriRequest request, int... expectedStatus) throws IOException, ClientException {
+        CloseableHttpResponse response = storageClient.execute(request);
+        try {
+            if (expectedStatus != null && expectedStatus.length > 0) {
+                HttpUtils.verifyHttpStatus(response, null, expectedStatus);
+            }
+
+            // consume response
+            response.getEntity();
+        } finally {
+            response.close();
         }
     }
 

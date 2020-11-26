@@ -19,11 +19,17 @@ import org.junit.Test;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 
 public class PackageManagerClientTest {
+
+    static {
+        // date formats below are expected to be formatted in english locale
+        Locale.setDefault(Locale.ENGLISH);
+    }
 
     @Test
     public void testBuildPackageFromJson() throws Exception {

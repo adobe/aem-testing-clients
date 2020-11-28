@@ -98,6 +98,10 @@ public class DefaultReplicationAgents implements TestRule {
 
     private void adaptDefaultReplicationAgents(ReplicationClient rClient, String serverUrl)
             throws ClientException, InterruptedException {
+        // normalize the URL to remove trailing slash, if present.
+        if (serverUrl.lastIndexOf("/") == serverUrl.length() - 1) {
+            serverUrl = serverUrl.substring(0, serverUrl.length() - 1);
+        }
         rClient.adaptReplicationAgent(getReplicationAgent(),
                 new BasicNameValuePair("enabled", "true"),
                 new BasicNameValuePair("transportUri", serverUrl + "/bin/receive?sling:authRequestLogin=1"),

@@ -18,7 +18,9 @@ package com.adobe.cq.testing.junit.rules;
 
 import com.adobe.cq.testing.client.CQClient;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpStatus;
 import org.apache.sling.testing.clients.ClientException;
+import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.ResourceUtil;
 import org.apache.sling.testing.junit.rules.instance.Instance;
 import org.junit.rules.ExternalResource;
@@ -74,13 +76,16 @@ public class Page extends ExternalResource {
     @Override
     protected void before() throws ClientException {
         prepare();
-        getClient().createPage(getName(), getTitle(), getParentPath(), getTemplatePath());
+        SlingHttpResponse response = getClient().createPage(getName(), getTitle(), getParentPath(), getTemplatePath(), HttpStatus.SC_OK);
+        logger.info("Created page at {}", response.getSlingLocation());
+
     }
 
     @Override
     protected void after() {
         try {
             getClient().deletePage(new String[]{getPath()}, true, false);
+            logger.info("Deleted page at {}", getPath());
         } catch (Exception e) {
             logger.error("Unable to delete the page", e);
         }

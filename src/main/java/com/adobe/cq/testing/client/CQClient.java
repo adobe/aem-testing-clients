@@ -111,7 +111,7 @@ public class CQClient extends SlingClient {
      */
     public SlingHttpResponse createPage(String pageName, String pageTitle, String parentPath, String templatePath,
                                         int... expectedStatus) throws ClientException {
-        return wcmCommands.createPage(pageName, pageTitle, parentPath, templatePath, expectedStatus);
+        return wcmCommands.createPage(pageName, pageTitle, parentPath, templatePath, HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
     }
 
     /**
@@ -138,7 +138,7 @@ public class CQClient extends SlingClient {
 
             @Override
             public Boolean call() throws Exception {
-                response = wcmCommands.createPage(pageName, pageTitle, parentPath, templatePath, expectedStatus);
+                response = wcmCommands.createPage(pageName, pageTitle, parentPath, templatePath, HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
                 return true;
             }
         }

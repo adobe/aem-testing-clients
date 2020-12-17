@@ -17,9 +17,10 @@
 package com.adobe.cq.testing.junit.rules;
 
 import com.adobe.cq.testing.client.CQClient;
+import org.apache.http.HttpStatus;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
-import org.apache.sling.testing.junit.rules.instance.Instance;
+import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +63,16 @@ public class EmptyPage extends ExternalResource {
 
     @Override
     protected void before() throws ClientException, InterruptedException {
-        getClient().createPageWithRetry(getName(), getTitle(), getParentPath(), "", 2000, 500);
+        SlingHttpResponse response = getClient().createPageWithRetry(getName(), getTitle(), getParentPath(), "", 2000, 500, HttpStatus.SC_OK);
+        logger.info("Created empty page at {}", response.getSlingLocation());
     }
 
     @Override
     protected void after() {
         try {
             getClient().deletePageWithRetry(getPath(), true, false, 2000, 500);
+            logger.info("Deleted empty page at {}", getPath());
+
         } catch (Exception e) {
             logger.error("Unable to delete the page", e);
         }

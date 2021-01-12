@@ -19,8 +19,9 @@ package com.adobe.cq.testing.client;
 import com.adobe.cq.testing.client.assets.*;
 import com.adobe.cq.testing.client.assets.dto.InitiateUploadFile;
 import com.adobe.cq.testing.client.assets.dto.InitiateUploadResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
@@ -28,11 +29,10 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.EntityTemplate;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicHeader;
 import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
@@ -55,7 +55,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -390,21 +389,31 @@ public class CQAssetsClient extends CQClient {
      * @throws ClientException Thrown when upload fails.
      */
     private void uploadAssetPart(String resourcePath, String mimeType, URI targetUri, long start, long size) throws ClientException {
-        try (InputStream assetStream = ResourceUtil.getResourceAsStream(resourcePath)) {
-            long skipped = assetStream.skip(start);
-            if (skipped != start) {
-                throw new AssertionError("Unable to skip InputStream - resource: " + resourcePath + ", expected: " + start + ", actual: " + skipped);
-            }
-            HttpPut request = new HttpPut(targetUri);
-            request.setEntity(new InputStreamEntity(assetStream, size));
-            List<Header> headers = new ArrayList<>();
-            headers.add(new BasicHeader(HttpHeaders.CONTENT_TYPE, mimeType));
+        HttpPut request = new HttpPut(targetUri);
+        request.setHeader(HttpHeaders.CONTENT_TYPE, mimeType);
 
+        // we need to support retries which are more common with cloud blob storage (temporary 503s etc.)
+        // hence we need to be able to recreate the InputStream on every retry
+        // Note: we don't use the simple BufferedHttpEntity to efficiently support larger files (parts)
+        request.setEntity(new EntityTemplate(
+            out -> {
+                InputStream in = ResourceUtil.getResourceAsStream(resourcePath);
+                IOUtils.copyLarge(in, out, start, size);
+            }
+        ) {
+            @Override
+            public long getContentLength() {
+                // Content-Length header is required and default EntityTemplate returns -1 which skips the header
+                return size;
+            }
+        });
+
+        try {
             // use separate client for requests to Azure/S3 blob storage without AEM authorization header
             doStorageClientRequest(request, HttpStatus.SC_CREATED);
 
         } catch (IOException e) {
-            throw new ClientException("Unable to read resource: " + resourcePath, e);
+            throw new ClientException("Unable to upload asset part: " + resourcePath + " (start=" + start + ", length=" + size + ")", e);
         }
     }
 

@@ -23,68 +23,68 @@ import java.util.List;
  */
 public class ProcessedAsset {
 
-	private String assetPath;
-	private List<String> processedRenditions;
-	private List<FailedRendition> failedRenditions;
+    private String assetPath;
+    private List<String> processedRenditions;
+    private List<FailedRendition> failedRenditions;
 
-	/**
-	 * Constructor.
-	 */
-	public ProcessedAsset() {
-		// Do nothing.
-	}
+    /**
+     * Constructor.
+     */
+    public ProcessedAsset() {
+        // Do nothing.
+    }
 
-	/**
-	 * Get the processed asset's path.
-	 *
-	 * @return String
-	 */
-	public String getAssetPath() {
-		return assetPath;
-	}
+    /**
+     * Get the processed asset's path.
+     *
+     * @return String
+     */
+    public String getAssetPath() {
+        return assetPath;
+    }
 
-	/**
-	 * Set the processed asset's path.
-	 *
-	 * @param assetPath String
-	 */
-	public void setAssetPath(final String assetPath) {
-		this.assetPath = assetPath;
-	}
+    /**
+     * Set the processed asset's path.
+     *
+     * @param assetPath String
+     */
+    public void setAssetPath(final String assetPath) {
+        this.assetPath = assetPath;
+    }
 
-	/**
-	 * Get the processed asset's processed renditions.
-	 *
-	 * @return String
-	 */
-	public List<String> getProcessedRenditions() {
-		return processedRenditions;
-	}
+    /**
+     * Get the processed asset's processed renditions.
+     *
+     * @return String
+     */
+    public List<String> getProcessedRenditions() {
+        return processedRenditions;
+    }
 
-	/**
-	 * Set the processed asset's processed renditions.
-	 *
-	 * @param processedRenditions List of String
-	 */
-	public void setProcessedRenditions(final List<String> processedRenditions) {
-		this.processedRenditions = processedRenditions;
-	}
+    /**
+     * Set the processed asset's processed renditions.
+     *
+     * @param processedRenditions List of String
+     */
+    public void setProcessedRenditions(final List<String> processedRenditions) {
+        this.processedRenditions = processedRenditions;
+    }
 
-	/**
-	 * Get the processed asset's failed renditions.
-	 *
-	 * @return String
-	 */
-	public List<FailedRendition> getFailedRenditions() {
-		return failedRenditions;
-	}
+    /**
+     * Get the processed asset's failed renditions.
+     *
+     * @return String
+     */
+    public List<FailedRendition> getFailedRenditions() {
+        return failedRenditions;
+    }
 
-	/**
-	 * Set the processed asset's failed renditions.
-	 *
-	 * @param failedRenditions List of String
-	 */
-	public void setFailedRenditions(final List<FailedRendition> failedRenditions) {
-		this.failedRenditions = failedRenditions;
-	}
+    /**
+     * Set the processed asset's failed renditions.
+     *
+     * @param failedRenditions List of String
+     */
+    public void setFailedRenditions(final List<FailedRendition> failedRenditions) {
+        this.failedRenditions = failedRenditions;
+    }
 }

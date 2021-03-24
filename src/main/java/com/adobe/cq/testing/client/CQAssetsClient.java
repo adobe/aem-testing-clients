@@ -140,7 +140,7 @@ public class CQAssetsClient extends CQClient {
      * Polling the asset status occurs every {@value #ASSET_PROCESSED_DELAY} milliseconds.
      *
      * @param assetPath Path to an asset
-	 * @return ProcessedAsset
+     * @return ProcessedAsset
      * @throws ClientException if something fails during the request/response cycle, or if the asset failed to process
      * @throws TimeoutException if the wait times out
      * @throws InterruptedException if the wait is interrupted
@@ -156,15 +156,15 @@ public class CQAssetsClient extends CQClient {
      * @param assetPath Path to an asset
      * @param timeout total time to wait, in milliseconds
      * @param delay time to wait between polls of asset status, in milliseconds
-	 * @return ProcessedAsset
+     * @return ProcessedAsset
      * @throws ClientException if something fails during the request/response cycle, or if the asset failed to process
      * @throws TimeoutException if the wait times out
      * @throws InterruptedException if the wait is interrupted
      */
     public ProcessedAsset waitAssetProcessed(String assetPath, long timeout, long delay)
             throws ClientException, TimeoutException, InterruptedException {
-    	ProcessedAsset processedAsset = new ProcessedAsset();
-		processedAsset.setAssetPath(assetPath);
+        ProcessedAsset processedAsset = new ProcessedAsset();
+        processedAsset.setAssetPath(assetPath);
         Polling p = new Polling() {
             private String assetStatus;
 
@@ -219,7 +219,7 @@ public class CQAssetsClient extends CQClient {
      * @throws ClientException if something fails during the request/response cycle
      */
     public List<FailedRendition> getAssetProcessingFailures(String assetPath) throws ClientException {
-    	List<FailedRendition> failedRenditionList = new ArrayList<>();
+        List<FailedRendition> failedRenditionList = new ArrayList<>();
         String requestPath = assetPath + "/jcr:content/dam:failedRenditions.2.json";
         SlingHttpResponse response = this.doGet(requestPath, HttpStatus.SC_OK, HttpStatus.SC_NOT_FOUND);
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -231,7 +231,7 @@ public class CQAssetsClient extends CQClient {
                 String reason = n.get("reason") != null ? n.get("reason").getTextValue() : null;
                 String message = n.get("message") != null ? n.get("message").getTextValue() : null;
                 if (reason != null && message != null) {
-					failedRenditionList.add(new FailedRendition(name, message, reason));
+                    failedRenditionList.add(new FailedRendition(name, message, reason));
                 }
             }
         }
@@ -246,7 +246,7 @@ public class CQAssetsClient extends CQClient {
      * @throws ClientException if something fails during the request/response cycle
      */
     public List<String> getAssetsProcessedRenditions(String assetPath) throws ClientException {
-    	List<String> processedRenditionList = new ArrayList<>();
+        List<String> processedRenditionList = new ArrayList<>();
         String requestPath = assetPath + "/jcr:content/renditions.2.json";
         SlingHttpResponse response = this.doGet(requestPath, HttpStatus.SC_OK, HttpStatus.SC_NOT_FOUND);
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -254,11 +254,11 @@ public class CQAssetsClient extends CQClient {
             Iterator<String> fieldNames = processedRenditions.getFieldNames();
             while (fieldNames.hasNext()) {
                 String name = fieldNames.next();
-				JsonNode n = processedRenditions.get(name);
-				String primaryType = n.get("jcr:primaryType") != null ? n.get("jcr:primaryType").getTextValue() : null;
-				if (primaryType != null) {
-					processedRenditionList.add(name);
-				}
+                JsonNode n = processedRenditions.get(name);
+                String primaryType = n.get("jcr:primaryType") != null ? n.get("jcr:primaryType").getTextValue() : null;
+                if (primaryType != null) {
+                    processedRenditionList.add(name);
+                }
             }
         }
         return processedRenditionList;

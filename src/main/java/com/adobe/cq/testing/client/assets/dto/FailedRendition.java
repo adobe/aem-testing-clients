@@ -21,47 +21,47 @@ package com.adobe.cq.testing.client.assets.dto;
  */
 public class FailedRendition {
 
-	private final String name;
-	private final String message;
-	private final String reason;
+    private final String name;
+    private final String message;
+    private final String reason;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param name String
-	 * @param message String
-	 * @param reason String
-	 */
-	public FailedRendition(final String name, final String message, final String reason) {
-		this.name = name;
-		this.message = message;
-		this.reason = reason;
-	}
+    /**
+     * Constructor.
+     *
+     * @param name String
+     * @param message String
+     * @param reason String
+     */
+    public FailedRendition(final String name, final String message, final String reason) {
+        this.name = name;
+        this.message = message;
+        this.reason = reason;
+    }
 
-	/**
-	 * Get the failed rendition's name.
-	 *
-	 * @return String
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Get the failed rendition's name.
+     *
+     * @return String
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Get the failed rendition's message.
-	 *
-	 * @return String
-	 */
-	public String getMessage() {
-		return message;
-	}
+    /**
+     * Get the failed rendition's message.
+     *
+     * @return String
+     */
+    public String getMessage() {
+        return message;
+    }
 
-	/**
-	 * Get the failed rendition's reason.
-	 *
-	 * @return String
-	 */
-	public String getReason() {
-		return reason;
-	}
+    /**
+     * Get the failed rendition's reason.
+     *
+     * @return String
+     */
+    public String getReason() {
+        return reason;
+    }
 }

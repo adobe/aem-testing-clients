@@ -272,6 +272,17 @@
             <artifactId>org.osgi.compendium</artifactId>
             <version>5.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+
 
         <!--
             We need a SLF4J binding when we run tests. Dependency on the binding is test-scoped: artifacts that depend

@@ -16,9 +16,17 @@
 
 package com.adobe.cq.testing;
 
+import org.junit.jupiter.api.extension.ExtensionContext;
+
 import java.time.Duration;
 
+import static org.apache.sling.testing.clients.SystemPropertiesConfig.CONFIG_PROP_PREFIX;
+
 public class Constants {
+
+    private static final String DEFAULT_URL = "%s://%s:%d%s";
+    private static final String DEFAULTS_PROP_PREFIX = CONFIG_PROP_PREFIX + "defaults.";
+    private static final String ADMIN = "admin";
 
     private Constants() {
     }
@@ -34,7 +42,31 @@ public class Constants {
 
     public static final String PROP_JCR_TITLE = "./jcr:title";
 
+    public static final String HOME_GROUPS = "/home/groups/";
+    public static final String HOME_USERS = "/home/users/";
+    public static final String CONTENT_ROOT = "/content";
+    public static final String CONTENT_DAM = "/content/dam";
+    public static final String PROP_CQ_CONF = "cq:conf";
+    public static final String PROP_CQ_ALLOWED_TEMPLATES = "cq:allowedTemplates";
+
     public static final long DEFAULT_RETRY_DELAY = Duration.ofSeconds(1).toMillis();
     public static final long DEFAULT_TIMEOUT = Duration.ofSeconds(30).toMillis();
+    public static final int DEFAULT_SMALL_SIZE = 8;
+
+    public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.GLOBAL;
+    public static final String SLING_CLIENTS_MAP_KEY = "slingClients";
+    public static final String RUNMODE_AUTHOR = "author";
+    public static final String RUNMODE_PUBLISH = "publish";
+    public static final String DEFAULT_SCHEME = "http";
+    public static final String DEFAULT_HOST = "localhost";
+    public static final String DEFAULT_CONTEXT_PATH = "/";
+    public static final int DEFAULT_AUTHOR_PORT = Integer.parseInt("4502");
+    public static final int DEFAULT_PUBLISH_PORT = Integer.parseInt("4503");
+    public static final String DEFAULT_USER = ADMIN;
+    public static final String DEFAULT_PASSWORD = ADMIN;
+    public static final String DEFAULT_AUTHOR_URL = String.format(DEFAULT_URL,
+            DEFAULT_SCHEME, DEFAULT_HOST, DEFAULT_AUTHOR_PORT, DEFAULT_CONTEXT_PATH);
+    public static final String DEFAULT_PUBLISH_URL = String.format(DEFAULT_URL,
+            DEFAULT_SCHEME, DEFAULT_HOST, DEFAULT_PUBLISH_PORT, DEFAULT_CONTEXT_PATH);
 
 }

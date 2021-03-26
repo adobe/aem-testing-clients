@@ -28,13 +28,6 @@ public class ProcessedAsset {
     private List<FailedRendition> failedRenditions;
 
     /**
-     * Constructor.
-     */
-    public ProcessedAsset() {
-        // Do nothing.
-    }
-
-    /**
      * Get the processed asset's path.
      *
      * @return String

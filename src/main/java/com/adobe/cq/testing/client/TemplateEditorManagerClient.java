@@ -33,7 +33,11 @@ import static org.apache.sling.testing.Constants.PARAMETER_CHARSET;
 
 
 /**
- * Client to create page templates.
+ * Client to create and update the page template.
+ * To create a default template use {@link #createDefaultTemplate(String configPath, String title, String Description)}
+ * To create a template with give type use {@link #createTemplate(String configPath, String templateType, String title, String Description)}
+ * To create Default Container on top level of a template use {@link #createTopLevelDefaultContainer(String templatePath, String name)}
+ * To create a Default container in a template use {@link #createDefaultContainer(String templatePath, String location, String name)}
  */
 public final class TemplateEditorManagerClient extends CQClient {
 
@@ -42,10 +46,20 @@ public final class TemplateEditorManagerClient extends CQClient {
     private static final String DD_START_PATTERN = "<dd>";
     private static final String DD_END_PATTERN = "</dd>";
 
-    public static final String PARAM_HIDDEN = "./hidden";
-    public static final String PARAM_STATUS = "./status";
+    private static final String PARAM_HIDDEN = "./hidden";
+    private static final String PARAM_STATUS = "./status";
 
     private static final String PARAM_TEMPLATE_TYPE = "templateType";
+    private static final String PARAM_COPY_FROM = "./@CopyFrom";
+    private static final String PARAM_RESOURCE_TYPE = "./sling:resourceType";
+    private static final String PARAM_PARENT_RESOURCE_TYPE = "parentResourceType";
+    private static final String PARAM_NAME_HINT = ":nameHint";
+    private static final String PARAM_ORDER = ":order";
+    private static final String PARAM_LOCK = "lock";
+    private static final String PARAM_JCR_PRIMARY_TYPE = "./jcr:primaryType";
+    private static final String PARAM_POLICY = "./cq:policy";
+
+
     private static final String DEFAULT_HTML5_TYPE = "/libs/settings/wcm/template-types/html5page";
     private static final String POLICIES_RELATIVE_PATH = "%s/settings/wcm/policies";
 
@@ -64,15 +78,15 @@ public final class TemplateEditorManagerClient extends CQClient {
     }
 
     /**
-     * Creates a HTML5 type page template
+     * Creates a default page template of type HTML5
      * @param configPath path of config to be used to create a page template
      * @param title title of the template
      * @param description description of the template
      * @return created template path
      * @throws ClientException
      */
-    public String createHTML5(final String configPath, final String title, final String description) throws ClientException {
-        return create(configPath, DEFAULT_HTML5_TYPE, title, description);
+    public String createDefaultTemplate(final String configPath, final String title, final String description) throws ClientException {
+        return createTemplate(configPath, DEFAULT_HTML5_TYPE, title, description);
     }
 
     /**
@@ -84,7 +98,7 @@ public final class TemplateEditorManagerClient extends CQClient {
      * @return created template path
      * @throws ClientException
      */
-    public String create(final String configPath, final String templateType, final String title, final String description) throws ClientException {
+    public String createTemplate(final String configPath, final String templateType, final String title, final String description) throws ClientException {
         FormEntityBuilder formEntry = FormEntityBuilder.create()
                 .addParameter(PARAMETER_CHARSET, CHARSET_UTF8)
                 .addParameter(CSRFUtils.PARAM_CSRF_TOKEN, CSRFUtils.createCSRFToken(this))
@@ -101,7 +115,7 @@ public final class TemplateEditorManagerClient extends CQClient {
     }
 
     /**
-     * Create a layout container on the provided location of the provided template
+     * Creates default layout container (responsivegrid) on the provided location of the provided template
      *
      * @param templatePath: path of the template the layout container should be created, i.e. /conf/myConfig/settings/wcm/templates/myTemplate
      * @param location: the location the layout container should be created, i.e. /structure/jcr:content/root/
@@ -109,15 +123,15 @@ public final class TemplateEditorManagerClient extends CQClient {
      * @return path of the created layout container
      * @throws ClientException
      */
-    public String createResponsiveGrid(String templatePath, String location, String nameHint) throws ClientException {
+    public String createDefaultContainer(String templatePath, String location, String nameHint) throws ClientException {
         if (nameHint == null) nameHint = "responsivegrid";
         FormEntityBuilder formEntry = FormEntityBuilder.create()
-                .addParameter("./@CopyFrom", "/libs/" + WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID + "/cq:template")
+                .addParameter(PARAM_COPY_FROM, "/libs/" + WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID + "/cq:template")
                 .addParameter(PARAMETER_CHARSET, CHARSET_UTF8)
-                .addParameter("./sling:resourceType", WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID)
-                .addParameter("parentResourceType", WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID)
-                .addParameter(":order", "last")
-                .addParameter(":nameHint", nameHint);
+                .addParameter(PARAM_RESOURCE_TYPE, WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID)
+                .addParameter(PARAM_PARENT_RESOURCE_TYPE, WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID)
+                .addParameter(PARAM_ORDER, "last")
+                .addParameter(PARAM_NAME_HINT, nameHint);
 
         location = StringUtils.prependIfMissing(location, "/");
         String parentPath = templatePath + StringUtils.appendIfMissing(location, "/");
@@ -126,16 +140,17 @@ public final class TemplateEditorManagerClient extends CQClient {
         return exec.getSlingPath();
     }
 
+
     /**
-     * Create a layout container on structure top level of the provided template
+     * Creates a default layout container (responsivegrid) on structure top level of the provided template
      *
      * @param templatePath: path of the template the layout container should be created, i.e. /conf/myConfig/settings/wcm/templates/myTemplate
      * @param nameHint: name hint for the layout container or null to create one
      * @return path of the created layout container
      * @throws ClientException
      */
-    public String createTopLevelResponsiveGrid(String templatePath, String nameHint) throws ClientException {
-        return createResponsiveGrid(templatePath, "/structure/jcr:content/root/", nameHint);
+    public String createTopLevelDefaultContainer(String templatePath, String nameHint) throws ClientException {
+        return createDefaultContainer(templatePath, "/structure/jcr:content/root/", nameHint);
     }
 
     /**
@@ -191,7 +206,7 @@ public final class TemplateEditorManagerClient extends CQClient {
     public void setStructureComponentLock(String componentPath, boolean isLocked) throws ClientException {
         String resourcePath = "/bin/wcm/template/sync.html" + componentPath;
         FormEntityBuilder form = FormEntityBuilder.create()
-                .addParameter("lock", "" + isLocked);
+                .addParameter(PARAM_LOCK, "" + isLocked);
 
         this.doPost(resourcePath, form.build(), HttpStatus.SC_OK, HttpStatus.SC_CREATED).getContent();
     }
@@ -211,9 +226,9 @@ public final class TemplateEditorManagerClient extends CQClient {
     public String setComponentPolicy(String componentPath, String policyPath) throws ClientException {
         String resourcePath = StringUtils.replaceOnce(componentPath, "structure", "policies");
         FormEntityBuilder form = FormEntityBuilder.create()
-                .addParameter("./jcr:primaryType", "nt:unstructured")  // set primary type for folder node
-                .addParameter("./sling:resourceType", getPolicyMappingResourceType(componentPath))
-                .addParameter("./cq:policy", policyPath);
+                .addParameter(PARAM_JCR_PRIMARY_TYPE, "nt:unstructured")  // set primary type for folder node
+                .addParameter(PARAM_RESOURCE_TYPE, getPolicyMappingResourceType(componentPath))
+                .addParameter(PARAM_POLICY, policyPath);
 
         SlingHttpResponse exec = this.doPost(resourcePath, form.build(), HttpStatus.SC_OK, HttpStatus.SC_CREATED);
         return exec.getSlingPath();

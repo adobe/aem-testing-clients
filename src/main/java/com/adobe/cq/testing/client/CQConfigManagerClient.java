@@ -36,13 +36,22 @@ import static org.apache.sling.testing.Constants.CHARSET_UTF8;
 import static org.apache.sling.testing.Constants.PARAMETER_CHARSET;
 
 /**
- * Client to create /conf structure.
+ * Client to configs in create /conf structure. Basic Conf Structure will look similar to this
+ * /conf
+ * ----/confName
+ *          jcr:title
+ *     ----/settings
+ *         ----/configCapability1
+ *         ----/configCapability2
+ * A config can be created using {@link #create(String title, CQConfigCapability...)}
+ * To manipulate existing config use {@link  CQConfig}
  */
 public final class CQConfigManagerClient extends CQClient {
 
     private static final String PARAM_TITLE = "configTitle";
     private static final String PARAM_NAME = "configName";
     private static final String PARAM_PARENT = "configParent";
+    private static final String PARAM_CONFIG_CAPABILITIES = "configCapabilities";
     private static final String CREATE_ENDPOINT = "/conf.createconf.json";
     private static final String DEFAULT_ROOT_PATH = "/conf";
     private static final String CFM_RELATIVE_PATH = "/settings/dam/cfm";
@@ -54,9 +63,6 @@ public final class CQConfigManagerClient extends CQClient {
     private static final String GROUPID_TEMPLATE_AUTHORS = "template-authors";
     private static final String GROUPID_CONTENT_AUTHORS = "content-authors";
     private static final String GROUPID_EVERYONE = "everyone";
-
-
-
 
     public CQConfigManagerClient(final CloseableHttpClient http, final SlingClientConfig config) throws ClientException {
         super(http, config);
@@ -105,13 +111,15 @@ public final class CQConfigManagerClient extends CQClient {
                 .addParameter(PARAM_NAME, configName)
                 .addParameter(PARAM_PARENT, parentPath);
         Arrays.stream(capabilities).forEach(c -> {
-            formEntry.addParameter("configCapabilities", c.getTitle());
-            formEntry.addParameter("configCapabilities@Delete", "");
+            formEntry.addParameter(PARAM_CONFIG_CAPABILITIES, c.getTitle());
         });
         doPost(CREATE_ENDPOINT, formEntry.build(), SC_OK);
         return new CQConfig(this, parentPath + "/" + configTitle);
     }
 
+    /**
+     * Helper class to update or delete an existing config.
+     */
     public final class CQConfig {
 
         private static final String DELETE_ENDPOINT_SUFFIX = ".deleteconf.json";
@@ -126,18 +134,30 @@ public final class CQConfigManagerClient extends CQClient {
             this.configPath = path;
         }
 
+        /**
+         * @return path of the config
+         */
         public String getPath() {
             return configPath;
         }
 
+        /**
+         * Delete the path of current config.
+         * @throws ClientException
+         */
         public void delete() throws ClientException {
             FormEntityBuilder formEntry = FormEntityBuilder.create()
                     .addParameter(PARAMETER_CHARSET, CHARSET_UTF8)
-                    .addParameter(":applyTo", configPath);
+                    .addParameter(PARAM_APPLY_TO, configPath);
             client.doPost(configPath + DELETE_ENDPOINT_SUFFIX, formEntry.build(), SC_OK);
         }
 
-        public void update(final String configPath, final String newTitle) throws ClientException {
+        /**
+         * Updates the title of config.
+         * @param newTitle  title to update
+         * @throws ClientException
+         */
+        public void updateTitle(final String newTitle) throws ClientException {
             FormEntityBuilder formEntry = FormEntityBuilder.create()
                     .addParameter(PARAMETER_CHARSET, CHARSET_UTF8)
                     .addParameter(PROP_JCR_TITLE, newTitle)
@@ -146,6 +166,13 @@ public final class CQConfigManagerClient extends CQClient {
             client.doPost(configPath + UPDATE_ENDPOINT_SUFFIX, formEntry.build(), SC_OK);
         }
 
+        /**
+         * Imports the Template for ContentFragment into the current config
+         * @param jsonString Structure of the the template to be imported into json format
+         * @return created template path
+         * @throws ClientException
+         * @throws InterruptedException
+         */
         public String importContentFragmentTemplate(final String jsonString) throws ClientException, InterruptedException {
             if (!client.exists(configPath + CFM_TEMPLATES_RELATIVE_PATH)) {
                 // Create the templates page
@@ -159,6 +186,11 @@ public final class CQConfigManagerClient extends CQClient {
             ).getSlingPath();
         }
 
+        /** sets the require permissons for template-authors, content-authors and everyone group
+         *  so that content-authors and everyone group can read templates and policies of current config and
+         *  template-authors can update the templates and policies of the current config
+         * @throws ClientException
+         */
         public void setWcmTemplatesPermissions() throws ClientException {
             // add required permissions for template author
             CQSecurityClient sClient = client.adaptTo(CQSecurityClient.class);
@@ -177,6 +209,9 @@ public final class CQConfigManagerClient extends CQClient {
         }
     }
 
+    /**
+     * List of available Config Capabilities in AEM
+     */
     public enum CQConfigCapability {
         CLOUD("Cloud Configurations"),
         CONTEXT_HUB("ContextHub segments"),
@@ -190,6 +225,9 @@ public final class CQConfigManagerClient extends CQClient {
 
         private String capabilityTitle;
 
+        /**
+         * @return title of the config capability
+         */
         public String getTitle() {
             return capabilityTitle;
         }

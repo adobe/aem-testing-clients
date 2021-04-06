@@ -41,7 +41,7 @@ import static org.apache.sling.testing.Constants.PARAMETER_CHARSET;
  */
 public final class TemplateEditorManagerClient extends CQClient {
 
-    private static final String CREATE_ENDPOINT = "/libs/wcm/core/content/sites/createtemplatewizard/_jcr_content";
+    private static final String TEMPLATE_CREATE_ENDPOINT = "/libs/wcm/core/content/sites/createtemplatewizard/_jcr_content";
     private static final String PATH_PATTERN = "<dt class='foundation-form-response-path'>Path</dt>";
     private static final String DD_START_PATTERN = "<dd>";
     private static final String DD_END_PATTERN = "</dd>";
@@ -60,10 +60,10 @@ public final class TemplateEditorManagerClient extends CQClient {
     private static final String PARAM_POLICY = "./cq:policy";
 
 
-    private static final String DEFAULT_HTML5_TYPE = "/libs/settings/wcm/template-types/html5page";
+    private static final String DEFAULT_TEMPLATE_TYPE = "/libs/settings/wcm/template-types/html5page";
     private static final String POLICIES_RELATIVE_PATH = "%s/settings/wcm/policies";
 
-    private static final String WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID = "wcm/foundation/components/responsivegrid";
+    private static final String DEFAULT_CONTAINER_RESOURCE_TYPE = "wcm/foundation/components/responsivegrid";
 
     private static final String PROP_JCR_TITLE = "./jcr:title";
     private static final String PARAM_DESCRIPTION = "description";
@@ -86,7 +86,7 @@ public final class TemplateEditorManagerClient extends CQClient {
      * @throws ClientException
      */
     public String createDefaultTemplate(final String configPath, final String title, final String description) throws ClientException {
-        return createTemplate(configPath, DEFAULT_HTML5_TYPE, title, description);
+        return createTemplate(configPath, DEFAULT_TEMPLATE_TYPE, title, description);
     }
 
     /**
@@ -110,7 +110,7 @@ public final class TemplateEditorManagerClient extends CQClient {
                 .addParameter(PARAM_TEMPLATE_TYPE, templateType)
                 .addParameter(PARAM_TEMPLATE_TYPE + "@Delete", "");
 
-        String content = doPost(CREATE_ENDPOINT, formEntry.build(), HttpStatus.SC_CREATED).getContent();
+        String content = doPost(TEMPLATE_CREATE_ENDPOINT, formEntry.build(), HttpStatus.SC_CREATED).getContent();
         return extractPath(content);
     }
 
@@ -126,10 +126,10 @@ public final class TemplateEditorManagerClient extends CQClient {
     public String createDefaultContainer(String templatePath, String location, String nameHint) throws ClientException {
         if (nameHint == null) nameHint = "responsivegrid";
         FormEntityBuilder formEntry = FormEntityBuilder.create()
-                .addParameter(PARAM_COPY_FROM, "/libs/" + WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID + "/cq:template")
+                .addParameter(PARAM_COPY_FROM, "/libs/" + DEFAULT_CONTAINER_RESOURCE_TYPE + "/cq:template")
                 .addParameter(PARAMETER_CHARSET, CHARSET_UTF8)
-                .addParameter(PARAM_RESOURCE_TYPE, WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID)
-                .addParameter(PARAM_PARENT_RESOURCE_TYPE, WCM_FOUNDATION_COMPONENTS_RESPONSIVEGRID)
+                .addParameter(PARAM_RESOURCE_TYPE, DEFAULT_CONTAINER_RESOURCE_TYPE)
+                .addParameter(PARAM_PARENT_RESOURCE_TYPE, DEFAULT_CONTAINER_RESOURCE_TYPE)
                 .addParameter(PARAM_ORDER, "last")
                 .addParameter(PARAM_NAME_HINT, nameHint);
 

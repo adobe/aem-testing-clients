@@ -17,8 +17,10 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.assets.*;
+import com.adobe.cq.testing.client.assets.dto.FailedRendition;
 import com.adobe.cq.testing.client.assets.dto.InitiateUploadFile;
 import com.adobe.cq.testing.client.assets.dto.InitiateUploadResponse;
+import com.adobe.cq.testing.client.assets.dto.ProcessedAsset;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +57,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -137,12 +140,13 @@ public class CQAssetsClient extends CQClient {
      * Polling the asset status occurs every {@value #ASSET_PROCESSED_DELAY} milliseconds.
      *
      * @param assetPath Path to an asset
+     * @return ProcessedAsset
      * @throws ClientException if something fails during the request/response cycle, or if the asset failed to process
      * @throws TimeoutException if the wait times out
      * @throws InterruptedException if the wait is interrupted
      */
-    public void waitAssetProcessed(String assetPath) throws ClientException, TimeoutException, InterruptedException {
-        waitAssetProcessed(assetPath, ASSET_PROCESSED_TIMEOUT, ASSET_PROCESSED_DELAY);
+    public ProcessedAsset waitAssetProcessed(String assetPath) throws ClientException, TimeoutException, InterruptedException {
+        return waitAssetProcessed(assetPath, ASSET_PROCESSED_TIMEOUT, ASSET_PROCESSED_DELAY);
     }
 
     /**
@@ -152,12 +156,15 @@ public class CQAssetsClient extends CQClient {
      * @param assetPath Path to an asset
      * @param timeout total time to wait, in milliseconds
      * @param delay time to wait between polls of asset status, in milliseconds
+     * @return ProcessedAsset
      * @throws ClientException if something fails during the request/response cycle, or if the asset failed to process
      * @throws TimeoutException if the wait times out
      * @throws InterruptedException if the wait is interrupted
      */
-    public void waitAssetProcessed(String assetPath, long timeout, long delay) 
+    public ProcessedAsset waitAssetProcessed(String assetPath, long timeout, long delay)
             throws ClientException, TimeoutException, InterruptedException {
+        ProcessedAsset processedAsset = new ProcessedAsset();
+        processedAsset.setAssetPath(assetPath);
         Polling p = new Polling() {
             private String assetStatus;
 
@@ -179,10 +186,10 @@ public class CQAssetsClient extends CQClient {
         p.poll(timeout, delay);
 
         // check if there are any failures
-        String failures = getAssetProcessingFailures(assetPath);
-        if (!StringUtils.isBlank(failures)) {
-            throw new ClientException(assetPath + " failed to process: " + failures);
-        }
+        processedAsset.setFailedRenditions(getAssetProcessingFailures(assetPath));
+        processedAsset.setProcessedRenditions(getAssetsProcessedRenditions(assetPath));
+
+        return processedAsset;
     }
 
     /**
@@ -205,14 +212,14 @@ public class CQAssetsClient extends CQClient {
 
     /**
      * Retrieve any processing failures with an asset.
-     * Only able to find failures when Asset Compute is enabled, will return "" otherwise.
+     * Only able to find failures when Asset Compute is enabled, will return an empty {@link List} otherwise.
      *
      * @param assetPath Asset path
-     * @return Processing failures or "" if there were no failures
+     * @return List of {@link FailedRendition}
      * @throws ClientException if something fails during the request/response cycle
      */
-    public String getAssetProcessingFailures(String assetPath) throws ClientException {
-        StringBuilder result = new StringBuilder();
+    public List<FailedRendition> getAssetProcessingFailures(String assetPath) throws ClientException {
+        List<FailedRendition> failedRenditionList = new ArrayList<>();
         String requestPath = assetPath + "/jcr:content/dam:failedRenditions.2.json";
         SlingHttpResponse response = this.doGet(requestPath, HttpStatus.SC_OK, HttpStatus.SC_NOT_FOUND);
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -224,17 +231,37 @@ public class CQAssetsClient extends CQClient {
                 String reason = n.get("reason") != null ? n.get("reason").getTextValue() : null;
                 String message = n.get("message") != null ? n.get("message").getTextValue() : null;
                 if (reason != null && message != null) {
-                    result.append("{ name: '");
-                    result.append(name);
-                    result.append("', reason: '");
-                    result.append(reason);
-                    result.append("', message: '");
-                    result.append(message);
-                    result.append("'}, ");
+                    failedRenditionList.add(new FailedRendition(name, message, reason));
                 }
             }
         }
-        return result.toString();
+        return failedRenditionList;
+    }
+
+    /**
+     * Retrieve all processed renditions of an asset.
+     *
+     * @param assetPath Asset path
+     * @return List of String
+     * @throws ClientException if something fails during the request/response cycle
+     */
+    public List<String> getAssetsProcessedRenditions(String assetPath) throws ClientException {
+        List<String> processedRenditionList = new ArrayList<>();
+        String requestPath = assetPath + "/jcr:content/renditions.2.json";
+        SlingHttpResponse response = this.doGet(requestPath, HttpStatus.SC_OK, HttpStatus.SC_NOT_FOUND);
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            JsonNode processedRenditions = JsonUtils.getJsonNodeFromString(response.getContent());
+            Iterator<String> fieldNames = processedRenditions.getFieldNames();
+            while (fieldNames.hasNext()) {
+                String name = fieldNames.next();
+                JsonNode n = processedRenditions.get(name);
+                String primaryType = n.get("jcr:primaryType") != null ? n.get("jcr:primaryType").getTextValue() : null;
+                if (primaryType != null) {
+                    processedRenditionList.add(name);
+                }
+            }
+        }
+        return processedRenditionList;
     }
 
     //*********************************************

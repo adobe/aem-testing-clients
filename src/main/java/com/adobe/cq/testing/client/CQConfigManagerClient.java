@@ -27,6 +27,7 @@ import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.JsonUtils;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Arrays;
@@ -84,7 +85,7 @@ public final class CQConfigManagerClient extends CQClient {
     }
 
     /**
-     * Created a  Config on the given path
+     * Creates a  CQConfig on the given path
      * @param parentPath path below which config should be created
      * @param configTitle title of the config to be created
      * @param capabilities capabilities of the configs eg Editable Templates
@@ -102,7 +103,7 @@ public final class CQConfigManagerClient extends CQClient {
      * @param configName node name for the config
      * @param capabilities capabilities of the configs eg Editable Templates
      * @return created config
-     * @throws ClientException
+     * @throws ClientException if the request fails
      */
     public CQConfig create(final String parentPath, final String configTitle, final String configName, final CQConfigCapability... capabilities) throws ClientException {
         FormEntityBuilder formEntry = FormEntityBuilder.create()
@@ -143,7 +144,7 @@ public final class CQConfigManagerClient extends CQClient {
 
         /**
          * Delete the path of current config.
-         * @throws ClientException
+         * @throws ClientException if the request fails
          */
         public void delete() throws ClientException {
             FormEntityBuilder formEntry = FormEntityBuilder.create()
@@ -155,9 +156,10 @@ public final class CQConfigManagerClient extends CQClient {
         /**
          * Updates the title of config.
          * @param newTitle  title to update
-         * @throws ClientException
+         * @throws ClientException if the request fails
+         * @throws IOException if json parsing fails
          */
-        public void updateTitle(final String newTitle) throws ClientException {
+        public void updateTitle(final String newTitle) throws ClientException, IOException {
             FormEntityBuilder formEntry = FormEntityBuilder.create()
                     .addParameter(PARAMETER_CHARSET, CHARSET_UTF8)
                     .addParameter(PROP_JCR_TITLE, newTitle)
@@ -170,8 +172,8 @@ public final class CQConfigManagerClient extends CQClient {
          * Imports the Template for ContentFragment into the current config
          * @param jsonString Structure of the the template to be imported into json format
          * @return created template path
-         * @throws ClientException
-         * @throws InterruptedException
+         * @throws ClientException if the request fails
+         * @throws InterruptedException if waiting was interrupted
          */
         public String importContentFragmentTemplate(final String jsonString) throws ClientException, InterruptedException {
             if (!client.exists(configPath + CFM_TEMPLATES_RELATIVE_PATH)) {
@@ -186,10 +188,10 @@ public final class CQConfigManagerClient extends CQClient {
             ).getSlingPath();
         }
 
-        /** sets the require permissons for template-authors, content-authors and everyone group
+        /** sets the require permissions for template-authors, content-authors and everyone group
          *  so that content-authors and everyone group can read templates and policies of current config and
          *  template-authors can update the templates and policies of the current config
-         * @throws ClientException
+         * @throws ClientException if the request fails
          */
         public void setWcmTemplatesPermissions() throws ClientException {
             // add required permissions for template author

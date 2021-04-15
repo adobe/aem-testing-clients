@@ -26,6 +26,7 @@ import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.JsonUtils;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static org.apache.sling.testing.Constants.CHARSET_UTF8;
@@ -83,9 +84,10 @@ public final class TemplateEditorManagerClient extends CQClient {
      * @param title title of the template
      * @param description description of the template
      * @return created template path
-     * @throws ClientException
+     * @throws ClientException if the request fails
+     * @throws IOException if json parsing fails
      */
-    public String createDefaultTemplate(final String configPath, final String title, final String description) throws ClientException {
+    public String createDefaultTemplate(final String configPath, final String title, final String description) throws ClientException,IOException {
         return createTemplate(configPath, DEFAULT_TEMPLATE_TYPE, title, description);
     }
 
@@ -96,9 +98,10 @@ public final class TemplateEditorManagerClient extends CQClient {
      * @param title title of the template
      * @param description description of the template
      * @return created template path
-     * @throws ClientException
+     * @throws ClientException if the request fails
+     * @throws IOException if json parsing fails
      */
-    public String createTemplate(final String configPath, final String templateType, final String title, final String description) throws ClientException {
+    public String createTemplate(final String configPath, final String templateType, final String title, final String description) throws ClientException, IOException {
         FormEntityBuilder formEntry = FormEntityBuilder.create()
                 .addParameter(PARAMETER_CHARSET, CHARSET_UTF8)
                 .addParameter(CSRFUtils.PARAM_CSRF_TOKEN, CSRFUtils.createCSRFToken(this))
@@ -121,7 +124,7 @@ public final class TemplateEditorManagerClient extends CQClient {
      * @param location: the location the layout container should be created, i.e. /structure/jcr:content/root/
      * @param nameHint: name hint for the layout container or null to create one
      * @return path of the created layout container
-     * @throws ClientException
+     * @throws ClientException if the request fails
      */
     public String createDefaultContainer(String templatePath, String location, String nameHint) throws ClientException {
         if (nameHint == null) nameHint = "responsivegrid";
@@ -147,7 +150,7 @@ public final class TemplateEditorManagerClient extends CQClient {
      * @param templatePath: path of the template the layout container should be created, i.e. /conf/myConfig/settings/wcm/templates/myTemplate
      * @param nameHint: name hint for the layout container or null to create one
      * @return path of the created layout container
-     * @throws ClientException
+     * @throws ClientException if the request fails
      */
     public String createTopLevelDefaultContainer(String templatePath, String nameHint) throws ClientException {
         return createDefaultContainer(templatePath, "/structure/jcr:content/root/", nameHint);
@@ -156,7 +159,7 @@ public final class TemplateEditorManagerClient extends CQClient {
     /**
      * Enables a existing template
      * @param templatePath path of the template to be enabled
-     * @throws ClientException
+     * @throws ClientException if the request fails
      */
     public void enable(final String templatePath) throws ClientException {
         setPageProperty(templatePath, PARAM_STATUS, "enabled", HttpStatus.SC_OK);
@@ -165,7 +168,7 @@ public final class TemplateEditorManagerClient extends CQClient {
     /**
      * Disables an existing template
      * @param templatePath path of the template to be disabled
-     * @throws ClientException
+     * @throws ClientException if the request fails
      */
     public void disable(final String templatePath) throws ClientException {
         setPageProperty(templatePath, PARAM_STATUS, "disabled", HttpStatus.SC_OK);
@@ -176,7 +179,7 @@ public final class TemplateEditorManagerClient extends CQClient {
      * @param configPath path of the config which needs to be updated
      * @param jsonString policy to be updated in json format
      * @return updated config path
-     * @throws ClientException
+     * @throws ClientException if the request fails
      */
     public String importPolicy(final String configPath, final String jsonString) throws ClientException {
         return importJson(
@@ -190,7 +193,7 @@ public final class TemplateEditorManagerClient extends CQClient {
      * Unlock a component in the structure tree of a template
      *
      * @param componentPath: path of the component to be unlocked
-     * @throws ClientException
+     * @throws ClientException if the request fails
      */
     public void unlockStructureComponent(final String componentPath) throws ClientException {
         setStructureComponentLock(componentPath, false);
@@ -201,7 +204,7 @@ public final class TemplateEditorManagerClient extends CQClient {
      *
      * @param componentPath: path of the component to be locked / unlocked
      * @param isLocked: true to lock the component, false to unlock the component
-     * @throws ClientException
+     * @throws ClientException if the request fails
      */
     public void setStructureComponentLock(String componentPath, boolean isLocked) throws ClientException {
         String resourcePath = "/bin/wcm/template/sync.html" + componentPath;
@@ -221,7 +224,7 @@ public final class TemplateEditorManagerClient extends CQClient {
      * @param componentPath: the path of the component for which the policy should be set
      * @param policyPath: the path of the policy to be set for the component, i.e. wcm/foundation/components/responsivegrid/default
      * @return path of the created/updated component policy
-     * @throws ClientException
+     * @throws ClientException if the request fails
      */
     public String setComponentPolicy(String componentPath, String policyPath) throws ClientException {
         String resourcePath = StringUtils.replaceOnce(componentPath, "structure", "policies");

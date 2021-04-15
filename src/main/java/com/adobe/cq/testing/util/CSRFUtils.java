@@ -17,9 +17,11 @@
 package com.adobe.cq.testing.util;
 
 import com.adobe.cq.testing.client.CQClient;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import org.apache.sling.testing.clients.ClientException;
+
+import java.io.IOException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 
@@ -42,10 +44,11 @@ public final class CSRFUtils {
      *
      * @param client Client to use
      * @return CSRF token
-     * @throws ClientException
+     * @throws ClientException if the request fails
+     * @throws IOException if reading json fails
      */
-    public static String createCSRFToken(final CQClient client) throws ClientException {
+    public static String createCSRFToken(final CQClient client) throws ClientException, IOException {
         String content = client.doGet(TOKEN_SERVLET_ENDPOINT, SC_OK).getContent();
-        return new Gson().fromJson(content, JsonObject.class).get("token").getAsString();
+        return new ObjectMapper().readValue(content, JsonObject.class).get("token").getAsString();
     }
 }

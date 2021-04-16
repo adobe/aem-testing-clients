@@ -53,7 +53,7 @@ public class ConfigurableInstance extends ExistingInstance {
         this.useLoginToken = !forceBasicAuth && loginTokenAuth();
         this.detectIndexLanes = forceIndexLaneDetection || shouldDetectIndexingLanes();
 
-        LOG.info("Using {} Auth as default. Index lane detection: {}",
+        LOG.info("Using instances with config: [authentication method: {}, indexing lanes detection: {}]",
                 (useLoginToken ? "LoginToken" : "Basic"), detectIndexLanes);
     }
 

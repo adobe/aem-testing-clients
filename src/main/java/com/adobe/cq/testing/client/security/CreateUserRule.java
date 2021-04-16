@@ -21,7 +21,10 @@ import java.util.function.Supplier;
 
 /**
  * Create and cleanup at the end a user belonging to the Authors group
+ *
+ * @deprecated User {@link com.adobe.cq.testing.junit.rules.TemporaryUser} instead.
  */
+@Deprecated
 public class CreateUserRule extends ExternalResource implements UserRule {
     private static final Logger LOG = LoggerFactory.getLogger(CreateUserRule.class);
     private Instance instanceRule;

@@ -166,7 +166,12 @@ public class TemporaryUser extends ExternalResource {
             try {
                 if (User.exists(securityClient, username)) {
                     User userToDelete = new User(securityClient, username);
-                    securityClient.deleteAuthorizables(new Authorizable[]{userToDelete});
+
+                    new Polling(() -> {
+                        securityClient.deleteAuthorizables(new Authorizable[]{userToDelete});
+                        return true;
+                    }).poll(SECONDS.toMillis(10), SECONDS.toMillis(1));
+
                     LOG.info("Deleted user {}", username);
                 }
             } catch (Exception e) {

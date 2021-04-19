@@ -213,8 +213,6 @@ public class User extends AbstractAuthorizable {
             .doPost(feb, HttpUtils.getExpectedStatus(SC_CREATED, expectedStatus))
             .getSlingPath();
 
-        LOG.info("Created user at {}", createUserPath);
-
         // wait for user and get Authorizable
         // new User is blocking until the user is found on the instance
         return new User(client, userId);

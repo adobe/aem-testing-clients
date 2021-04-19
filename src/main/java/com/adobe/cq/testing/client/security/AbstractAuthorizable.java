@@ -81,6 +81,9 @@ public abstract class AbstractAuthorizable implements Authorizable {
         this.client = client;
         this.authorizableId = authorizableId;
         this.authorizablePath = getAuthorizablePath(authorizableId);
+        if (this.authorizablePath == null) {
+            throw new ClientException("Failed to retrieve authorizable path for " + authorizableId);
+        }
         this.authorizableUrl = encodePathToURL(this.authorizablePath);
     }
 
@@ -228,7 +231,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @throws ClientException if the request failed
      */
     private String getAuthorizablePath(String authorizableId) throws ClientException, InterruptedException {
-        return getAuthorizableNodeWithRetry(authorizableId).get(HOME).getTextValue();
+        return getAuthorizableNodeWithRetry(authorizableId).path(HOME).getTextValue();
     }
 
     /**
@@ -238,7 +241,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @return type as String: "user" or "group"
      */
     private String getAuthorizableType(String authorizableId) throws ClientException, InterruptedException {
-        return getAuthorizableNodeWithRetry(authorizableId).get(Authorizable.TYPE).getTextValue();
+        return getAuthorizableNodeWithRetry(authorizableId).path(Authorizable.TYPE).getTextValue();
     }
 
     private JsonNode getAutorizablesWithRetry(final String query) throws ClientException, InterruptedException {
@@ -248,7 +251,15 @@ public abstract class AbstractAuthorizable implements Authorizable {
             @Override
             public Boolean call() throws Exception {
                 authorizables = getAuthorizables(query);
-                return authorizables != null && authorizables.size() == 1;
+                if (authorizables == null) {
+                    throw new ClientException("getAuthorizables returned null");
+                }
+
+                if (authorizables.size() != 1) {
+                    throw new ClientException("getAuthorizables returned " + authorizables.size() + " elements, expected 1");
+                }
+
+                return true;
             }
         }
 

@@ -64,7 +64,7 @@ public class EmptyPage extends ExternalResource {
     @Override
     protected void before() throws ClientException, InterruptedException {
         SlingHttpResponse response = getClient().createPageWithRetry(getName(), getTitle(), getParentPath(), "", 2000, 500, HttpStatus.SC_OK);
-        logger.info("Created empty page at {}", response.getSlingLocation());
+        logger.info("Created empty page '{}' at {}", getTitle(), response.getSlingLocation());
     }
 
     @Override

@@ -21,14 +21,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to mark a test that should run only if a toggle is enabled.
- * This is meant for tests that validate features introduced via toggles.
+ * Annotation to mark a test that should be skipped if a toggle is enabled.
+ * This is meant for tests that rely on a feature that changes once
+ * the toggle is enabled.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface RunIfToggleEnabled {
+public @interface SkipIfToggleEnabled {
     /**
-     * The toggle that is required for the test to run
+     * The toggle that is required for the test to be skipped
      * @return the toggle name
      */
     String value();

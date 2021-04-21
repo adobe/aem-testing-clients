@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Adobe Systems Incorporated
+ * Copyright 2021 Adobe
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,38 @@
 package com.adobe.cq.testing.junit.rules.toggles;
 
 import com.adobe.cq.testing.client.TogglesClient;
-import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
+import org.apache.sling.testing.clients.util.poller.Polling;
 import org.junit.AssumptionViolatedException;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
- * Junit rule for enable filtering of tests based on the toggles enabled on the remote instance.
- *
- * The rule should be used in combination with the {@link RunIfToggleEnabled} annotation.
+ * Junit rule for filtering tests based on the toggles enabled on the remote instance.<br>
+ * <br>
+ * The rule is used in combination with the annotations {@link RunIfToggleEnabled} and
+ * {@link SkipIfToggleEnabled}.
+ * If both annotations are applied to a test, both conditions must be met (AND operation).
  *
  * @see RunIfToggleEnabled
+ * @see SkipIfToggleEnabled
  */
 public class TogglesAwareTestRule implements TestRule {
+    private static final Logger LOG = LoggerFactory.getLogger(TogglesAwareTestRule.class);
 
+    /**
+     * Supplier of the client needed for retrieving the enabled toggles.
+     */
     private final Supplier<SlingClient> clientSupplier;
 
     public TogglesAwareTestRule(Supplier<SlingClient> clientSupplier) {
@@ -50,20 +64,45 @@ public class TogglesAwareTestRule implements TestRule {
     }
 
     protected boolean shouldRunTest(Description description) {
-        String requiredToggle = getAnnotationToggle(description);
-        if (requiredToggle == null) {
-            return true;
+        String runIfToggle = getRunIfToggle(description);
+        String skipIfToggle = getSkipIfToggle(description);
+
+        if (runIfToggle == null && skipIfToggle == null) {
+            return true; // no annotation was applied to the test
         }
 
+        AtomicReference<List<String>> enabledToggles = new AtomicReference<>();
         try {
-            return clientSupplier.get().adaptTo(TogglesClient.class).isToggleEnabled(requiredToggle);
-        } catch (ClientException e) {
-            return true; // if something goes wrong, we assume test should run
+            new Polling(() -> {
+                enabledToggles.set(clientSupplier.get().adaptTo(TogglesClient.class).getEnabledToggles());
+                return true;
+            }).poll(SECONDS.toMillis(30), SECONDS.toMillis(1));
+        } catch (TimeoutException e) {
+            LOG.warn("Failed to retrieve toggles", e);
+            return true; // if something goes wrong we assume test should run
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return true; // thread was interrupted, we assume test should run
         }
+
+        if (runIfToggle != null && !enabledToggles.get().contains(runIfToggle)) {
+            return false; // RunIfToggleEnabled condition was not met, skipping
+        }
+
+        return skipIfToggle == null || !enabledToggles.get().contains(skipIfToggle);
     }
 
-    private String getAnnotationToggle(Description description) {
+    private String getRunIfToggle(Description description) {
         RunIfToggleEnabled annotation = description.getAnnotation(RunIfToggleEnabled.class);
+        if (annotation == null) {
+            return null;
+        }
+
+        return annotation.value();
+    }
+
+    private String getSkipIfToggle(Description description) {
+        SkipIfToggleEnabled annotation = description.getAnnotation(SkipIfToggleEnabled.class);
         if (annotation == null) {
             return null;
         }
@@ -75,8 +114,7 @@ public class TogglesAwareTestRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() {
-                throw new AssumptionViolatedException("Test " + testName + " was ignored by TogglesAwareTestRule" +
-                        " because required toggle is not enabled on the target instance");
+                throw new AssumptionViolatedException("Test " + testName + " was ignored by TogglesAwareTestRule");
             }
         };
     }

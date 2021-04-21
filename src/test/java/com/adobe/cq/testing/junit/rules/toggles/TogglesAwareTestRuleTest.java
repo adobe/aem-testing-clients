@@ -41,17 +41,55 @@ public class TogglesAwareTestRuleTest {
     });
 
     @Test
-    @RunIfToggleEnabled("dummy")
-    public void testSkipIfToggleNotEnabled() {
-        fail();
-    }
-
-    @Test
     @RunIfToggleEnabled("a")
     public void testRunIfToggleEnabled() {
     }
 
     @Test
-    public void testRunNoToggleAnnotation() {
+    @RunIfToggleEnabled("dummy")
+    public void testNotRunIfToggleNotEnabled() {
+        fail();
+    }
+
+    @Test
+    @SkipIfToggleEnabled("dummy")
+    public void testNotSkipIfToggleEnabled() {
+    }
+
+    @Test
+    @SkipIfToggleEnabled("a")
+    public void testSkipIfToggleNotEnabled() {
+        fail();
+    }
+
+    @Test
+    public void testRunNoAnnotation() {
+    }
+
+    @Test
+    @RunIfToggleEnabled("a")
+    @SkipIfToggleEnabled("b")
+    public void testSkipIfRunSkip() {
+        fail(); // Skip condition is met
+    }
+
+    @Test
+    @RunIfToggleEnabled("a")
+    @SkipIfToggleEnabled("dummy")
+    public void testRunIfRunNotSkip() {
+    }
+
+    @Test
+    @RunIfToggleEnabled("dummy")
+    @SkipIfToggleEnabled("a")
+    public void testSkipIfNotRunSkip() {
+        fail(); // Skip condition is met
+    }
+
+    @Test
+    @RunIfToggleEnabled("dummy")
+    @SkipIfToggleEnabled("yummy")
+    public void testSkipIfNotRunNotSkip() {
+        fail(); // Run condition is not met
     }
 }

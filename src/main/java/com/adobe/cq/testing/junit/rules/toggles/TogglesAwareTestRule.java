@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -64,10 +65,10 @@ public class TogglesAwareTestRule implements TestRule {
     }
 
     protected boolean shouldRunTest(Description description) {
-        String runIfToggle = getRunIfToggle(description);
-        String skipIfToggle = getSkipIfToggle(description);
+        Optional<String> runIfToggle = getRunIfToggle(description);
+        Optional<String> skipIfToggle = getSkipIfToggle(description);
 
-        if (runIfToggle == null && skipIfToggle == null) {
+        if (!runIfToggle.isPresent() && !skipIfToggle.isPresent()) {
             return true; // no annotation was applied to the test
         }
 
@@ -85,29 +86,21 @@ public class TogglesAwareTestRule implements TestRule {
             return true; // thread was interrupted, we assume test should run
         }
 
-        if (runIfToggle != null && !enabledToggles.get().contains(runIfToggle)) {
+        if (runIfToggle.filter(s -> !enabledToggles.get().contains(s)).isPresent()) {
             return false; // RunIfToggleEnabled condition was not met, skipping
         }
 
-        return skipIfToggle == null || !enabledToggles.get().contains(skipIfToggle);
+        return !skipIfToggle.filter(s -> enabledToggles.get().contains(s)).isPresent();
     }
 
-    private String getRunIfToggle(Description description) {
+    private Optional<String> getRunIfToggle(Description description) {
         RunIfToggleEnabled annotation = description.getAnnotation(RunIfToggleEnabled.class);
-        if (annotation == null) {
-            return null;
-        }
-
-        return annotation.value();
+        return Optional.ofNullable(annotation).map(RunIfToggleEnabled::value);
     }
 
-    private String getSkipIfToggle(Description description) {
+    private Optional<String> getSkipIfToggle(Description description) {
         SkipIfToggleEnabled annotation = description.getAnnotation(SkipIfToggleEnabled.class);
-        if (annotation == null) {
-            return null;
-        }
-
-        return annotation.value();
+        return Optional.ofNullable(annotation).map(SkipIfToggleEnabled::value);
     }
 
     private Statement emptyStatement(final String testName) {

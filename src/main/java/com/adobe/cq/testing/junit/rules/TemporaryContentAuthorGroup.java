@@ -111,7 +111,7 @@ public class TemporaryContentAuthorGroup extends ExternalResource {
         try {
             p.poll(DEFAULT_TIMEOUT, SECONDS.toMillis(DEFAULT_RETRY_DELAY));
         } catch (TimeoutException e) {
-            LOG.error("Timeout of 20s reached while trying to create group." +
+            LOG.error("Timeout of " + DEFAULT_TIMEOUT +" seconds reached while trying to create group." +
                     " List of exceptions: " + p.getExceptions(), e);
             deleteGroup();
             throw e;

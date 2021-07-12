@@ -28,9 +28,10 @@ import org.ops4j.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
+import java.time.Duration;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
+import java.util.UUID;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -43,6 +44,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 public class TemporaryContentAuthorGroup extends ExternalResource {
     private static final Logger LOG = LoggerFactory.getLogger(TemporaryContentAuthorGroup.class);
+    private static final long DEFAULT_TIMEOUT = Duration.ofSeconds(30).toMillis();
+    private static final long DEFAULT_RETRY_DELAY = Duration.ofSeconds(1).toMillis();
     private static final String CONTENT_NODE = "/content";
     private final Supplier<SlingClient> creatorSupplier;
     private final String groupName;
@@ -106,7 +109,7 @@ public class TemporaryContentAuthorGroup extends ExternalResource {
 
         CreateGroupPolling p = new CreateGroupPolling();
         try {
-            p.poll(SECONDS.toMillis(20), SECONDS.toMillis(1));
+            p.poll(DEFAULT_TIMEOUT, SECONDS.toMillis(DEFAULT_RETRY_DELAY));
         } catch (TimeoutException e) {
             LOG.error("Timeout of 20s reached while trying to create group." +
                     " List of exceptions: " + p.getExceptions(), e);
@@ -141,7 +144,7 @@ public class TemporaryContentAuthorGroup extends ExternalResource {
                 new Polling(() -> {
                     securityClient.deleteAuthorizables(new Authorizable[]{grouptoDelete});
                     return true;
-                }).poll(SECONDS.toMillis(10), SECONDS.toMillis(1));
+                }).poll(DEFAULT_TIMEOUT, SECONDS.toMillis(DEFAULT_RETRY_DELAY));
 
                 LOG.info("Deleted group {}", groupName);
             }
@@ -157,7 +160,7 @@ public class TemporaryContentAuthorGroup extends ExternalResource {
      * @return unique authorizableId
      */
     protected String createUniqueAuthorizableId(String authorizableId) {
-        return authorizableId + new Date().getTime();
+        return authorizableId + UUID.randomUUID();
     }
 
 }

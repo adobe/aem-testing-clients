@@ -15,6 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -34,6 +35,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -52,6 +56,8 @@ public class ReplicationClient extends CQClient {
     private static final String SYSTEM_USE_DISTRIBUTION = "granite.it.useDistribution";
     private static final boolean isDistribution = "true".equals(System.getProperty(SYSTEM_USE_DISTRIBUTION, null));
 
+    public static final String DIST_AGENTS_PATH = "/libs/sling/distribution/services/agents";
+
     public ReplicationClient(CloseableHttpClient http, SlingClientConfig config) throws ClientException {
         super(http, config);
     }
@@ -60,6 +66,31 @@ public class ReplicationClient extends CQClient {
         super(serverUrl, user, password);
     }
 
+    /**
+     * Activates(publish) a node on the given agent.
+     * 
+     * @param agent agent to send the replication request
+     * @param nodePath path of the node to activate
+     * @param expectedStatus list of expected HTTP status to be returned, if not set, 200 is assumed.
+     * 
+     * @return the response
+     * @throws ClientException if something fails during the request/response cycle
+     */
+    public SlingHttpResponse activate(String agent, String nodePath, int... expectedStatus) throws ClientException {
+        FormEntityBuilder formEntityBuilder = FormEntityBuilder.create()
+                .addParameter("cmd", "Activate")
+                .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
+                .addParameter("path", nodePath);
+                
+        if (StringUtils.isNotBlank(agent)) {
+            formEntityBuilder.addParameter("agentId", agent);
+        }
+        
+        return doPost("/bin/replicate.json",
+            formEntityBuilder.build(),
+            HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+    }
+    
     /**
      * Activates (publish) a node.
      *
@@ -70,15 +101,33 @@ public class ReplicationClient extends CQClient {
      * @throws ClientException if something fails during the request/response cycle
      */
     public SlingHttpResponse activate(String nodePath, int... expectedStatus) throws ClientException {
-        return doPost("/bin/replicate.json",
-                FormEntityBuilder.create()
-                    .addParameter("cmd", "Activate")
-                    .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
-                    .addParameter("path", nodePath)
-                    .build(),
-                HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+        return activate("", nodePath, expectedStatus);
     }
 
+    /**
+     * Deactivates (un-publish) a node on the specified agent.
+     * 
+     * @param agent agent to send the replication request
+     * @param pagePath path of the node to deactivate
+     * @param expectedStatus list of expected HTTP status to be returned, if not set, 200 is assumed.
+     * @return the response
+     * @throws ClientException if something fails during the request/response cycle
+     */
+    public SlingHttpResponse deactivate(String agent, String pagePath, int... expectedStatus) throws ClientException {
+        FormEntityBuilder formEntityBuilder = FormEntityBuilder.create()
+            .addParameter("cmd", "Deactivate")
+            .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
+            .addParameter("path", pagePath);
+
+        if (StringUtils.isNotBlank(agent)) {
+            formEntityBuilder.addParameter("agentId", agent);
+        }
+
+        return doPost("/bin/replicate.json",
+            formEntityBuilder.build(),
+            HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+    }
+    
     /**
      * Deactivates (un-publish) a node.
      *
@@ -88,15 +137,8 @@ public class ReplicationClient extends CQClient {
      * @throws ClientException if something fails during the request/response cycle
      */
     public SlingHttpResponse deactivate(String pagePath, int... expectedStatus) throws ClientException {
-        return doPost("/bin/replicate.json",
-                FormEntityBuilder.create()
-                    .addParameter("cmd", "Deactivate")
-                    .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
-                    .addParameter("path", pagePath)
-                    .build(),
-                HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+        return deactivate("", pagePath, expectedStatus);
     }
-
 
     /**
      * Activates a page after a period of time.
@@ -225,6 +267,112 @@ public class ReplicationClient extends CQClient {
         return doGetJson(agentPath + "/_jcr_content.queue", -1, SC_OK).get("queue");
     }
 
+    /**
+     * Checks whether the given agent exists.
+     *
+     * @param agent to check
+     * @return true if the given agent exists
+     * @throws ClientException if an error occurred
+     */
+    public Boolean checkContentDistributionAgentExists(String agent) throws ClientException {
+        JsonNode agents = doGetJson(DIST_AGENTS_PATH, 3);
+        log.info("Replication agents list: {}", agents);
+        if (agents.path(agent).isMissingNode()) {
+            log.warn("Default distribution agent {} is missing from the distribution list", agent);
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Checks if the item is empty or if not whether the replicated path is in the list of packages.
+     * Sample curl response
+     * <pre>
+     * {
+     *   "name": "publish",
+     *   "queues": {
+     *     "items": [
+     *       "7ece8e2c-d641-4d50-a0ff-6fcd3c52f7d8-publishSubscriber",
+     *       "0c77809c-cb61-437b-981b-0424c042fd92-publishSubscriber"
+     *     ],
+     *     "7ece8e2c-d641-4d50-a0ff-6fcd3c52f7d8-publishSubscriber": {
+     *       "state": "BLOCKED",
+     *       "items": [
+     *         "package-0@52734825"
+     *       ],
+     *       "itemsCount": 1,
+     *       "empty": false,
+     *       "package-0@52734825": {
+     *         "size": 6073,
+     *         "paths": [
+     *           "/content/test-site/testpage_8e57dec8-40e8-4e42-a267-ff5142f5c472"
+     *         ],
+     *         "errorMessage": "Failed attempt (12/infinite) to import the distribution package"
+     *     },
+     *     "0c77809c-cb61-437b-981b-0424c042fd92-publishSubscriber": {
+     *       "sling:resourceType": "sling/distribution/service/agent/queue",
+     *       "state": "IDLE",
+     *       "items": [],
+     *       "itemsCount": 0,
+     *       "empty": true
+     *     }
+     *   },
+     *   "log": {
+     *     "sling:resourceType": "sling/distribution/service/log"
+     *   },
+     *   "status": {
+     *     "state": "BLOCKED"
+     *   }
+     * }
+     * </pre> 
+     *
+     * @param agentPath the agent path for which queues to be asserted
+     * @param replicatedPath the path replicated
+     * @return
+     * @throws Exception
+     */
+    public boolean waitQueueEmptyOfPath(String agentPath, String replicatedPath) throws Exception {
+        JsonNode queuesJson = doGetJson(agentPath, 2, 200, 300).get("queues");
+        log.debug("queuesJson for agentPath {} is {}", agentPath, queuesJson);
+        Set<String> queueIds = elementsAsText(queuesJson.get("items"));
+
+        for (String queueId : queueIds) {
+            JsonNode queueJson = queuesJson.get(queueId);
+
+            boolean isEmpty = queueJson.get("empty").getBooleanValue();
+            if (!isEmpty) {
+                Set<String> pkgs = elementsAsText(queueJson.get("items"));
+                for (String pkg : pkgs) {
+                    JsonNode pkgJson = queueJson.get(pkg);
+
+                    if (pkgJson != null) {
+                        Set<String> paths = elementsAsText(pkgJson.get("paths"));
+
+                        if (paths.contains(replicatedPath)) {
+                            log.warn("Package [{}] in queue [{}] with paths {} failed due to [{}]", pkg, queueId,
+                                paths, pkgJson.get("errorMessage"));
+                        }
+                    }
+                    log.debug("Queue {} is empty {}", queueId, isEmpty);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static Set<String> elementsAsText(JsonNode queue) {
+        return elements(queue).map(JsonNode::getTextValue).collect(Collectors.toSet());
+    }
+
+    private static Stream<JsonNode> elements(JsonNode node) {
+        if (node == null ) {
+            return Stream.empty();
+        }
+        Iterator<JsonNode> elementsIt = node.getElements();
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(elementsIt, Spliterator.ORDERED), false);
+    }
+    
     /**
      * Returns the default replication agent queue.
      *

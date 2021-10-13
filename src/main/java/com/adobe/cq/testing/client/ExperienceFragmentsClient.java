@@ -1130,9 +1130,14 @@ public class ExperienceFragmentsClient extends CQClient {
         private final String imageComponentPath;
 
         public ImageComponent(ExperienceFragmentsClient client, String variantPath) {
+            this(client, variantPath, null);
+        }
+
+        public ImageComponent(ExperienceFragmentsClient client, String variantPath, String pathSuffix) {
             super(client, variantPath);
 
-            this.imageComponentPath = variantPath + IMAGE_COMPONENT_PATH_SUFIX;
+            this.imageComponentPath = variantPath
+                    + (StringUtils.isBlank(pathSuffix) ? IMAGE_COMPONENT_PATH_SUFIX : pathSuffix);
         }
 
         public SlingHttpResponse setImageReference(String imagePath, int... expectedStatus) throws ClientException {
@@ -1163,9 +1168,14 @@ public class ExperienceFragmentsClient extends CQClient {
         private final String textComponentPath;
 
         public TextComponent(ExperienceFragmentsClient client, String variantPath) {
+            this(client, variantPath, null);
+        }
+
+        public TextComponent(ExperienceFragmentsClient client, String variantPath, String pathSuffix) {
             super(client, variantPath);
 
-            this.textComponentPath = variantPath + TEXT_COMPONENT_PATH_SUFIX;
+            this.textComponentPath = variantPath
+                    + (StringUtils.isBlank(pathSuffix) ? TEXT_COMPONENT_PATH_SUFIX : pathSuffix);
         }
 
         public SlingHttpResponse setText(String text, int... expectedStatus) throws ClientException {
@@ -1203,9 +1213,14 @@ public class ExperienceFragmentsClient extends CQClient {
         private final String contentFragmentComponentPath;
 
         public ContentFragmentComponent(ExperienceFragmentsClient client, String variantPath) {
+            this(client, variantPath, null);
+        }
+
+        public ContentFragmentComponent(ExperienceFragmentsClient client, String variantPath, String pathSuffix) {
             super(client, variantPath);
 
-            contentFragmentComponentPath = variantPath + CONTENT_FRAGMENT_PATH_SUFIX;
+            contentFragmentComponentPath = variantPath
+                    + (StringUtils.isBlank(pathSuffix) ? CONTENT_FRAGMENT_PATH_SUFIX : pathSuffix);
         }
 
         @Override

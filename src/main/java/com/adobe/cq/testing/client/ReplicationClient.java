@@ -286,7 +286,7 @@ public class ReplicationClient extends CQClient {
     
     /**
      * Checks if the item is empty or if not whether the replicated path is in the list of packages.
-     * Sample curl response
+     * Sample HTTP response
      * <pre>
      * {
      *   "name": "publish",

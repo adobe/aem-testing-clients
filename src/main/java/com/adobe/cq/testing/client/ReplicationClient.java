@@ -283,7 +283,7 @@ public class ReplicationClient extends CQClient {
         }
         return true;
     }
-    
+
     /**
      * Checks if the item is empty or if not whether the replicated path is in the list of packages.
      * Sample HTTP response
@@ -328,8 +328,8 @@ public class ReplicationClient extends CQClient {
      *
      * @param agentPath the agent path for which queues to be asserted
      * @param replicatedPath the path replicated
-     * @return
-     * @throws Exception
+     * @return true if path empty
+     * @throws Exception the exception
      */
     public boolean waitQueueEmptyOfPath(String agentPath, String replicatedPath) throws Exception {
         JsonNode queuesJson = doGetJson(agentPath, 2, 200, 300).get("queues");
@@ -340,6 +340,8 @@ public class ReplicationClient extends CQClient {
             JsonNode queueJson = queuesJson.get(queueId);
 
             boolean isEmpty = queueJson.get("empty").getBooleanValue();
+            log.debug("Queue {} is empty {}", queueId, isEmpty);
+
             if (!isEmpty) {
                 Set<String> pkgs = elementsAsText(queueJson.get("items"));
                 for (String pkg : pkgs) {
@@ -349,11 +351,11 @@ public class ReplicationClient extends CQClient {
                         Set<String> paths = elementsAsText(pkgJson.get("paths"));
 
                         if (paths.contains(replicatedPath)) {
-                            log.warn("Package [{}] in queue [{}] with paths {} failed due to [{}]", pkg, queueId,
-                                paths, pkgJson.get("errorMessage"));
+                            log.warn("The replication queue {} is blocked by the item {} with paths {} due to {}.",
+                                queueId, pkg, paths, pkgJson.get("errorMessage"));
                         }
                     }
-                    log.debug("Queue {} is empty {}", queueId, isEmpty);
+                    log.warn("The replication queue {} is blocked by the item {}.", queueId, pkg);
                     return false;
                 }
             }

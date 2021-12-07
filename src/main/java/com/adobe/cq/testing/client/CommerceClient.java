@@ -15,6 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -23,7 +24,6 @@ import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
-import org.codehaus.jackson.JsonNode;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -1016,7 +1016,7 @@ public class CommerceClient extends FormClient {
     public boolean isProductPage(String productPage) throws ClientException {
 
         JsonNode product = this.doGetJson(productPage, -1, SC_OK);
-        String resourceType = product.get("jcr:content").get("sling:resourceType").getTextValue();
+        String resourceType = product.get("jcr:content").get("sling:resourceType").textValue();
 
         return PRODUCT_PAGE_RESOURCE_TYPE.equals(resourceType);
 
@@ -1032,7 +1032,7 @@ public class CommerceClient extends FormClient {
     public boolean isProxyPage(String productPage) throws ClientException {
 
         JsonNode product = this.doGetJson(productPage, -1, SC_OK);
-        String resourceType = product.get("jcr:content").get("sling:resourceType").getTextValue();
+        String resourceType = product.get("jcr:content").get("sling:resourceType").textValue();
 
         return PROXY_PRODUCT_PAGE_RESOURCE_TYPE.equals(resourceType);
 

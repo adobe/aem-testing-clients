@@ -15,6 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
@@ -24,7 +25,6 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.poller.Polling;
-import org.codehaus.jackson.JsonNode;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
@@ -250,8 +250,8 @@ public class TopologyClient extends CQClient {
             @Override
             public Boolean call() throws Exception {
                 json = getConnectorUrlsJson();
-                if (null != json && "ok".equals(json.get("status").getTextValue())
-                        && json.get("is_current").getBooleanValue()) {
+                if (null != json && "ok".equals(json.get("status").textValue())
+                        && json.get("is_current").booleanValue()) {
                     connectorUrls = parseConnectorUrls(json);
                     return true;
                 }
@@ -278,11 +278,11 @@ public class TopologyClient extends CQClient {
 
     private Set<String> parseConnectorUrls(JsonNode json) throws ClientException {
         Set<String> connectorUrls = new HashSet<>(5);
-        Iterator<JsonNode> connectorListIterator = json.get("data").getElements();
+        Iterator<JsonNode> connectorListIterator = json.get("data").elements();
         while (connectorListIterator.hasNext()){
             String connUrl;
             try {
-                connUrl = URLDecoder.decode(connectorListIterator.next().getTextValue(), UTF_8);
+                connUrl = URLDecoder.decode(connectorListIterator.next().textValue(), UTF_8);
             } catch (UnsupportedEncodingException e) {
                 throw new ClientException("Could not decode URL", e);
             }
@@ -333,7 +333,7 @@ public class TopologyClient extends CQClient {
         JsonNode json = JsonUtils.getJsonNodeFromString(response.getContent());
         // this is a String and not a UUID because the sling method in SlingSettingsService returns String
 
-        return json.get("data").get("sling_id").getTextValue();
+        return json.get("data").get("sling_id").textValue();
     }
 
 }

@@ -16,6 +16,9 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.workflow.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.NameValuePair;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -26,9 +29,7 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.ResourceUtil;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
+
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -405,7 +406,7 @@ public class WorkflowClient extends CQClient {
         Map<String, InboxItem> map = new HashMap<>();
         for (int i = 0; i < workItems.size(); i++) {
             JsonNode workItem = workItems.get(i);
-            map.put(workItem.get("uri").getValueAsText(), new InboxItem(workItem));
+            map.put(workItem.get("uri").asText(), new InboxItem(workItem));
         }
         return map;
     }
@@ -436,7 +437,7 @@ public class WorkflowClient extends CQClient {
         JsonNode rootNode = JsonUtils.getJsonNodeFromString(exec.getContent()).get("backroutes");
         ArrayList<String> backrouteIds = new ArrayList<>();
         for (int i = 0; i < rootNode.size(); i++) {
-            backrouteIds.add(rootNode.get(i).get("rid").getValueAsText());
+            backrouteIds.add(rootNode.get(i).get("rid").asText());
         }
 
         return backrouteIds;
@@ -568,10 +569,10 @@ public class WorkflowClient extends CQClient {
         // turn properties into a map
         HashMap<String, String> properties = new HashMap<>();
         // iterate over properties
-        rootNode.getFieldNames();
-        for (Iterator<String> it = rootNode.getFieldNames(); it.hasNext();) {
+        rootNode.fieldNames();
+        for (Iterator<String> it = rootNode.fieldNames(); it.hasNext();) {
             String propName = it.next();
-            properties.put(propName, rootNode.get(propName).getValueAsText());
+            properties.put(propName, rootNode.get(propName).asText());
         }
         // return the result
         return new WorkflowEngine(properties);
@@ -830,9 +831,9 @@ public class WorkflowClient extends CQClient {
         // iterate over the URI's
         for (JsonNode aRootNode : rootNode) {
             try {
-                wfInstances.add(new URI(aRootNode.get("uri").getValueAsText()));
+                wfInstances.add(new URI(aRootNode.get("uri").asText()));
             } catch (URISyntaxException e) {
-                throw new ClientException("Error parsing url: " + aRootNode.get("uri").getValueAsText(), e);
+                throw new ClientException("Error parsing url: " + aRootNode.get("uri").asText(), e);
             }
         }
         // return the result
@@ -879,7 +880,7 @@ public class WorkflowClient extends CQClient {
 
         // iterate over the returned entries
         for (JsonNode aRootNode : rootNode) {
-            wfModels.add(aRootNode.get(nodeProperty).getValueAsText());
+            wfModels.add(aRootNode.get(nodeProperty).asText());
         }
         // return the result
         return wfModels;
@@ -1049,7 +1050,7 @@ public class WorkflowClient extends CQClient {
 		List<HistoryItem> listHistoryItems = new ArrayList<>();
 		JsonNode workflowHistoryNode = JsonUtils.getJsonNodeFromString(exec.getContent());
 		JsonNode historyNode = workflowHistoryNode.get("historyItems");
-		Iterator<JsonNode> historyEntryIterator = historyNode.getElements();
+		Iterator<JsonNode> historyEntryIterator = historyNode.elements();
 		while (historyEntryIterator.hasNext()) {
 			// read the history items and store it in the list via wrapper
 			// object

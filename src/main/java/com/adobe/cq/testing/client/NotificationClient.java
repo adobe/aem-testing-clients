@@ -16,6 +16,7 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.notification.Notification;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
@@ -24,7 +25,6 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.URLParameterBuilder;
-import org.codehaus.jackson.JsonNode;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -105,9 +105,9 @@ public class NotificationClient extends CQClient {
                     .replace(")", "");
 
             JsonNode options = JsonUtils.getJsonNodeFromString(optionsJson);
-            for (Iterator<JsonNode> it = options.getElements(); it.hasNext(); ) {
+            for (Iterator<JsonNode> it = options.elements(); it.hasNext(); ) {
                 JsonNode option = it.next();
-                actions.add(option.get("value").getValueAsText());
+                actions.add(option.get("value").asText());
             }
         }
 
@@ -149,7 +149,7 @@ public class NotificationClient extends CQClient {
         SlingHttpResponse exec = doGet(NOTIFICATION_MESSAGES_PATH + ".json", params.getList(), SC_OK);
         JsonNode messages = JsonUtils.getJsonNodeFromString(exec.getContent()).get("messages");
 
-        for (Iterator<JsonNode> it = messages.getElements(); it.hasNext(); ) {
+        for (Iterator<JsonNode> it = messages.elements(); it.hasNext(); ) {
             JsonNode message = it.next();
             Notification notification = new Notification(message);
             notifications.add(notification);

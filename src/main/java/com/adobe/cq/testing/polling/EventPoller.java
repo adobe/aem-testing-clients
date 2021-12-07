@@ -15,13 +15,14 @@
  */
 package com.adobe.cq.testing.polling;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.poller.Polling;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,9 +84,9 @@ public class EventPoller extends Polling {
         JsonNode allEvents = eventData.get("data");
 
         long mostRecent = 0;
-        for (Iterator<JsonNode> it = allEvents.getElements(); it.hasNext(); ) {
+        for (Iterator<JsonNode> it = allEvents.elements(); it.hasNext(); ) {
             JsonNode event = it.next();
-            long received = event.get("received").getLongValue();
+            long received = event.get("received").longValue();
 
             if (received > mostRecent) {
                 mostRecent = received;
@@ -109,10 +110,10 @@ public class EventPoller extends Polling {
         JsonNode allEvents = eventData.get("data");
         ArrayNode events  = new ObjectMapper().createArrayNode();
 
-        for (Iterator<JsonNode> it = allEvents.getElements(); it.hasNext(); ) {
+        for (Iterator<JsonNode> it = allEvents.elements(); it.hasNext(); ) {
             JsonNode event = it.next();
 
-            if (event.get("received").getLongValue() > timestamp) {
+            if (event.get("received").longValue() > timestamp) {
                 events.add(event);
             }
         }
@@ -129,23 +130,23 @@ public class EventPoller extends Polling {
      * @return true if the event was found in the given array
      */
     public static boolean containsEvent(JsonNode events, String topic, String path) {
-        for (Iterator<JsonNode> it = events.getElements(); it.hasNext(); ) {
+        for (Iterator<JsonNode> it = events.elements(); it.hasNext(); ) {
             JsonNode event = it.next();
 
 
-            if (event.get("topic").getTextValue().equals(topic)) {
+            if (event.get("topic").textValue().equals(topic)) {
                 JsonNode properties = event.get("properties");
                 JsonNode eventPath = properties.get("path");
 
-                if (eventPath != null && eventPath.getTextValue().equals(path)) {
+                if (eventPath != null && eventPath.textValue().equals(path)) {
                     return true;
                 }
 
                 JsonNode paths = properties.get("paths");
                 if (paths != null) {
-                    for (Iterator<JsonNode> it1 = paths.getElements(); it1.hasNext(); ) {
+                    for (Iterator<JsonNode> it1 = paths.elements(); it1.hasNext(); ) {
                         JsonNode otherPath = it1.next();
-                        if (otherPath != null && otherPath.getTextValue().equals(path)) {
+                        if (otherPath != null && otherPath.textValue().equals(path)) {
                             return true;
                         }
                     }

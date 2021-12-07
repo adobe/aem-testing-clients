@@ -16,6 +16,7 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.util.TestUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
@@ -24,7 +25,7 @@ import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.SlingParameter;
 import org.apache.sling.testing.clients.util.URLParameterBuilder;
-import org.codehaus.jackson.JsonNode;
+
 
 import java.net.URI;
 import java.util.Date;
@@ -52,7 +53,7 @@ public class JsonClient extends CQClient {
      * Get children for a given page.
      *
      * @param parentPath parent page to get children from
-     * @return the root {@link org.codehaus.jackson.JsonNode}
+     * @return the root {@link com.fasterxml.jackson.databind.JsonNode}
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode getPages(String parentPath) throws ClientException {
@@ -70,7 +71,7 @@ public class JsonClient extends CQClient {
      * In case path is not valid, an empty pages array will be returned
      *
      * @param pagePaths the page path to get the references for
-     * @return the root {@link org.codehaus.jackson.JsonNode}
+     * @return the root {@link com.fasterxml.jackson.databind.JsonNode}
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode getPageReferences(String[] pagePaths) throws ClientException {
@@ -92,7 +93,7 @@ public class JsonClient extends CQClient {
      * @param pagePath       the page path to get the references for
      * @param expectedStatus list of allowed HTTP Status to be returned. If not set,
      *                       http status 200 (OK) is assumed.
-     * @return the root {@link org.codehaus.jackson.JsonNode}
+     * @return the root {@link com.fasterxml.jackson.databind.JsonNode}
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode getMoveReferences(String pagePath, int... expectedStatus) throws ClientException {
@@ -114,7 +115,7 @@ public class JsonClient extends CQClient {
      *
      * @param sitePath the page path to get the languages for
      * @param deep     true if languages' subpages should be part of json
-     * @return the root {@link org.codehaus.jackson.JsonNode}
+     * @return the root {@link com.fasterxml.jackson.databind.JsonNode}
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode getLanguages(String sitePath, boolean deep) throws ClientException {
@@ -133,7 +134,7 @@ public class JsonClient extends CQClient {
      * @param showChildren   true if versions of the children should be included
      * @param expectedStatus list of allowed HTTP Status to be returned. If not set,
      *                       http status 200 (OK) is assumed.
-     * @return the root {@link org.codehaus.jackson.JsonNode}
+     * @return the root {@link com.fasterxml.jackson.databind.JsonNode}
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode getVersions(String pagePath, boolean showChildren, int... expectedStatus) throws ClientException {
@@ -155,7 +156,7 @@ public class JsonClient extends CQClient {
      * @param node     the relative path to node
      * @param date     the date which versions should be shown e.g. 2010-01-01T12:00:00+01:00
      * @param expectedStatus list of expected http status codes
-     * @return the root {@link org.codehaus.jackson.JsonNode}
+     * @return the root {@link com.fasterxml.jackson.databind.JsonNode}
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode getVersionTree(String pagePath, String node, Date date,
@@ -184,7 +185,7 @@ public class JsonClient extends CQClient {
      * @param predicate   Predicate used to filter hierarchy nodes in the siteadmin e.g. siteadmin (nt:hierarchy- node,
      *                    not hidden, no file
      * @param view        filter: dependent from module
-     * @return a {@link org.codehaus.jackson.JsonNode} mapping to the requested content node.
+     * @return a {@link com.fasterxml.jackson.databind.JsonNode} mapping to the requested content node.
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode getUserGeneratedPages(String ugcBasePath, int limit, int start, String predicate, String view)

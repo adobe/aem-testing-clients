@@ -16,15 +16,16 @@
 package com.adobe.cq.testing.junit.assertion;
 
 import com.adobe.cq.testing.client.CQClient;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ContainerNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.HttpResponse;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.util.HttpUtils;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.impl.DefaultPrettyPrinter;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ContainerNode;
-import org.codehaus.jackson.node.ObjectNode;
+
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,7 +251,7 @@ public class GraniteAssert {
     private static Set<String> getFieldNames(JsonNode object) {
         Set<String> names = new HashSet<>();
 
-        Iterator<String> i = object.getFieldNames();
+        Iterator<String> i = object.fieldNames();
         while (i.hasNext()) {
             names.add(i.next());
         }
@@ -264,7 +265,7 @@ public class GraniteAssert {
      */
     private static String prettyPrint(ObjectMapper mapper, JsonNode node) throws IOException {
         final StringWriter w = new StringWriter();
-        final JsonGenerator g = mapper.getJsonFactory().createJsonGenerator(w);
+        final JsonGenerator g = mapper.getFactory().createGenerator(w);
         g.setPrettyPrinter(new DefaultPrettyPrinter());
         mapper.writeTree(g, node);
         return w.toString();
@@ -355,7 +356,7 @@ public class GraniteAssert {
         Assert.assertFalse("Missing " + agentPath + "/jcr:content/enabled !", node.isMissingNode());
 
         // check if node is properly set
-        Assert.assertEquals("Agent " + agentPath + " is not enabled!", "true", node.getValueAsText());
+        Assert.assertEquals("Agent " + agentPath + " is not enabled!", "true", node.asText());
     }
 
 }

@@ -16,6 +16,7 @@
 package com.adobe.cq.testing.client.offloading;
 
 import com.adobe.cq.testing.client.CQClient;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
@@ -24,7 +25,7 @@ import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.poller.Polling;
-import org.codehaus.jackson.JsonNode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class OffloadingBrowserClient extends CQClient {
         for (JsonNode topicNode: topics) {
             JsonNode instancesNode = topicNode.get("instances");
             Set<OffloadingInstanceConfiguration> topicInstances = instancesFromJSONArray(instancesNode,
-                    topicNode.get("topic").getTextValue().trim());
+                    topicNode.get("topic").textValue().trim());
 
             // Matching is done by using the slingId, cluster, ip and port
             instances.addAll(topicInstances);
@@ -158,12 +159,12 @@ public class OffloadingBrowserClient extends CQClient {
         Set<OffloadingInstanceConfiguration> instances = new HashSet<>();
         for (JsonNode instanceNode: instancesNode) {
             OffloadingInstanceConfiguration instance = new OffloadingInstanceConfiguration();
-            instance.slingId = instanceNode.get(SLING_ID_KEY).getTextValue();
-            instance.ip = instanceNode.get(IP_KEY).getTextValue();
-            instance.port = instanceNode.get(PORT_KEY).getTextValue();
-            instance.cluster = instanceNode.get(CLUSTER_KEY).getTextValue();
+            instance.slingId = instanceNode.get(SLING_ID_KEY).textValue();
+            instance.ip = instanceNode.get(IP_KEY).textValue();
+            instance.port = instanceNode.get(PORT_KEY).textValue();
+            instance.cluster = instanceNode.get(CLUSTER_KEY).textValue();
 
-            if (instanceNode.get("topicEnabled") != null && instanceNode.get("topicEnabled").getBooleanValue()) {
+            if (instanceNode.get("topicEnabled") != null && instanceNode.get("topicEnabled").booleanValue()) {
                 instance.topics.add(topicName);
             }
             instances.add(instance);

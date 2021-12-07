@@ -15,6 +15,9 @@
  */
 package com.adobe.cq.testing.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -27,9 +30,6 @@ import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.ResourceUtil;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -466,7 +466,7 @@ public class PackageManagerClient extends CQClient {
 
         private static String getJsonStringSafely(JsonNode node, String attr) {
             try {
-                return node.get(attr).getValueAsText();
+                return node.get(attr).asText();
             } catch (Exception e) {
                 return null;
             }
@@ -474,7 +474,7 @@ public class PackageManagerClient extends CQClient {
 
         private static Date getJsonDateSafely(JsonNode node, String attr) {
             try {
-                String dateAsString = node.get(attr).getTextValue();
+                String dateAsString = node.get(attr).textValue();
                 return new SimpleDateFormat("E MMM dd yyyy HH:mm:ss 'GMT'z").parse(dateAsString);
             } catch (Exception e) {
                 return null;
@@ -483,7 +483,7 @@ public class PackageManagerClient extends CQClient {
 
         private static Integer getJsonIntegerSafely(JsonNode node, String attr) {
             try {
-                return Integer.parseInt(node.get(attr).getValueAsText());
+                return Integer.parseInt(node.get(attr).asText());
             } catch (Exception e) {
                 return null;
             }
@@ -491,7 +491,7 @@ public class PackageManagerClient extends CQClient {
 
         private static Boolean getJsonBooleanSafely(JsonNode node, String attr) {
             try {
-                return Boolean.parseBoolean(node.get(attr).getValueAsText());
+                return Boolean.parseBoolean(node.get(attr).asText());
             } catch (Exception e) {
                 return null;
             }
@@ -539,10 +539,10 @@ public class PackageManagerClient extends CQClient {
         } catch (Exception ex) {
             throw new ClientException("Unable to parse JSON response to upload request.", ex);
         }
-        if (!root.get("success").getBooleanValue()) {
-            throw new ClientException(root.get("msg").getTextValue());
+        if (!root.get("success").booleanValue()) {
+            throw new ClientException(root.get("msg").textValue());
         }
-        return new Package(this, root.get("path").getTextValue());
+        return new Package(this, root.get("path").textValue());
     }
 
     //Bellow is another set of methods for that are used to manage packages

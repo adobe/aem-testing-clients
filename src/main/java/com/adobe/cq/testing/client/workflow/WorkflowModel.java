@@ -15,7 +15,8 @@
  */
 package com.adobe.cq.testing.client.workflow;
 
-import org.codehaus.jackson.JsonNode;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class WorkflowModel {
      */
     public String getId(){
         if (rootNode.get("id") == null)return null;
-        return rootNode.get("id").getValueAsText();
+        return rootNode.get("id").asText();
     }
 
     /**
@@ -53,7 +54,7 @@ public class WorkflowModel {
      */
     public String getTitle(){
         if (rootNode.get("title") == null)return null;
-        return rootNode.get("title").getValueAsText();
+        return rootNode.get("title").asText();
     }
 
     /**
@@ -62,7 +63,7 @@ public class WorkflowModel {
      */
     public String getDescription(){
         if (rootNode.get("description") == null)return null;
-        return rootNode.get("description").getValueAsText();
+        return rootNode.get("description").asText();
     }
 
     /**
@@ -72,7 +73,7 @@ public class WorkflowModel {
      */
     public String getVersion(){
         if (rootNode.get("version") == null)return null;
-        return rootNode.get("version").getValueAsText();
+        return rootNode.get("version").asText();
     }
 
 
@@ -115,7 +116,7 @@ public class WorkflowModel {
         JsonNode nodes = rootNode.get("nodes");
         for (int i = 0;i < nodes.size();i++){
             JsonNode n = nodes.get(i);
-            map.put(n.get("id").getValueAsText(),new Node(n));
+            map.put(n.get("id").asText(),new Node(n));
         }
         return map;
     }
@@ -124,7 +125,7 @@ public class WorkflowModel {
         if (rootNode.get("nodes") == null)return null;
         JsonNode nodes = rootNode.get("nodes");
         for (int i = 0;i < nodes.size();i++){
-            if (nodes.get(i).get("id").getValueAsText().equals(nodeId)){
+            if (nodes.get(i).get("id").asText().equals(nodeId)){
                 return new Node(nodes.get(i));
             }
         }
@@ -167,7 +168,7 @@ public class WorkflowModel {
          */
         public String getId(){
             if (nodeNode.get("id") == null)return null;
-            return nodeNode.get("id").getValueAsText();
+            return nodeNode.get("id").asText();
         }
 
         /**
@@ -176,7 +177,7 @@ public class WorkflowModel {
          */
         public String getType(){
             if (nodeNode.get("type") == null)return null;
-            return nodeNode.get("type").getValueAsText();
+            return nodeNode.get("type").asText();
         }
 
         /**
@@ -185,7 +186,7 @@ public class WorkflowModel {
          */
         public String getTitle(){
             if (nodeNode.get("title") == null)return null;
-            return nodeNode.get("title").getValueAsText();
+            return nodeNode.get("title").asText();
         }
 
         /**
@@ -194,7 +195,7 @@ public class WorkflowModel {
          */
         public String getDescription(){
             if (nodeNode.get("description") == null)return null;
-            return nodeNode.get("description").getValueAsText();
+            return nodeNode.get("description").asText();
         }
 
         /**
@@ -227,7 +228,7 @@ public class WorkflowModel {
          */
         public String getFrom(){
             if (transitionNode.get("from") == null)return null;
-            return transitionNode.get("from").getValueAsText();
+            return transitionNode.get("from").asText();
         }
 
         /**
@@ -236,7 +237,7 @@ public class WorkflowModel {
          */
         public String getTo(){
             if (transitionNode.get("to") == null)return null;
-            return transitionNode.get("to").getValueAsText();
+            return transitionNode.get("to").asText();
         }
 
         /**
@@ -245,7 +246,7 @@ public class WorkflowModel {
          */
         public String getRule(){
             if (transitionNode.get("rule") == null)return null;
-            return transitionNode.get("rule").getValueAsText();
+            return transitionNode.get("rule").asText();
         }
 
         /**
@@ -257,9 +258,9 @@ public class WorkflowModel {
             if (transitionNode.get("metaData") == null)return null;
             HashMap<String,String> map = new HashMap<>();
             JsonNode metaData = transitionNode.get("metaData");
-            for(Iterator<String> it = metaData.getFieldNames();it.hasNext();){
+            for(Iterator<String> it = metaData.fieldNames();it.hasNext();){
                 String key = it.next();
-                map.put(key,metaData.get(key).getValueAsText());
+                map.put(key,metaData.get(key).asText());
             }
             return map;
         }
@@ -270,9 +271,9 @@ public class WorkflowModel {
 
         HashMap<String,String> map = new HashMap<>();
 
-        for(Iterator<String> it = node.getFieldNames(); it.hasNext();) {
+        for(Iterator<String> it = node.fieldNames(); it.hasNext();) {
             String key = it.next();
-            map.put(key, node.get(key).getValueAsText());
+            map.put(key, node.get(key).asText());
         }
 
         return map;

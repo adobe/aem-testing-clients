@@ -44,6 +44,6 @@ public final class CSRFUtils {
      */
     public static String createCSRFToken(final CQClient client) throws ClientException {
         String content = client.doGet(TOKEN_SERVLET_ENDPOINT, SC_OK).getContent();
-        return JsonUtils.getJsonNodeFromString(content).path("token").getTextValue();
+        return JsonUtils.getJsonNodeFromString(content).path("token").textValue();
     }
 }

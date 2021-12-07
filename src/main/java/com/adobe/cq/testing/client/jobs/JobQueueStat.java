@@ -15,7 +15,8 @@
  */
 package com.adobe.cq.testing.client.jobs;
 
-import org.codehaus.jackson.JsonNode;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -180,29 +181,29 @@ public class JobQueueStat {
         JsonNode statistics = jobJson.get("statistics");
         JsonNode configuration = jobJson.get("configuration");
 
-        this.startTime = statistics.get("start_time").getLongValue();
-        this.lastActivated = statistics.get("last_activated").getLongValue();
-        this.lastFinished = statistics.get("last_finished").getLongValue();
-        this.queuedJobs = statistics.get("queued_jobs").getIntValue();
-        this.activeJobs = statistics.get("active_jobs").getIntValue();
-        this.finishedJobs = statistics.get("finished_jobs").getIntValue();
-        this.failedJobs = statistics.get("failed_jobs").getIntValue();
-        this.cancelledJobs = statistics.get("cancelled_jobs").getIntValue();
-        this.avgProcessingTime = statistics.get("avg_processing_time").getIntValue();
-        this.avgWaitingTime = statistics.get("avg_waiting_time").getIntValue();
+        this.startTime = statistics.get("start_time").longValue();
+        this.lastActivated = statistics.get("last_activated").longValue();
+        this.lastFinished = statistics.get("last_finished").longValue();
+        this.queuedJobs = statistics.get("queued_jobs").intValue();
+        this.activeJobs = statistics.get("active_jobs").intValue();
+        this.finishedJobs = statistics.get("finished_jobs").intValue();
+        this.failedJobs = statistics.get("failed_jobs").intValue();
+        this.cancelledJobs = statistics.get("cancelled_jobs").intValue();
+        this.avgProcessingTime = statistics.get("avg_processing_time").intValue();
+        this.avgWaitingTime = statistics.get("avg_waiting_time").intValue();
 
-        this.type = configuration.get("type").getTextValue();
+        this.type = configuration.get("type").textValue();
 
         this.topics = new ArrayList<>();
-        Iterator<JsonNode> topicsIterator = configuration.get("topics").getElements();
+        Iterator<JsonNode> topicsIterator = configuration.get("topics").elements();
         while (topicsIterator.hasNext()) {
-            this.topics.add(topicsIterator.next().getTextValue());
+            this.topics.add(topicsIterator.next().textValue());
         }
 
-        this.maxParallel = configuration.get("max_parallel").getIntValue();
-        this.maxRetries = configuration.get("max_retries").getIntValue();
-        this.retryDelay = configuration.get("retry_delay").getIntValue();
-        this.priority = configuration.get("priority").getTextValue();
-        this.statusInfo = jobJson.get("status_info").getTextValue();
+        this.maxParallel = configuration.get("max_parallel").intValue();
+        this.maxRetries = configuration.get("max_retries").intValue();
+        this.retryDelay = configuration.get("retry_delay").intValue();
+        this.priority = configuration.get("priority").textValue();
+        this.statusInfo = jobJson.get("status_info").textValue();
     }
 }

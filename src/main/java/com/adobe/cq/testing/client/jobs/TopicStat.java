@@ -15,7 +15,8 @@
  */
 package com.adobe.cq.testing.client.jobs;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
+
 
 public class TopicStat {
 
@@ -65,14 +66,14 @@ public class TopicStat {
      * @param topicJson  the topic JSON node
      */
     public TopicStat(JsonNode topicJson) {
-        this.topicName = topicJson.get("topic").getTextValue();
-        this.lastActivated = topicJson.get("last_activated").getLongValue();
-        this.lastFinished = topicJson.get("last_finished").getLongValue();
-        this.finishedJobs = topicJson.get("finished_jobs").getIntValue();
-        this.failedJobs = topicJson.get("failed_jobs").getIntValue();
-        this.cancelledJobs = topicJson.get("cancelled_jobs").getIntValue();
-        this.avgProcessingTime = topicJson.get("avg_processing_time").getLongValue();
-        this.avgWaitingTime = topicJson.get("avg_waiting_time").getLongValue();
+        this.topicName = topicJson.get("topic").textValue();
+        this.lastActivated = topicJson.get("last_activated").longValue();
+        this.lastFinished = topicJson.get("last_finished").longValue();
+        this.finishedJobs = topicJson.get("finished_jobs").intValue();
+        this.failedJobs = topicJson.get("failed_jobs").intValue();
+        this.cancelledJobs = topicJson.get("cancelled_jobs").intValue();
+        this.avgProcessingTime = topicJson.get("avg_processing_time").longValue();
+        this.avgWaitingTime = topicJson.get("avg_waiting_time").longValue();
     }
 
     public String getTopicName() {

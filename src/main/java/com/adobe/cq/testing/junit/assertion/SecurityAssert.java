@@ -18,8 +18,8 @@ package com.adobe.cq.testing.junit.assertion;
 import com.adobe.cq.testing.client.SecurityClient;
 import com.adobe.cq.testing.client.security.Authorizable;
 import com.adobe.cq.testing.client.security.Group;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.ClientException;
-import org.codehaus.jackson.JsonNode;
 import org.junit.Assert;
 
 import java.util.HashMap;
@@ -106,7 +106,7 @@ public class SecurityAssert {
 
         // check resource type
         Assert.assertEquals("'jcr:primaryType' for '" + userPath + "' is not 'rep:User'!", "rep:User",
-                userNode.get("jcr:primaryType").getValueAsText());
+                userNode.get("jcr:primaryType").asText());
 
         // check permissions / rep:policy node exist
         assertACE(client, userPath);
@@ -137,7 +137,7 @@ public class SecurityAssert {
 
         // check node has correct primary type
         Assert.assertEquals("'jcr:primaryType' for '" + userPath + "/" + REP_POLICY + "' is wrong!", "rep:ACL",
-                policyNode.get("jcr:primaryType").getValueAsText());
+                policyNode.get("jcr:primaryType").asText());
 
         // check node has at minimum one allow or deny node
         JsonNode allowNode = policyNode.get("allow");
@@ -159,7 +159,7 @@ public class SecurityAssert {
         // FIXME find solution to validate schema
         //assertSchemaValid(aceNode.toString(), SCHEMA_ACE);
         Assert.assertEquals("'jcr:primaryType' for '" + userPath + "' is not 'rep:GrantACE'!", "rep:GrantACE",
-                aceNode.get("jcr:primaryType").getValueAsText());
+                aceNode.get("jcr:primaryType").asText());
     }
 
     /**
@@ -184,7 +184,7 @@ public class SecurityAssert {
 
         // check resource type
         Assert.assertEquals("'jcr:primaryType' for '" + groupPath + "' is not 'rep:Group'!", "rep:Group",
-                userNode.get("jcr:primaryType").getValueAsText());
+                userNode.get("jcr:primaryType").asText());
     }
 
     /**
@@ -211,7 +211,7 @@ public class SecurityAssert {
         String expectedResourceType = "nt:unstructured";
         Assert.assertEquals("'jcr:primaryType' for '" + authorizablePath + "/profile' is wrong'!",
                 expectedResourceType,
-                profileNode.get("jcr:primaryType").getValueAsText());
+                profileNode.get("jcr:primaryType").asText());
 
         // check profile properties
         if (expectedProps == null) return; // nothing to check
@@ -221,7 +221,7 @@ public class SecurityAssert {
             String expectedValue = expectedProps.get(propName);
             Assert.assertEquals("Users property '" + propName + "' does not match expected value in profile node.",
                     expectedValue,
-                    profileNode.get(propName).getValueAsText());
+                    profileNode.get(propName).asText());
         }
     }
 

@@ -15,6 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -26,7 +27,7 @@ import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.*;
-import org.codehaus.jackson.JsonNode;
+
 
 import java.io.InputStream;
 import java.net.URI;

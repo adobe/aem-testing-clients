@@ -16,6 +16,7 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.util.WCMCommands;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.annotation.Immutable;
@@ -34,7 +35,6 @@ import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.ResourceUtil;
 import org.apache.sling.testing.clients.util.poller.Polling;
-import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -607,9 +607,9 @@ public class CQClient extends SlingClient {
                 entityBuilder.addParameter("wwo", "on");
             }
 
-            for (Iterator<JsonNode> it = pages.getElements(); it.hasNext(); ) {
+            for (Iterator<JsonNode> it = pages.elements(); it.hasNext(); ) {
                 JsonNode page = it.next();
-                entityBuilder.addParameter("p", page.get("path").getTextValue());
+                entityBuilder.addParameter("p", page.get("path").textValue());
             }
 
             doPost(replacePath, entityBuilder.build(), SC_OK);

@@ -18,11 +18,11 @@ package com.adobe.cq.testing.junit.assertion;
 import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.components.AbstractComponent;
 import com.adobe.cq.testing.util.TestUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.AbstractSlingClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.ResourceUtil;
-import org.codehaus.jackson.JsonNode;
 import org.junit.Assert;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class ComponentAssert {
         // Check if sling:resourceType property was properly set
         Assert.assertEquals("'sling:resourceType' for '" + comp.getComponentPath() + "' not properly set!",
                 comp.getResourceType(),
-                componentNode.get("sling:resourceType").getValueAsText());
+                componentNode.get("sling:resourceType").asText());
     }
 
     /**

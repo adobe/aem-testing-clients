@@ -16,6 +16,7 @@
 package com.adobe.cq.testing.client.security;
 
 import com.adobe.cq.testing.client.SecurityClient;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -25,7 +26,6 @@ import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.poller.Polling;
-import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,7 +174,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
     public boolean isImpersonated() throws ClientException {
         JsonNode authorizableNode = JsonUtils.getJsonNodeFromString(getJsonAsString(null, SC_OK));
         JsonNode isImpersonated = authorizableNode.get(Authorizable.IS_IMPERSONATED);
-        return (isImpersonated != null) && "true".equals(isImpersonated.getValueAsText());
+        return (isImpersonated != null) && "true".equals(isImpersonated.asText());
     }
 
     public JsonNode getProfile() throws ClientException {
@@ -231,7 +231,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @throws ClientException if the request failed
      */
     private String getAuthorizablePath(String authorizableId) throws ClientException, InterruptedException {
-        return getAuthorizableNodeWithRetry(authorizableId).path(HOME).getTextValue();
+        return getAuthorizableNodeWithRetry(authorizableId).path(HOME).textValue();
     }
 
     /**
@@ -241,7 +241,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @return type as String: "user" or "group"
      */
     private String getAuthorizableType(String authorizableId) throws ClientException, InterruptedException {
-        return getAuthorizableNodeWithRetry(authorizableId).path(Authorizable.TYPE).getTextValue();
+        return getAuthorizableNodeWithRetry(authorizableId).path(Authorizable.TYPE).textValue();
     }
 
     private JsonNode getAutorizablesWithRetry(final String query) throws ClientException, InterruptedException {
@@ -421,7 +421,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
         // FIXME find solution to validate schema
         //GraniteAssert.assertSchemaValid(authorizableNode.toString(), SCHEMA_AUTHORIZABLE);
         // add authorizable
-        String authorizableId = authorizableNode.get(Authorizable.AUTHORIZABLE_ID).getValueAsText();
+        String authorizableId = authorizableNode.get(Authorizable.AUTHORIZABLE_ID).asText();
         // check if authorizable is user or group
         String type = getAuthorizableType(authorizableId);
         return client.getManager().getAuthorizable(getAuthorizableClass(type), authorizableId);

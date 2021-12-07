@@ -16,13 +16,13 @@
 package com.adobe.cq.testing.client.security;
 
 import com.adobe.cq.testing.client.SecurityClient;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.URLParameterBuilder;
-import org.codehaus.jackson.JsonNode;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -58,6 +58,7 @@ public class AuthorizableManager {
 
     /**
      * Get built-in group "administrators"
+     *
      * @return administrators' {@link Group}
      * @throws ClientException if the request failed
      */
@@ -67,6 +68,7 @@ public class AuthorizableManager {
 
     /**
      * Get built-in group "contributor"
+     *
      * @return contributor' {@link Group}
      * @throws ClientException if the request failed
      */
@@ -76,6 +78,7 @@ public class AuthorizableManager {
 
     /**
      * Get built-in group "everyone"
+     *
      * @return everyone' {@link Group}
      * @throws ClientException if the request failed
      */
@@ -85,6 +88,7 @@ public class AuthorizableManager {
 
     /**
      * Get built-in group "user-administrators"
+     *
      * @return user-administrators' {@link Group}
      * @throws ClientException if the request failed
      */
@@ -97,8 +101,7 @@ public class AuthorizableManager {
      *
      * @param userId the user ID.
      * @return {@link User}
-     * @throws ClientException
-     *          If something fails during request/response cycle
+     * @throws ClientException If something fails during request/response cycle
      */
     public User getUser(String userId) throws ClientException {
         return getAuthorizable(User.class, userId);
@@ -107,10 +110,9 @@ public class AuthorizableManager {
     /**
      * Get an existing group object from the id.
      *
-     * @param groupId   the group ID.
+     * @param groupId the group ID.
      * @return {@link Group}
-     * @throws ClientException
-     *          If something fails during request/response cycle
+     * @throws ClientException If something fails during request/response cycle
      */
     public Group getGroup(String groupId) throws ClientException {
         return getAuthorizable(Group.class, groupId);
@@ -151,8 +153,7 @@ public class AuthorizableManager {
      * @param authorizableId    the authorizable ID.
      * @param <T>               any class extending {@link AbstractAuthorizable}
      * @return the client
-     * @throws ClientException
-     *          if client can't be instantiated
+     * @throws ClientException if client can't be instantiated
      */
     protected <T extends AbstractAuthorizable> T getAuthorizable(Class<T> authorizableClass, String authorizableId)
             throws ClientException {
@@ -162,7 +163,7 @@ public class AuthorizableManager {
             authorizable = cons.newInstance(client, authorizableId);
         } catch (Exception e) {
             throw new ClientException("Could not initialize Authorizable: '"
-                    + authorizableClass.getCanonicalName() +"'.", e);
+                    + authorizableClass.getCanonicalName() + "'.", e);
         }
         return authorizable;
     }
@@ -173,7 +174,6 @@ public class AuthorizableManager {
      * @param query search query for authorizables
      * @return authorizables as {@link Authorizable}
      * @throws ClientException if the request failed
-     *
      */
     public List<Authorizable> getAuthorizables(String query) throws ClientException {
         JsonNode json = JsonUtils.getJsonNodeFromString(getAuthorizablesJson(query));
@@ -186,8 +186,8 @@ public class AuthorizableManager {
                 // FIXME find solution to validate schema
                 //GraniteAssert.assertSchemaValid(authorizableNode.toString(), Authorizable.SCHEMA_AUTHORIZABLE);
                 // add authorizable
-                String authorizableId = authorizableNode.get(Authorizable.AUTHORIZABLE_ID).getValueAsText();
-                String type = authorizableNode.get(Authorizable.TYPE).getValueAsText();
+                String authorizableId = authorizableNode.get(Authorizable.AUTHORIZABLE_ID).asText();
+                String type = authorizableNode.get(Authorizable.TYPE).asText();
                 Authorizable authorizable = getAuthorizable(
                         AbstractAuthorizable.getAuthorizableClass(type), authorizableId);
                 authorizables.add(authorizable);
@@ -202,13 +202,12 @@ public class AuthorizableManager {
      * @param query search query for authorizables
      * @return authorizables as JSON String
      * @throws ClientException if the request failed
-     *
      */
     public String getAuthorizablesJson(String query) throws ClientException {
         // do search
         URLParameterBuilder params = URLParameterBuilder.create()
                 .add("offset", "0")
-                .add("query", "{" + ((query == null) ? "" : query) +"}");
+                .add("query", "{" + ((query == null) ? "" : query) + "}");
 
         return client.doGet(AUTHORIZABLES_PATH + ".json", params.getList(), SC_OK).getContent();
     }
@@ -220,7 +219,6 @@ public class AuthorizableManager {
      * @param expectedStatus list of allowed HTTP Status to be returned.
      * @return executed request
      * @throws ClientException if the request failed
-     *
      */
     public SlingHttpResponse doPost(FormEntityBuilder formParameters, int... expectedStatus) throws ClientException {
         return client.doPost(AUTHORIZABLE_POST_PATH + ".html", formParameters.build(), expectedStatus);

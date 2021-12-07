@@ -15,6 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -27,7 +28,6 @@ import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.poller.Polling;
-import org.codehaus.jackson.JsonNode;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
@@ -339,7 +339,7 @@ public class ReplicationClient extends CQClient {
         for (String queueId : queueIds) {
             JsonNode queueJson = queuesJson.get(queueId);
 
-            boolean isEmpty = queueJson.get("empty").getBooleanValue();
+            boolean isEmpty = queueJson.get("empty").booleanValue();
             log.debug("Queue {} is empty {}", queueId, isEmpty);
 
             if (!isEmpty) {
@@ -364,14 +364,14 @@ public class ReplicationClient extends CQClient {
     }
 
     private static Set<String> elementsAsText(JsonNode queue) {
-        return elements(queue).map(JsonNode::getTextValue).collect(Collectors.toSet());
+        return elements(queue).map(JsonNode::textValue).collect(Collectors.toSet());
     }
 
     private static Stream<JsonNode> elements(JsonNode node) {
         if (node == null ) {
             return Stream.empty();
         }
-        Iterator<JsonNode> elementsIt = node.getElements();
+        Iterator<JsonNode> elementsIt = node.elements();
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(elementsIt, Spliterator.ORDERED), false);
     }
     
@@ -488,7 +488,7 @@ public class ReplicationClient extends CQClient {
         @Override
         public Boolean call() throws  Exception {
             queue = client.getAgentReplicationQueue(agentPath);
-            return !queue.getElements().hasNext();
+            return !queue.elements().hasNext();
         }
     }
 }

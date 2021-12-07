@@ -18,11 +18,12 @@ package com.adobe.cq.testing.client.components.collab;
 
 import com.adobe.cq.testing.client.ComponentClient;
 import com.adobe.cq.testing.client.components.AbstractComponent;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.HttpEntity;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
-import org.codehaus.jackson.JsonNode;
+
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -97,11 +98,11 @@ public class Ratings extends AbstractComponent {
 
         JsonNode compJson = client.doGetJson(getGeneratedRatingsPath(), -1);
 
-        Iterator<JsonNode> it = compJson.getElements();
+        Iterator<JsonNode> it = compJson.elements();
         while (it.hasNext()) {
             JsonNode n = it.next();
             if (n.isObject() && (n.get("sling:resourceType") != null) &&
-                    n.get("sling:resourceType").getTextValue().equals(Rating.RESOURCE_TYPE)) {
+                    n.get("sling:resourceType").textValue().equals(Rating.RESOURCE_TYPE)) {
                 Rating r = new Rating(n);
                 res.add(r);
             }

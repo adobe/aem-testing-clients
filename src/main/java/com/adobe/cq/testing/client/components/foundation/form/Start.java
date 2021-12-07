@@ -18,6 +18,7 @@ package com.adobe.cq.testing.client.components.foundation.form;
 import com.adobe.cq.testing.client.ComponentClient;
 import com.adobe.cq.testing.client.components.AbstractComponent;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -26,7 +27,6 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
-import org.codehaus.jackson.JsonNode;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -201,7 +201,7 @@ public class Start extends AbstractComponent {
         }
         JsonNode node  = client.doGetJson(getComponentPath(), 1);
         JsonNode action = node.get(PROP_ACTION_STORE_CONTENT_PATH);
-        return action.getValueAsText();
+        return action.asText();
     }
 
     /**

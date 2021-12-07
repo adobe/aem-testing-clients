@@ -15,7 +15,8 @@
  */
 package com.adobe.cq.testing.client.workflow;
 
-import org.codehaus.jackson.JsonNode;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Date;
 
@@ -42,7 +43,7 @@ public class InboxItem {
      */
     public String getUri() {
         if (rootNode.get("uri") == null)return null;
-        return rootNode.get("uri").getValueAsText();
+        return rootNode.get("uri").asText();
     }
 
     /**
@@ -51,7 +52,7 @@ public class InboxItem {
      */
     public String  getCurrentAssignee(){
         if (rootNode.get("currentAssignee") == null)return null;
-        return rootNode.get("currentAssignee").getValueAsText();
+        return rootNode.get("currentAssignee").asText();
     }
 
     /**
@@ -62,7 +63,7 @@ public class InboxItem {
     public Date getStartTime(){
         if (rootNode.get("startTime") == null)return null;
         Date startTime = new Date();
-        startTime.setTime(Long.parseLong(rootNode.get("startTime").getValueAsText()));
+        startTime.setTime(Long.parseLong(rootNode.get("startTime").asText()));
         return startTime;
     }
 
@@ -74,7 +75,7 @@ public class InboxItem {
     public Date getEndTime(){
         if (rootNode.get("endTime") == null)return null;
         Date endTime = new Date();
-        endTime.setTime(Long.parseLong(rootNode.get("endTime").getValueAsText()));
+        endTime.setTime(Long.parseLong(rootNode.get("endTime").asText()));
         return endTime;
     }
 
@@ -85,7 +86,7 @@ public class InboxItem {
      */
     public String getPayloadType(){
         if (rootNode.get("payloadType") == null)return null;
-        return rootNode.get("payloadType").getValueAsText();
+        return rootNode.get("payloadType").asText();
     }
 
     /**
@@ -94,7 +95,7 @@ public class InboxItem {
      */
     public String getPayload(){
         if (rootNode.get("payload") == null)return null;
-        return rootNode.get("payload").getValueAsText();
+        return rootNode.get("payload").asText();
     }
 
     /**
@@ -103,7 +104,7 @@ public class InboxItem {
      */
     public String getComment(){
         if (rootNode.get("comment") == null)return null;
-        return rootNode.get("comment").getValueAsText();
+        return rootNode.get("comment").asText();
     }
 
 }

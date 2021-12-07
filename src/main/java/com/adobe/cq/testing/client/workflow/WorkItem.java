@@ -16,7 +16,7 @@
 package com.adobe.cq.testing.client.workflow;
 
 import com.adobe.cq.testing.client.WorkflowClient;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +45,7 @@ public class WorkItem {
      */
     public String getId() {
         if (rootNode.get("id") == null)return null;
-        return rootNode.get("id").getValueAsText();
+        return rootNode.get("id").asText();
     }
 
     /**
@@ -54,7 +54,7 @@ public class WorkItem {
      */
     public String getInstanceURI() {
         if (rootNode.get("instance") == null)return null;
-        return rootNode.get("instance").getValueAsText();
+        return rootNode.get("instance").asText();
     }
 
     /**
@@ -64,7 +64,7 @@ public class WorkItem {
      */
     public String getModelId() {
         if (rootNode.get("model") == null)return null;
-        return rootNode.get("model").getValueAsText();
+        return rootNode.get("model").asText();
     }
 
     /**
@@ -73,7 +73,7 @@ public class WorkItem {
      */
     public String getNodeId() {
         if (rootNode.get("node") == null)return null;
-        return rootNode.get("node").getValueAsText();
+        return rootNode.get("node").asText();
     }
 
     /**
@@ -82,7 +82,7 @@ public class WorkItem {
      */
     public Date getStartDate(){
         if (rootNode.get("startTime") == null)return null;
-        return WorkflowClient.parseJSONDate(rootNode.get("startTime").getValueAsText());
+        return WorkflowClient.parseJSONDate(rootNode.get("startTime").asText());
     }
 
     /**
@@ -91,7 +91,7 @@ public class WorkItem {
      */
     public String getPayloadType(){
         if (rootNode.get("payloadType") == null)return null;
-        return rootNode.get("payloadType").getValueAsText();
+        return rootNode.get("payloadType").asText();
     }
 
     /**
@@ -100,7 +100,7 @@ public class WorkItem {
      */
     public String getPayLoad(){
         if (rootNode.get("payload") == null)return null;
-        return rootNode.get("payload").getValueAsText();
+        return rootNode.get("payload").asText();
     }
 
     /**
@@ -114,7 +114,7 @@ public class WorkItem {
         HashMap<String,String> map = new HashMap<>();
         for (int i = 0 ; i < properties.size();i++){
             JsonNode property = properties.get(i);
-            map.put(property.get("key").getValueAsText(),property.get("value").getValueAsText());
+            map.put(property.get("key").asText(),property.get("value").asText());
         }
         return map;
     }
@@ -170,7 +170,7 @@ public class WorkItem {
          */
         public String getId(){
             if (delNode.get("id") == null)return null;
-            return delNode.get("id").getValueAsText();
+            return delNode.get("id").asText();
         }
 
         /**
@@ -179,7 +179,7 @@ public class WorkItem {
          */
         public String getName(){
             if (delNode.get("name") == null)return null;
-            return delNode.get("name").getValueAsText();
+            return delNode.get("name").asText();
         }
 
         /**
@@ -188,7 +188,7 @@ public class WorkItem {
          */
         public String getType(){
             if (delNode.get("type") == null)return null;
-            return delNode.get("type").getValueAsText();
+            return delNode.get("type").asText();
         }
     }
 
@@ -214,7 +214,7 @@ public class WorkItem {
          */
         public String getId(){
             if (routeNode.get("id") == null)return null;
-            return routeNode.get("id").getValueAsText();
+            return routeNode.get("id").asText();
         }
 
         /**
@@ -223,7 +223,7 @@ public class WorkItem {
          */
         public String getName(){
             if (routeNode.get("name") == null)return null;
-            return routeNode.get("name").getValueAsText();
+            return routeNode.get("name").asText();
         }
 
         /**
@@ -236,7 +236,7 @@ public class WorkItem {
             HashMap<String,String> map = new HashMap<>();
             for (int i = 0; i < destinations.size();i++){
                 JsonNode destination = destinations.get(i);
-                map.put(destination.get("id").getValueAsText(),destination.get("title").getTextValue());
+                map.put(destination.get("id").asText(),destination.get("title").textValue());
             }
             return map;
         }

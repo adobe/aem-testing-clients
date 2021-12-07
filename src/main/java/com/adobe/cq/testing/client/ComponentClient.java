@@ -48,12 +48,12 @@ import com.adobe.cq.testing.client.components.foundation.form.RadioGroup;
 import com.adobe.cq.testing.client.components.foundation.form.Start;
 import com.adobe.cq.testing.client.components.foundation.parsys.ColCtrl;
 import com.adobe.cq.testing.client.components.tagging.TagCloud;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
-import org.codehaus.jackson.JsonNode;
 
 import java.lang.reflect.Constructor;
 import java.net.URI;
@@ -261,7 +261,7 @@ public class ComponentClient extends CQClient {
                     "sling:resourceType property was found!");
         }
         // get the class
-        Class<? extends AbstractComponent> compClass = getCompClassByResourceType(node.get("sling:resourceType").getTextValue());
+        Class<? extends AbstractComponent> compClass = getCompClassByResourceType(node.get("sling:resourceType").textValue());
         
         // no class found ?
         if (compClass == null) return null;

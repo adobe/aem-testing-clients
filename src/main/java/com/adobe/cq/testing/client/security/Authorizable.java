@@ -16,10 +16,10 @@
 package com.adobe.cq.testing.client.security;
 
 import com.adobe.cq.testing.client.SecurityClient;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
-import org.codehaus.jackson.JsonNode;
 
 import java.util.Map;
 

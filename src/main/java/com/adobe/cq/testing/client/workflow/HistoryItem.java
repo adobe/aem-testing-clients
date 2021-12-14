@@ -16,7 +16,7 @@
 package com.adobe.cq.testing.client.workflow;
 
 import com.adobe.cq.testing.client.WorkflowClient;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Date;
 
@@ -46,7 +46,7 @@ public class HistoryItem {
      */
     public String getStatus() {
         if (rootNode.get("status") == null)return null;
-        return rootNode.get("status").getValueAsText();
+        return rootNode.get("status").asText();
     }
 
     /**
@@ -55,7 +55,7 @@ public class HistoryItem {
      */
     public String getProcess() {
         if (rootNode.get("process") == null)return null;
-        return rootNode.get("process").getValueAsText();
+        return rootNode.get("process").asText();
     }
 
     /**
@@ -64,7 +64,7 @@ public class HistoryItem {
      */
     public String getUser() {
         if (rootNode.get("user") == null)return null;
-        return rootNode.get("user").getValueAsText();
+        return rootNode.get("user").asText();
     }
 
     /**
@@ -73,7 +73,7 @@ public class HistoryItem {
      */
     public String getAction() {
         if (rootNode.get("action") == null)return null;
-        return rootNode.get("action").getValueAsText();
+        return rootNode.get("action").asText();
     }
 
     /**
@@ -82,7 +82,7 @@ public class HistoryItem {
      */
     public String getComment() {
         if (rootNode.get("comment") == null)return null;
-        return rootNode.get("comment").getValueAsText();
+        return rootNode.get("comment").asText();
     }
 
     /**
@@ -91,7 +91,7 @@ public class HistoryItem {
      */
     public Date getStartDate(){
         if (rootNode.get("startTime") == null)return null;
-        return WorkflowClient.parseJSONDate(rootNode.get("startTime").getValueAsText());
+        return WorkflowClient.parseJSONDate(rootNode.get("startTime").asText());
     }
 
     /**
@@ -100,7 +100,7 @@ public class HistoryItem {
      */
     public Date getEndDate(){
         if (rootNode.get("endTime") == null)return null;
-        return WorkflowClient.parseJSONDate(rootNode.get("endTime").getValueAsText());
+        return WorkflowClient.parseJSONDate(rootNode.get("endTime").asText());
     }
 
 }

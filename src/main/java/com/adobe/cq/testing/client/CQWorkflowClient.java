@@ -16,6 +16,7 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.workflow.EventType;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -23,7 +24,7 @@ import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
-import org.codehaus.jackson.JsonNode;
+
 
 import java.net.URI;
 import java.util.HashMap;
@@ -174,10 +175,10 @@ public class CQWorkflowClient extends WorkflowClient {
             return null;
 
         Map<String, String> launcher = new HashMap<>();
-        Iterator<String> it = launcherNode.getFieldNames();
+        Iterator<String> it = launcherNode.fieldNames();
         while (it.hasNext()) {
             String propName = it.next();
-            launcher.put(propName, launcherNode.get(propName).getValueAsText());
+            launcher.put(propName, launcherNode.get(propName).asText());
         }
 
         return launcher;
@@ -212,6 +213,6 @@ public class CQWorkflowClient extends WorkflowClient {
         workflowModel = workflowModel.endsWith("/jcr:content") ? workflowModel
                 : workflowModel+"/jcr:content" ;
         JsonNode json = this.adaptTo(JsonClient.class).doGetJson(workflowModel, 0);
-        return (!json.path("transient").isMissingNode()) && (json.get("transient").getValueAsText().equalsIgnoreCase("true"));
+        return (!json.path("transient").isMissingNode()) && (json.get("transient").asText().equalsIgnoreCase("true"));
     }
 }

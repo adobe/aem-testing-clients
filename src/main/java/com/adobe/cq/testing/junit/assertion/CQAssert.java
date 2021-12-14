@@ -18,10 +18,10 @@ package com.adobe.cq.testing.junit.assertion;
 import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.JsonClient;
 import com.adobe.cq.testing.util.TestUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.poller.Polling;
-import org.codehaus.jackson.JsonNode;
 import org.junit.Assert;
 
 import java.io.IOException;
@@ -106,7 +106,7 @@ public class CQAssert {
         }
 
         // check if jcr:primaryType is set to sling:OrderedFolder
-        String primaryType = rootNode.get("jcr:primaryType").getValueAsText();
+        String primaryType = rootNode.get("jcr:primaryType").asText();
 
         Assert.assertTrue("jcr:primaryType of folder node " + path + " is neither sling:OrderedFolder nor Sling:Folder",
                 ("sling:OrderedFolder".equals(primaryType) ||"sling:Folder".equals(primaryType) ));
@@ -121,7 +121,7 @@ public class CQAssert {
         // check if jcr:primaryType is set to cq:PageContent
         Assert.assertEquals("jcr:primaryType of jcr:content node below " + path +
                 " is not set to nt:unstructured!",
-                "nt:unstructured", contentNode.get("jcr:primaryType").getTextValue());
+                "nt:unstructured", contentNode.get("jcr:primaryType").textValue());
 
         // check if jcr:title is set
         Assert.assertNotNull("jcr:title property is not set in jcr:content node below " +
@@ -130,7 +130,7 @@ public class CQAssert {
         // check if jcr:title is set to the folder title
         Assert.assertEquals("jcr:title of jcr:content node below " + path +
                 " is not set folder title " + folderTitle + "!",
-                folderTitle, contentNode.get("jcr:title").getTextValue());
+                folderTitle, contentNode.get("jcr:title").textValue());
     }
 
     /**
@@ -157,7 +157,7 @@ public class CQAssert {
 
         // check if jcr:primaryType is set to sling:OrderedFolder
         Assert.assertEquals("jcr:primaryType of folder node " + path + " is not set to sling:OrderedFolder!",
-                "sling:OrderedFolder", node.get("jcr:primaryType").getValueAsText());
+                "sling:OrderedFolder", node.get("jcr:primaryType").asText());
 
         // check if file node exists
         Assert.assertTrue("No file node found below " + path + "!",
@@ -171,7 +171,7 @@ public class CQAssert {
         // check if jcr:primaryType is set to nt:file
         Assert.assertEquals("jcr:primaryType of file node below " + path +
                 " is not set to nt:file!",
-                "nt:file", node.get("jcr:primaryType").getTextValue());
+                "nt:file", node.get("jcr:primaryType").textValue());
 
         // check if jcr:content node exists
         Assert.assertTrue("No jcr:content node found below " + path + "!",
@@ -183,12 +183,12 @@ public class CQAssert {
 
         // check if jcr:mimeType is set correctly
         Assert.assertEquals("jcr:mimeType is not set to " + mimeType,
-                mimeType, node.path("jcr:mimeType").getTextValue());
+                mimeType, node.path("jcr:mimeType").textValue());
 
         // check if jcr:primaryType is set to nt:resource
         Assert.assertEquals("jcr:primaryType of jcr:content node below " + path +
                 " is not set to nt:resource!",
-                "nt:resource", node.path("jcr:primaryType").getTextValue());
+                "nt:resource", node.path("jcr:primaryType").textValue());
 
         try {
             InputStream in = client.doStreamGet(path, null, null).getEntity().getContent();
@@ -229,7 +229,7 @@ public class CQAssert {
 
         // check if jcr:primaryType is set to dam:Asset
         Assert.assertEquals("jcr:primaryType of folder node " + path + " is not set to dam:Asset!",
-                "dam:Asset", node.get("jcr:primaryType").getValueAsText());
+                "dam:Asset", node.get("jcr:primaryType").asText());
 
         // check if jcr:content node exists
         Assert.assertTrue("No jcr:content node found below " + path + "!",
@@ -243,7 +243,7 @@ public class CQAssert {
         // check if jcr:primaryType is set to dam:AssetContent
         Assert.assertEquals("jcr:primaryType of jcr:content node below " + path +
                 " is not set to dam:AssetContent!",
-                "dam:AssetContent", node.get("jcr:primaryType").getTextValue());
+                "dam:AssetContent", node.get("jcr:primaryType").textValue());
 
         // check if metadata node exists
         Assert.assertTrue("No metadata node found below " + path + "!",
@@ -268,7 +268,7 @@ public class CQAssert {
         // check if jcr:primaryType is set to nt:file
         Assert.assertEquals("jcr:primaryType of node  " + path +
                 " is not set to nt:file!",
-                "nt:file", node.get("jcr:primaryType").getTextValue());
+                "nt:file", node.get("jcr:primaryType").textValue());
 
         // check if jcr:content node exists
         Assert.assertTrue("No jcr:content node found below " + path + "!",
@@ -280,7 +280,7 @@ public class CQAssert {
 
         // check if jcr:mimeType is set correctly
         Assert.assertEquals("jcr:mimeType is not set to " + mimeType,
-                mimeType, node.get("jcr:mimeType").getTextValue());
+                mimeType, node.get("jcr:mimeType").textValue());
 
         try {
             Assert.assertTrue("The original file and the requested file are not the same",
@@ -313,7 +313,7 @@ public class CQAssert {
 
         // check if jcr:primaryType is set to cq:Page
         Assert.assertEquals("jcr:primaryType of page node " + path + " is not set to cq:Page!",
-                "cq:Page", rootNode.get("jcr:primaryType").getValueAsText());
+                "cq:Page", rootNode.get("jcr:primaryType").asText());
 
         // check if jcr:content node exists
         Assert.assertTrue("No jcr:content node found below " + path + "!", !rootNode.path("jcr:content").isMissingNode());
@@ -335,7 +335,7 @@ public class CQAssert {
         JsonNode liveSyncConfig = contentNode.path("cq:LiveSyncConfig");
         Assert.assertTrue("No cq:LiveSyncConfig node found!", !liveSyncConfig.isMissingNode());
         Assert.assertEquals("cq:master is not set correctly!", masterPath, liveSyncConfig.get("cq:master")
-                .getValueAsText());
+                .asText());
         Assert.assertNotNull("cq:isDeep is not set!", liveSyncConfig.get("cq:isDeep"));
     }
 
@@ -358,7 +358,7 @@ public class CQAssert {
             currentNode = currentNode.path(child[0]);
             Assert.assertTrue("No " + child[0] + " node found!", !currentNode.isMissingNode());
             Assert.assertEquals(child[0] + " is not of type " + child[1], currentNode.get("jcr:primaryType")
-                    .getValueAsText(), child[1]);
+                    .asText(), child[1]);
         }
         String[][] tabs = {
                 {"tab_lan", "/libs/wcm/msm/templates/blueprint/defaults/language_tab.infinity.json"},
@@ -368,9 +368,9 @@ public class CQAssert {
         for (String[] child : tabs) {
             JsonNode tab = currentNode.path(child[0]);
             Assert.assertTrue("No " + child[0] + " node found!", !tab.isMissingNode());
-            Assert.assertEquals(child[0] + " has wrong type.", tab.get("jcr:primaryType").getValueAsText(),
+            Assert.assertEquals(child[0] + " has wrong type.", tab.get("jcr:primaryType").asText(),
                     "cq:Widget");
-            Assert.assertEquals(child[0] + " has wrong path property.", tab.get("path").getValueAsText(), child[1]);
+            Assert.assertEquals(child[0] + " has wrong path property.", tab.get("path").asText(), child[1]);
         }
     }
 

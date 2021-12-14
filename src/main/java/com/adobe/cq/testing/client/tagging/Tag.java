@@ -17,8 +17,8 @@
 package com.adobe.cq.testing.client.tagging;
 
 import com.adobe.cq.testing.client.TagClient;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.ClientException;
-import org.codehaus.jackson.JsonNode;
 
 import java.util.StringTokenizer;
 

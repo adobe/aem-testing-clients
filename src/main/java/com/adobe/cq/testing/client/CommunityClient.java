@@ -15,6 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.NameValuePair;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
@@ -24,7 +25,7 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.SlingParameter;
-import org.codehaus.jackson.JsonNode;
+
 
 import java.net.URI;
 
@@ -166,7 +167,7 @@ public class CommunityClient extends CQClient {
      * @param email          the users email
      * @param expectedStatus list of allowed HTTP Status to be returned. If not set,
      *                       http status 200 (OK) is assumed.
-     * @return a {@link org.codehaus.jackson.JsonNode} mapping to the requested content node.
+     * @return a {@link com.fasterxml.jackson.databind.JsonNode} mapping to the requested content node.
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode createComment(String commentPath, String comment, String user, String url,
@@ -197,7 +198,7 @@ public class CommunityClient extends CQClient {
      * @param start       defines the start node below ugcBasePath
      * @param predicate   Predicate used to filter hierarchy nodes in the siteadmin e.g. siteadmin
      * @param view        filter: null | approved | denied | spam | notspam
-     * @return a {@link org.codehaus.jackson.JsonNode} mapping to the requested content node.
+     * @return a {@link com.fasterxml.jackson.databind.JsonNode} mapping to the requested content node.
      * @throws ClientException If something fails during request/response cycle
      */
     public JsonNode getComments(String ugcBasePath, int limit, int start, String predicate,

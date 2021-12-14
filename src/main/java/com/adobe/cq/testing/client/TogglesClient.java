@@ -15,12 +15,13 @@
  */
 package com.adobe.cq.testing.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.JsonUtils;
-import org.codehaus.jackson.JsonNode;
+
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class TogglesClient extends CQClient {
         SlingHttpResponse response = doGet(TOGGLES_PATH, SC_OK);
         JsonUtils.getJsonNodeFromString(response.getContent())
                 .path("enabled")
-                .forEach((JsonNode node) -> enabledToggles.add(node.getTextValue()));
+                .forEach((JsonNode node) -> enabledToggles.add(node.textValue()));
 
         return enabledToggles;
     }

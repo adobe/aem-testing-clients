@@ -16,7 +16,8 @@
 
 package com.adobe.cq.testing.client.components.collab;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,18 +56,18 @@ public class Rating {
     public Rating(JsonNode node) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
-            this.added = format.parse(node.get("added").getTextValue());
+            this.added = format.parse(node.get("added").textValue());
         } catch (ParseException e) {
             this.added = null;
         }
-        this.rating = node.get("rating").getIntValue();
-        this.description = node.get("jcr:description").getTextValue();
-        this.url = node.get("url").getTextValue();
-        this.userAgent = node.get("userAgent").getTextValue();
-        this.email = node.get("email").getTextValue();
-        this.approved = node.get("approved") != null && node.get("approved").getBooleanValue();
-        this.userIdentifier = node.get("userIdentifier").getTextValue();
-        this.createdBy = node.get("jcr:createdBy").getTextValue();
+        this.rating = node.get("rating").intValue();
+        this.description = node.get("jcr:description").textValue();
+        this.url = node.get("url").textValue();
+        this.userAgent = node.get("userAgent").textValue();
+        this.email = node.get("email").textValue();
+        this.approved = node.get("approved") != null && node.get("approved").booleanValue();
+        this.userIdentifier = node.get("userIdentifier").textValue();
+        this.createdBy = node.get("jcr:createdBy").textValue();
     }
 
 

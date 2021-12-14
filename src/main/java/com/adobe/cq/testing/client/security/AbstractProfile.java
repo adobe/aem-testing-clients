@@ -15,8 +15,8 @@
  */
 package com.adobe.cq.testing.client.security;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.ClientException;
-import org.codehaus.jackson.JsonNode;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -86,9 +86,9 @@ public class AbstractProfile implements Profile {
     private void loadProperties() throws ClientException {
         JsonNode profileNode = getProfileNode();
         if (profileNode != null) {
-            for (Iterator<String> fieldNames = profileNode.getFieldNames(); fieldNames.hasNext(); ) {
+            for (Iterator<String> fieldNames = profileNode.fieldNames(); fieldNames.hasNext(); ) {
                 String fieldName = fieldNames.next();
-                profileProps.put(fieldName, profileNode.get(fieldName).getTextValue());
+                profileProps.put(fieldName, profileNode.get(fieldName).textValue());
             }
         }
     }

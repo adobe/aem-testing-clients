@@ -16,13 +16,13 @@
 package com.adobe.cq.testing.client.security;
 
 import com.adobe.cq.testing.client.SecurityClient;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
-import org.codehaus.jackson.JsonNode;
 
 /**
  * http://qabase.day.com/cf#/content/qabase/testcases/cq/setting_user_andgrouppreferencesdocumentation.html
@@ -97,7 +97,7 @@ public class CQPreferences {
      */
     public String getLanguage() throws ClientException {
         JsonNode lang = getJson().get(LANGUAGE_PROPERTY);
-        return (lang == null) ? LANGUAGE_EN : lang.getValueAsText();
+        return (lang == null) ? LANGUAGE_EN : lang.asText();
     }
 
     /**

@@ -22,6 +22,8 @@ import com.adobe.cq.testing.client.assets.dto.InitiateUploadFile;
 import com.adobe.cq.testing.client.assets.dto.InitiateUploadResponse;
 import com.adobe.cq.testing.client.assets.dto.ProcessedAsset;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -47,8 +49,6 @@ import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.ResourceUtil;
 import org.apache.sling.testing.clients.util.ServerErrorRetryStrategy;
 import org.apache.sling.testing.clients.util.poller.Polling;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,7 +206,7 @@ public class CQAssetsClient extends CQClient {
         if (assetStateNode == null) {
             throw new ClientException("Property not found: " + requestPath + "/" + DAM_ASSET_STATE);
         } else {
-            return assetStateNode.getTextValue();
+            return assetStateNode.textValue();
         }
     }
 
@@ -224,12 +224,12 @@ public class CQAssetsClient extends CQClient {
         SlingHttpResponse response = this.doGet(requestPath, HttpStatus.SC_OK, HttpStatus.SC_NOT_FOUND);
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             JsonNode failedRenditions = JsonUtils.getJsonNodeFromString(response.getContent());
-            Iterator<String> fieldNames = failedRenditions.getFieldNames();
+            Iterator<String> fieldNames = failedRenditions.fieldNames();
             while (fieldNames.hasNext()) {
                 String name = fieldNames.next();
                 JsonNode n = failedRenditions.get(name);
-                String reason = n.get("reason") != null ? n.get("reason").getTextValue() : null;
-                String message = n.get("message") != null ? n.get("message").getTextValue() : null;
+                String reason = n.get("reason") != null ? n.get("reason").textValue() : null;
+                String message = n.get("message") != null ? n.get("message").textValue() : null;
                 if (reason != null && message != null) {
                     failedRenditionList.add(new FailedRendition(name, message, reason));
                 }
@@ -251,11 +251,11 @@ public class CQAssetsClient extends CQClient {
         SlingHttpResponse response = this.doGet(requestPath, HttpStatus.SC_OK, HttpStatus.SC_NOT_FOUND);
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             JsonNode processedRenditions = JsonUtils.getJsonNodeFromString(response.getContent());
-            Iterator<String> fieldNames = processedRenditions.getFieldNames();
+            Iterator<String> fieldNames = processedRenditions.fieldNames();
             while (fieldNames.hasNext()) {
                 String name = fieldNames.next();
                 JsonNode n = processedRenditions.get(name);
-                String primaryType = n.get("jcr:primaryType") != null ? n.get("jcr:primaryType").getTextValue() : null;
+                String primaryType = n.get("jcr:primaryType") != null ? n.get("jcr:primaryType").textValue() : null;
                 if (primaryType != null) {
                     processedRenditionList.add(name);
                 }
@@ -310,8 +310,8 @@ public class CQAssetsClient extends CQClient {
         JsonNode root = JsonUtils.getJsonNodeFromString(response.getContent());
         JsonNode createLink = Util.getJsonChildNode(root, ACP_LINKS, ACP_REL_CREATE);
         if (createLink != null) {
-            String href = createLink.path(ACP_LINK_HREF).getTextValue();
-            String type = createLink.path(ACP_LINK_TYPE).getTextValue();
+            String href = createLink.path(ACP_LINK_HREF).textValue();
+            String type = createLink.path(ACP_LINK_TYPE).textValue();
             return DBA_CONTENT_DAM_INITIATE_UPLOAD.equals(href) && ACP_LINK_TYPE_DIRECT.equals(type);
         } else {
             return false;

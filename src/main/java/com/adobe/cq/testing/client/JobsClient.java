@@ -16,6 +16,7 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.jobs.*;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.NameValuePair;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -24,7 +25,6 @@ import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
-import org.codehaus.jackson.JsonNode;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class JobsClient extends CQClient {
         JobsStatistics jobsStatistics = new JobsStatistics();
 
         // Populate the active queues statistics
-        Iterator<String> activeQueuesIter = data.get("active_queues").getFieldNames();
+        Iterator<String> activeQueuesIter = data.get("active_queues").fieldNames();
         while (activeQueuesIter.hasNext()) {
             String queueName = activeQueuesIter.next();
             JsonNode queueJson = data.get("active_queues").get(queueName);
@@ -74,7 +74,7 @@ public class JobsClient extends CQClient {
         }
 
         // Populate the topics statistics
-        Iterator<JsonNode> topicsIter = data.get("topic_statistics").getElements();
+        Iterator<JsonNode> topicsIter = data.get("topic_statistics").elements();
         while (topicsIter.hasNext()) {
             jobsStatistics.addTopicStat(new TopicStat(topicsIter.next()));
         }
@@ -105,21 +105,21 @@ public class JobsClient extends CQClient {
 
     private ArrayList<JobDescriptor> extractJobDescriptors(JsonNode root) {
         ArrayList<JobDescriptor> jobDescriptors = new ArrayList<>();
-        Iterator<String> elems = root.getFieldNames();
+        Iterator<String> elems = root.fieldNames();
         while (elems.hasNext()) {
             String jobId = elems.next();
             JsonNode jobNode = root.get(jobId);
             JobDescriptor jd = new JobDescriptor();
             jd.setId(jobId);
-            jd.setName(jobNode.get("name").getTextValue());
-            jd.setTopic(jobNode.get("topic").getTextValue());
-            jd.setQueueName(jobNode.get("queue_name").getTextValue());
-            jd.setCreateTime(jobNode.get("created").getLongValue());
-            jd.setStartTime(jobNode.get("processing_started").getLongValue());
-            jd.setMaxRetries(jobNode.get("max_retries").getIntValue());
-            jd.setRetryCount(jobNode.get("retry_count").getIntValue());
-            jd.setCreatedBy(jobNode.get("created_by").getTextValue());
-            jd.setTargetInstanceId(jobNode.get("target_instance").getTextValue());
+            jd.setName(jobNode.get("name").textValue());
+            jd.setTopic(jobNode.get("topic").textValue());
+            jd.setQueueName(jobNode.get("queue_name").textValue());
+            jd.setCreateTime(jobNode.get("created").longValue());
+            jd.setStartTime(jobNode.get("processing_started").longValue());
+            jd.setMaxRetries(jobNode.get("max_retries").intValue());
+            jd.setRetryCount(jobNode.get("retry_count").intValue());
+            jd.setCreatedBy(jobNode.get("created_by").textValue());
+            jd.setTargetInstanceId(jobNode.get("target_instance").textValue());
             jobDescriptors.add(jd);
         }
 

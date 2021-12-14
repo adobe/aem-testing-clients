@@ -16,7 +16,7 @@
 package com.adobe.cq.testing.client.notification;
 
 import com.adobe.cq.testing.client.CQClient;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,13 +39,13 @@ public class Notification {
 
     public Notification(JsonNode jsonNotification) {
 
-        this.id = jsonNotification.get("id").getTextValue();
-        this.modification = jsonNotification.get("modification").getTextValue();
-        this.path = jsonNotification.get("path").getTextValue();
-        this.isRead = jsonNotification.get("isRead").getBooleanValue();
-        this.isUserMessage = jsonNotification.get("isUserMessage").getBooleanValue();
-        this.user = jsonNotification.get("user").getTextValue();
-        String d = jsonNotification.get("date").getTextValue();
+        this.id = jsonNotification.get("id").textValue();
+        this.modification = jsonNotification.get("modification").textValue();
+        this.path = jsonNotification.get("path").textValue();
+        this.isRead = jsonNotification.get("isRead").booleanValue();
+        this.isUserMessage = jsonNotification.get("isUserMessage").booleanValue();
+        this.user = jsonNotification.get("user").textValue();
+        String d = jsonNotification.get("date").textValue();
 
         try {
             SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");

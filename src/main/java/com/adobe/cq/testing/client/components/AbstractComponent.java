@@ -16,13 +16,13 @@
 package com.adobe.cq.testing.client.components;
 
 import com.adobe.cq.testing.client.ComponentClient;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -247,9 +247,9 @@ public abstract class AbstractComponent {
             // check if array is empty
             if (array.size() == 0) return null;
             // return only the first value
-            return array.get(0).getValueAsText();
+            return array.get(0).asText();
         }
-        return getJsonNode(propName).getValueAsText();
+        return getJsonNode(propName).asText();
     }
 
     /**
@@ -296,7 +296,7 @@ public abstract class AbstractComponent {
         // if its a not an array
         if (!propNode.isArray()) {
             // as string array with one entry
-            return new String[]{propNode.getValueAsText()};
+            return new String[]{propNode.asText()};
         }
         ArrayNode array = ((ArrayNode) propNode);
         // check if array is empty
@@ -304,7 +304,7 @@ public abstract class AbstractComponent {
         // return values
         String[] values = new String[array.size()];
         for (int i = 0; i < array.size(); i++) {
-            values[i] = array.get(i).getValueAsText();
+            values[i] = array.get(i).asText();
         }
         return values;
     }
@@ -420,7 +420,7 @@ public abstract class AbstractComponent {
         }
         JsonNode parNode = client.doGetJson(getParentPath(), 1);
         // go through the list of field names
-        for(Iterator<String> it = parNode.getFieldNames();it.hasNext();){
+        for(Iterator<String> it = parNode.fieldNames();it.hasNext();){
             // get next field name
             String testName = it.next();
             // if the field references an object 
@@ -452,7 +452,7 @@ public abstract class AbstractComponent {
         // shortcut
         JsonNode parentNode = getComponentNode();
         // go trough the fields of the component node
-        for(Iterator<String> it = parentNode.getFieldNames();it.hasNext();){
+        for(Iterator<String> it = parentNode.fieldNames();it.hasNext();){
             // get the next field name
             String childName = it.next();
             // get the next field  node
@@ -501,7 +501,7 @@ public abstract class AbstractComponent {
         JsonNode parNode = client.doGetJson(getParentPath(), 1);
         String prevNodeName = null;
         // go through the list of field names
-        for(Iterator<String> it = parNode.getFieldNames();it.hasNext();){
+        for(Iterator<String> it = parNode.fieldNames();it.hasNext();){
             // get next field name
             String testName = it.next();
             // if the field references an object 

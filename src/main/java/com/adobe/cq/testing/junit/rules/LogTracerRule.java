@@ -15,6 +15,8 @@
  */
 package com.adobe.cq.testing.junit.rules;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.apache.sling.testing.clients.ClientException;
@@ -27,8 +29,7 @@ import org.apache.sling.testing.clients.util.config.InstanceConfigException;
 import org.apache.sling.testing.clients.util.config.impl.InstanceConfigCacheImpl;
 import org.apache.sling.testing.clients.util.poller.Polling;
 import org.apache.sling.testing.junit.rules.instance.Instance;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+
 import org.junit.Assert;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;

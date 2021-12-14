@@ -16,7 +16,7 @@
 package com.adobe.cq.testing.client.workflow;
 
 import com.adobe.cq.testing.client.WorkflowClient;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.*;
 
@@ -44,7 +44,7 @@ public class WorkflowInstance {
      */
     public String getId(){
         if (rootNode.get("id") == null)return null;
-        return rootNode.get("id").getValueAsText();
+        return rootNode.get("id").asText();
     }
 
     /**
@@ -53,7 +53,7 @@ public class WorkflowInstance {
      */
     public WorkflowClient.Status getStatus(){
         if (rootNode.get("state") == null)return null;
-        return WorkflowClient.Status.valueOf(rootNode.get("state").getValueAsText());
+        return WorkflowClient.Status.valueOf(rootNode.get("state").asText());
     }
 
     /**
@@ -62,7 +62,7 @@ public class WorkflowInstance {
      */
     public String getModelId(){
         if (rootNode.get("model") == null)return null;
-        return rootNode.get("model").getValueAsText();
+        return rootNode.get("model").asText();
     }
 
     /**
@@ -71,7 +71,7 @@ public class WorkflowInstance {
      */
     public String getPayloadType(){
         if (rootNode.get("payloadType") == null)return null;
-        return rootNode.get("payloadType").getValueAsText();
+        return rootNode.get("payloadType").asText();
     }
 
     /**
@@ -80,7 +80,7 @@ public class WorkflowInstance {
      */
     public String getPayload(){
         if (rootNode.get("payload") == null)return null;
-        return rootNode.get("payload").getValueAsText();
+        return rootNode.get("payload").asText();
     }
 
     /**
@@ -89,7 +89,7 @@ public class WorkflowInstance {
      */
     public String getInitiator(){
         if (rootNode.get("initiator") == null)return null;
-        return rootNode.get("initiator").getValueAsText();
+        return rootNode.get("initiator").asText();
     }
 
     /**
@@ -98,7 +98,7 @@ public class WorkflowInstance {
      */
     public Date getStartTime() {
         if (rootNode.get("startTime") == null)return null;
-        return WorkflowClient.parseJSONDate(rootNode.get("startTime").getValueAsText());
+        return WorkflowClient.parseJSONDate(rootNode.get("startTime").asText());
     }
 
     /**
@@ -107,7 +107,7 @@ public class WorkflowInstance {
      */
     public Date getEndTime()  {
         if (rootNode.get("endTime") == null)return null;
-        return WorkflowClient.parseJSONDate(rootNode.get("endTime").getValueAsText());
+        return WorkflowClient.parseJSONDate(rootNode.get("endTime").asText());
     }
 
     public List<String> getWorkItemIds(){
@@ -116,7 +116,7 @@ public class WorkflowInstance {
 
         JsonNode itemsNode = rootNode.get("workItems");
         for (int i = 0; i < itemsNode.size(); i++){
-            list.add(itemsNode.get(i).get("id").getValueAsText());
+            list.add(itemsNode.get(i).get("id").asText());
         }
         return list;
     }
@@ -134,7 +134,7 @@ public class WorkflowInstance {
         JsonNode itemsNode = rootNode.get("workItems");
         for (int i = 0; i < itemsNode.size(); i++){
             JsonNode workItem = itemsNode.get(i);
-            map.put(workItem.get("id").getValueAsText(), workItem.get("node").getValueAsText());
+            map.put(workItem.get("id").asText(), workItem.get("node").asText());
         }
         return map;
     }

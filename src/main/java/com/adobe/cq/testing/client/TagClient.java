@@ -16,6 +16,7 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.tagging.Tag;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -32,7 +33,6 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.URLParameterBuilder;
-import org.codehaus.jackson.JsonNode;
 
 import java.net.URI;
 import java.util.ArrayList;

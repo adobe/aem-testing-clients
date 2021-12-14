@@ -17,6 +17,7 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.util.TestUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.Header;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
@@ -28,7 +29,7 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.URLParameterBuilder;
-import org.codehaus.jackson.JsonNode;
+
 
 import java.net.URI;
 import java.text.ParseException;
@@ -190,7 +191,7 @@ public class VersioningClient extends CQClient {
      * @throws java.text.ParseException if the date is not valid
      */
     public long getVersionCreationDate(JsonNode version) throws ParseException {
-        String creationDate = version.path("created").getValueAsText();
+        String creationDate = version.path("created").asText();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         Date convertDate = dateFormat.parse(creationDate);
         return convertDate.getTime();

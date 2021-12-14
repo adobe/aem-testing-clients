@@ -16,11 +16,11 @@
 
 package com.adobe.cq.testing.client.assets;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.Header;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.ResourceUtil;
-import org.codehaus.jackson.JsonNode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,7 +121,7 @@ public class Util {
     // TODO: Contribute to org.apache.sling.testing.clients.util.JsonUtils
     public static long getJsonLongValue(JsonNode parent, String fieldName) {
         JsonNode field = parent.get(fieldName);
-        return field != null ? field.getLongValue() : 0;
+        return field != null ? field.longValue() : 0;
     }
 
     private Util() {

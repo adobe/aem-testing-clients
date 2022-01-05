@@ -43,9 +43,13 @@ public class Page extends ExternalResource {
 
     private Logger logger = LoggerFactory.getLogger(Page.class);
 
+    // singleton value; true if the target test instances have been prepared once since the class was loaded
+    // this is used to run prepare() once per classloader / "suite" execution
+    private static boolean prepared = false;
     private static final String SITE_ROOT_PATH = "/content/test-site";
     private static final String TEMPLATE_ROOT_PATH = "/conf/test-site";
     private static final String TEMPLATE_PATH = "/conf/test-site/settings/wcm/templates/content-page";
+
 
     private final Instance quickstartRule;
 
@@ -142,6 +146,8 @@ public class Page extends ExternalResource {
      * @throws ClientException if the content cannot be created
      */
     protected void prepare() throws ClientException {
+        if (Page.prepared) return;
+
         if (!getClient().exists(TEMPLATE_ROOT_PATH)) {
             try {
                 InputStream templateStream =
@@ -165,6 +171,8 @@ public class Page extends ExternalResource {
                 throw new ClientException("Failed to create test site.", e);
             }
         }
+        // set static prepared value
+        Page.prepared = true;
     }
 
     /**

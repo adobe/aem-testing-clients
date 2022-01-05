@@ -146,7 +146,9 @@ public class Page extends ExternalResource {
      * @throws ClientException if the content cannot be created
      */
     protected void prepare() throws ClientException {
-        if (!prepared || !getClient().exists(TEMPLATE_ROOT_PATH)) {
+        if (Page.prepared) return;
+
+        if (!getClient().exists(TEMPLATE_ROOT_PATH)) {
             try {
                 InputStream templateStream =
                         ResourceUtil.getResourceAsStream("/com/adobe/cq/testing/junit/rules/template.json");
@@ -158,7 +160,7 @@ public class Page extends ExternalResource {
             }
         }
 
-        if (!prepared || !getClient().exists(SITE_ROOT_PATH)) {
+        if (!getClient().exists(SITE_ROOT_PATH)) {
             try {
                 InputStream siteStream =
                         ResourceUtil.getResourceAsStream("/com/adobe/cq/testing/junit/rules/site.json");

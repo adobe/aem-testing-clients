@@ -22,9 +22,6 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import static com.adobe.cq.testing.junit.rules.CQClassRule.DEFAULT_AUTHOR_CONFIG;
-import static com.adobe.cq.testing.junit.rules.CQClassRule.DEFAULT_PUBLISH_CONFIG;
-
 public class CQAuthorPublishClassRule implements TestRule {
 
     /** Granite rules to be executed at class level */
@@ -42,11 +39,22 @@ public class CQAuthorPublishClassRule implements TestRule {
         this(false);
     }
 
+    /**
+     * @param forceBasicAuth Force basic authentication for author and publish instances.
+     */
     public CQAuthorPublishClassRule(boolean forceBasicAuth) {
+        this(forceBasicAuth, forceBasicAuth);
+    }
+
+    /**
+     * @param forceBasicAuthAuthor Force basic authentication for author instance.
+     * @param forceBasicAuthPublish Force basic authentication for publish instance.
+     */
+    public CQAuthorPublishClassRule(boolean forceBasicAuthAuthor, boolean forceBasicAuthPublish) {
         super();
         cqClassRule = new CQClassRule();
-        authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("author");
-        publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("publish");
+        authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuthAuthor).withRunMode("author");
+        publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuthPublish).withRunMode("publish");
 
         ruleChain = RuleChain.outerRule(cqClassRule)
                 .around(authorRule)

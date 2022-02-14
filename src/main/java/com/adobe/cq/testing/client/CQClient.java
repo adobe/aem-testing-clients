@@ -19,7 +19,8 @@ import com.adobe.cq.testing.util.WCMCommands;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
-import org.apache.http.annotation.Immutable;
+import org.apache.http.annotation.Contract;
+import org.apache.http.annotation.ThreadingBehavior;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -56,7 +57,7 @@ import static org.apache.http.HttpStatus.SC_OK;
  * <p>It extends from {@link SlingClient} which in turn provides functions for
  * manipulating repository nodes directly.</p>
  */
-@Immutable
+@Contract(threading = ThreadingBehavior.IMMUTABLE)
 public class CQClient extends SlingClient {
     public static Logger LOG = LoggerFactory.getLogger(CQClient.class);
 

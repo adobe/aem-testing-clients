@@ -139,7 +139,14 @@ public class CQClient extends SlingClient {
 
             @Override
             public Boolean call() throws Exception {
-                response = wcmCommands.createPage(pageName, pageTitle, parentPath, templatePath, HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+                try {
+                    response = wcmCommands.createPage(pageName, pageTitle, parentPath, templatePath, HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+                } catch (ClientException e) {
+                    ClientException ex = (ClientException) e.getCause();
+                    response = ex.getResponse();
+                    LOG.info("Exception while creating page " + e.toString() + "\n Cause is: " + e.getCause());
+                    throw e;
+                }
                 return true;
             }
         }

@@ -33,6 +33,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.sling.testing.Constants.CHARSET_UTF8;
@@ -203,31 +204,35 @@ public final class CQConfigManagerClient extends CQClient {
             // add required permissions for template author
             CQSecurityClient sClient = client.adaptTo(CQSecurityClient.class);
             ExtendedCQPermissions cqPermissions = new ExtendedCQPermissions(sClient);
+            long timeout = MINUTES.toMillis(1);
+            long delay = 500;
 
             final String templatePath = configPath + "/settings/wcm/templates";
             sClient.waitExists(templatePath, DEFAULT_TIMEOUT, DEFAULT_RETRY_DELAY);
             cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_EVERYONE)
-                    .withPath(templatePath).withRead().build(), SC_OK);
+                    .withPath(templatePath).withRead().build(), timeout, delay, SC_OK);
             cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_CONTENT_AUTHORS)
-                    .withPath(templatePath).withRead().withReplicate().build(), SC_OK);
+                    .withPath(templatePath).withRead().withReplicate().build(), timeout, delay, SC_OK);
             cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_TEMPLATE_AUTHORS)
-                    .withPath(templatePath).withRead().withModify().withCreate().withDelete().withReplicate().build(), SC_OK);
+                    .withPath(templatePath).withRead().withModify().withCreate().withDelete()
+                    .withReplicate().build(), timeout, delay, SC_OK);
             cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId("version-manager-service")
-                    .withPath(templatePath).withRead().withModify().withCreate().withDelete().build(), SC_OK);
+                    .withPath(templatePath).withRead().withModify().withCreate().withDelete().build(), timeout, delay, SC_OK);
 
             final String policiesPath = configPath + "/settings/wcm/policies";
             sClient.waitExists(policiesPath, DEFAULT_TIMEOUT, DEFAULT_RETRY_DELAY);
             cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_EVERYONE)
-                    .withPath(policiesPath).withRead().build(), SC_OK);
+                    .withPath(policiesPath).withRead().build(), timeout, delay, SC_OK);
             cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_CONTENT_AUTHORS)
-                    .withPath(policiesPath).withRead().withReplicate().build(), SC_OK);
+                    .withPath(policiesPath).withRead().withReplicate().build(), timeout, delay, SC_OK);
             cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_TEMPLATE_AUTHORS)
-                    .withPath(policiesPath).withRead().withModify().withCreate().withDelete().withReplicate().build(), SC_OK);
+                    .withPath(policiesPath).withRead().withModify().withCreate().withDelete()
+                    .withReplicate().build(), timeout, delay, SC_OK);
 
             final String templateTypesPath = configPath + "/settings/wcm/template-types";
             sClient.waitExists(templateTypesPath, DEFAULT_TIMEOUT, DEFAULT_RETRY_DELAY);
             cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_TEMPLATE_AUTHORS)
-                    .withPath(templateTypesPath).withRead().build(), SC_OK);
+                    .withPath(templateTypesPath).withRead().build(), timeout, delay, SC_OK);
         }
     }
 

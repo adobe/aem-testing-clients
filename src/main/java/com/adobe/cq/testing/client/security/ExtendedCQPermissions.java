@@ -70,7 +70,7 @@ public class ExtendedCQPermissions extends CQPermissions {
         ChangePermissionsPolling createPolling = new ChangePermissionsPolling();
         try {
             createPolling.poll(timeout, delay);
-        } catch(TimeoutException e) {
+        } catch (TimeoutException e) {
             String errorMsg = String.format("Failed to change permission for {} at {} in {}",
                     config.getAuthorizableId(), config.getPath(), createPolling.getWaited());
             throw new ClientException(errorMsg, e);
@@ -90,28 +90,37 @@ public class ExtendedCQPermissions extends CQPermissions {
      * @return the root {@link JsonNode}
      * @throws ClientException If something fails during request/response cycle after 10 times unsuccessful retry
      */
-    @Override
-    public JsonNode getPermissions(String authorizableId, String path, int depth, int... expectedStatus) throws
-            ClientException {
-        int retries = 0;
-        int maxRetries = 10;
-        boolean passed = false;
-        JsonNode permissions = JsonNodeFactory.instance.objectNode();
-        while (!passed && (retries < maxRetries)) {
-            try {
-                permissions = super.getPermissions(authorizableId, path, depth, expectedStatus);
-                passed = true;
-            } catch (ClientException e) {
-                if (retries + 1 == maxRetries) {
-                    LOG.error("Maximal retries reached!");
+
+    public JsonNode getPermissionsWithRetry(String authorizableId, String path, int depth,
+                                   long timeout, long delay, int... expectedStatus) throws
+            ClientException, InterruptedException {
+        class GetPermissionsPolling extends Polling {
+            JsonNode permissions = JsonNodeFactory.instance.objectNode();
+
+            @Override
+            public Boolean call() throws Exception {
+                try {
+                    permissions = getPermissions(authorizableId, path, depth, expectedStatus);
+                    LOG.info("get permission response string for {} at {} with depth {}: {}",
+                            authorizableId, path, depth, permissions);
+                    return true;
+                } catch (Exception e) {
+                    LOG.warn("Error on get permission -> retry:  {}", e.getLocalizedMessage(), e);
                     throw e;
                 }
-                LOG.warn("Error at retry number {} on get permission -> retry:  {}",retries, e.getLocalizedMessage(), e);
-            } finally {
-                retries++;
             }
         }
-        return permissions;
+
+        GetPermissionsPolling createPolling = new GetPermissionsPolling();
+        try {
+            createPolling.poll(timeout, delay);
+        } catch (TimeoutException e) {
+            String errorMsg = String.format("Failed to get permission for {} at {} with depth {} in {}",
+                    authorizableId, path, depth, createPolling.getWaited());
+            throw new ClientException(errorMsg, e);
+        }
+        return createPolling.permissions;
+
     }
 
 }

@@ -17,11 +17,11 @@ package com.adobe.cq.testing.client.security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.ClientException;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.StringJoiner;
 
 /**
  * Define and load authorizable's profile properties
@@ -99,15 +99,11 @@ public class AbstractProfile implements Profile {
         }
     }
 
-    private @NotNull String arrayNodeToString(@NotNull JsonNode node) {
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < node.size(); i++) {
-            sb.append(node.get(i).asText());
-            if (i + 1 < node.size()) {
-                sb.append(",");
-            }
+    private String arrayNodeToString(JsonNode node) {
+        StringJoiner sj = new StringJoiner(",", "[", "]");
+        for (final JsonNode val : node) {
+            sj.add(val.asText());
         }
-        sb.append("]");
-        return sb.toString();
+        return sj.toString();
     }
 }

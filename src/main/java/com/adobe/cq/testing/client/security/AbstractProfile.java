@@ -90,7 +90,7 @@ public class AbstractProfile implements Profile {
             for (Iterator<String> fieldNames = profileNode.fieldNames(); fieldNames.hasNext(); ) {
                 String fieldName = fieldNames.next();
                 JsonNode fieldNode = profileNode.get(fieldName);
-                if (fieldNode.isArray()){
+                if (fieldNode.isArray()) {
                     profileProps.put(fieldName, arrayNodeToString(fieldNode));
                 } else {
                     profileProps.put(fieldName, fieldNode.textValue());
@@ -99,11 +99,11 @@ public class AbstractProfile implements Profile {
         }
     }
 
-    private @NotNull String arrayNodeToString (@NotNull JsonNode node) {
+    private @NotNull String arrayNodeToString(@NotNull JsonNode node) {
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < node.size(); i++) {
             sb.append(node.get(i).asText());
-            if ( i+1 < node.size()){
+            if (i + 1 < node.size()) {
                 sb.append(",");
             }
         }

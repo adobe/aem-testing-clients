@@ -21,6 +21,7 @@ import org.apache.sling.testing.clients.ClientException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.StringJoiner;
 
 /**
  * Define and load authorizable's profile properties
@@ -88,8 +89,21 @@ public class AbstractProfile implements Profile {
         if (profileNode != null) {
             for (Iterator<String> fieldNames = profileNode.fieldNames(); fieldNames.hasNext(); ) {
                 String fieldName = fieldNames.next();
-                profileProps.put(fieldName, profileNode.get(fieldName).textValue());
+                JsonNode fieldNode = profileNode.get(fieldName);
+                if (fieldNode.isArray()) {
+                    profileProps.put(fieldName, arrayNodeToString(fieldNode));
+                } else {
+                    profileProps.put(fieldName, fieldNode.textValue());
+                }
             }
         }
+    }
+
+    private String arrayNodeToString(JsonNode node) {
+        StringJoiner sj = new StringJoiner(",", "[", "]");
+        for (final JsonNode val : node) {
+            sj.add(val.asText());
+        }
+        return sj.toString();
     }
 }

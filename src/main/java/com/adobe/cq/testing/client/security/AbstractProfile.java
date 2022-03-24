@@ -17,6 +17,7 @@ package com.adobe.cq.testing.client.security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sling.testing.clients.ClientException;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -88,8 +89,25 @@ public class AbstractProfile implements Profile {
         if (profileNode != null) {
             for (Iterator<String> fieldNames = profileNode.fieldNames(); fieldNames.hasNext(); ) {
                 String fieldName = fieldNames.next();
-                profileProps.put(fieldName, profileNode.get(fieldName).textValue());
+                JsonNode fieldNode = profileNode.get(fieldName);
+                if (fieldNode.isArray()){
+                    profileProps.put(fieldName, arrayNodeToString(fieldNode));
+                } else {
+                    profileProps.put(fieldName, fieldNode.textValue());
+                }
             }
         }
+    }
+
+    private @NotNull String arrayNodeToString (@NotNull JsonNode node) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < node.size(); i++) {
+            sb.append(node.get(i).asText());
+            if ( i+1 < node.size()){
+                sb.append(",");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }

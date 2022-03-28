@@ -16,7 +16,9 @@
 
 package com.adobe.cq.testing.client;
 
-import com.adobe.cq.testing.client.security.CQPermissions;
+
+import com.adobe.cq.testing.client.security.ExtendedCQPermissions;
+import com.adobe.cq.testing.client.security.PermissionConfig;
 import com.adobe.cq.testing.util.CSRFUtils;
 
 import org.apache.http.HttpStatus;
@@ -30,6 +32,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.concurrent.TimeoutException;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.sling.testing.Constants.CHARSET_UTF8;
@@ -196,21 +200,39 @@ public final class CQConfigManagerClient extends CQClient {
          *
          * @throws ClientException if the request fails
          */
-        public void setWcmTemplatesPermissions() throws ClientException {
+        public void setWcmTemplatesPermissions() throws ClientException, TimeoutException, InterruptedException {
             // add required permissions for template author
             CQSecurityClient sClient = client.adaptTo(CQSecurityClient.class);
-            CQPermissions cqPermissions = new CQPermissions(sClient);
+            ExtendedCQPermissions cqPermissions = new ExtendedCQPermissions(sClient);
+            long timeout = MINUTES.toMillis(1);
+            long delay = 500;
+
             final String templatePath = configPath + "/settings/wcm/templates";
-            cqPermissions.changePermissions(GROUPID_EVERYONE, templatePath, true, false, false, false, false, false, false, SC_OK);
-            cqPermissions.changePermissions(GROUPID_CONTENT_AUTHORS, templatePath, true, false, false, false, false, false, true, SC_OK);
-            cqPermissions.changePermissions(GROUPID_TEMPLATE_AUTHORS, templatePath, true, true, true, true, false, false, true, SC_OK);
-            cqPermissions.changePermissions("version-manager-service", templatePath, true, true, true, true, false, false, false, SC_OK);
+            sClient.waitExists(templatePath, DEFAULT_TIMEOUT, DEFAULT_RETRY_DELAY);
+            cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_EVERYONE)
+                    .withPath(templatePath).withRead().build(), timeout, delay, SC_OK);
+            cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_CONTENT_AUTHORS)
+                    .withPath(templatePath).withRead().withReplicate().build(), timeout, delay, SC_OK);
+            cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_TEMPLATE_AUTHORS)
+                    .withPath(templatePath).withRead().withModify().withCreate().withDelete()
+                    .withReplicate().build(), timeout, delay, SC_OK);
+            cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId("version-manager-service")
+                    .withPath(templatePath).withRead().withModify().withCreate().withDelete().build(), timeout, delay, SC_OK);
+
             final String policiesPath = configPath + "/settings/wcm/policies";
-            cqPermissions.changePermissions(GROUPID_EVERYONE, policiesPath, true, false, false, false, false, false, false, SC_OK);
-            cqPermissions.changePermissions(GROUPID_CONTENT_AUTHORS, policiesPath, true, false, false, false, false, false, true, SC_OK);
-            cqPermissions.changePermissions(GROUPID_TEMPLATE_AUTHORS, policiesPath, true, true, true, true, false, false, true, SC_OK);
+            sClient.waitExists(policiesPath, DEFAULT_TIMEOUT, DEFAULT_RETRY_DELAY);
+            cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_EVERYONE)
+                    .withPath(policiesPath).withRead().build(), timeout, delay, SC_OK);
+            cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_CONTENT_AUTHORS)
+                    .withPath(policiesPath).withRead().withReplicate().build(), timeout, delay, SC_OK);
+            cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_TEMPLATE_AUTHORS)
+                    .withPath(policiesPath).withRead().withModify().withCreate().withDelete()
+                    .withReplicate().build(), timeout, delay, SC_OK);
+
             final String templateTypesPath = configPath + "/settings/wcm/template-types";
-            cqPermissions.changePermissions(GROUPID_TEMPLATE_AUTHORS, templateTypesPath, true, false, false, false, false, false, false, SC_OK);
+            sClient.waitExists(templateTypesPath, DEFAULT_TIMEOUT, DEFAULT_RETRY_DELAY);
+            cqPermissions.changePermissionsWithRetry(PermissionConfig.builder().withAuthorizableId(GROUPID_TEMPLATE_AUTHORS)
+                    .withPath(templateTypesPath).withRead().build(), timeout, delay, SC_OK);
         }
     }
 

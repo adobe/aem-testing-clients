@@ -36,14 +36,14 @@ public class ExtendedCQPermissions extends CQPermissions {
 
     /**
      * Changes permissions for an authorizable with retry in case an exception is thrown.
-     * The exception is thrown anyway if 10 times retry did not succeed.
+     * The operation is retried until successful, or until the {timeout} is reached
      *
      * @param config The PermissionConfig to be used
-     * @param expectedStatus list of allowed HTTP Status to be returned. If not set,
-     *                       http status 200 (OK) is assumed.
+     * @param timeout the timeout for retries, in milliseconds
+     * @param delay the delay between retries, in milliseconds
+     * @param expectedStatus list of allowed HTTP statuses to be returned. If not set, http status 200 (OK) is assumed.
      * @return Json node containing resulting permissions
-     * @throws ClientException
-     *          If something fails during request/response cycle after 10 times unsuccessful retry
+     * @throws ClientException If something fails during the request/response cycle after timeout was reached
      */
     public JsonNode changePermissionsWithRetry(PermissionConfig config, long timeout, long delay,
                                                int... expectedStatus) throws ClientException, InterruptedException {
@@ -79,16 +79,17 @@ public class ExtendedCQPermissions extends CQPermissions {
     }
 
     /**
-     * Get permissions for an authorizable with retry in case an exception is thrown.
-     * The exception is thrown anyway if 10 times retry did not succeed.
-     *
+     * Get permissions for an authorizable with retry in case an exception is thrown.*
+     * The operation is retried until successful, or until the {timeout} is reached
+     * 
      * @param authorizableId the Id of the authorizable
      * @param path           path
      * @param depth          depth
-     * @param expectedStatus list of allowed HTTP Status to be returned. If not set,
-     *                       http status 200 (OK) is assumed.
+     * @param timeout the timeout for retries, in milliseconds
+     * @param delay the delay between retries, in milliseconds
+     * @param expectedStatus list of allowed HTTP statuses to be returned. If not set, http status 200 (OK) is assumed.
      * @return the root {@link JsonNode}
-     * @throws ClientException If something fails during request/response cycle after 10 times unsuccessful retry
+     * @throws ClientException If something fails during request/response cycle after timeout was reached
      */
 
     public JsonNode getPermissionsWithRetry(String authorizableId, String path, int depth,

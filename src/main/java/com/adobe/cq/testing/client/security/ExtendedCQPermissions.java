@@ -44,6 +44,7 @@ public class ExtendedCQPermissions extends CQPermissions {
      * @param expectedStatus list of allowed HTTP statuses to be returned. If not set, http status 200 (OK) is assumed.
      * @return Json node containing resulting permissions
      * @throws ClientException If something fails during the request/response cycle after timeout was reached
+     * @throws InterruptedException on interrupt
      */
     public JsonNode changePermissionsWithRetry(PermissionConfig config, long timeout, long delay,
                                                int... expectedStatus) throws ClientException, InterruptedException {
@@ -90,6 +91,7 @@ public class ExtendedCQPermissions extends CQPermissions {
      * @param expectedStatus list of allowed HTTP statuses to be returned. If not set, http status 200 (OK) is assumed.
      * @return the root {@link JsonNode}
      * @throws ClientException If something fails during request/response cycle after timeout was reached
+     * @throws InterruptedException on interrupt
      */
 
     public JsonNode getPermissionsWithRetry(String authorizableId, String path, int depth,

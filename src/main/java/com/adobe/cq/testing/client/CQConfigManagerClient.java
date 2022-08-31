@@ -199,6 +199,8 @@ public final class CQConfigManagerClient extends CQClient {
          * template-authors can update the templates and policies of the current config
          *
          * @throws ClientException if the request fails
+         * @throws TimeoutException if a timeout happens
+         * @throws InterruptedException on interrupt
          */
         public void setWcmTemplatesPermissions() throws ClientException, TimeoutException, InterruptedException {
             // add required permissions for template author

@@ -77,7 +77,7 @@ public class UsingPackageStatement extends Statement {
 
 
     private File generatePackage(final String resourceFolder) throws IOException, URISyntaxException {
-        File generatedPackage = File.createTempFile("temp-package-", ".zip");
+        File generatedPackage = Files.createTempFile("temp-package-", ".zip").toFile();
         generatedPackage.deleteOnExit();
 
         addResourcesToPackage(resourceFolder, initPackage(generatedPackage));

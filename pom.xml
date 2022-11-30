@@ -100,6 +100,19 @@
 
                 </executions>
             </plugin>
+            <!-- Package jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!-- Include project info in manifest (for user-agent) -->
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <!-- Configure release plugin for OSSRH -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

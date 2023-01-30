@@ -37,7 +37,7 @@ public class CQClassRule implements TestRule {
 
     public final SlingClassRule slingBaseClassRule = new SlingClassRule();
 
-    protected TestRule ruleChain = RuleChain.outerRule(slingBaseClassRule);
+    protected TestRule ruleChain = RuleChain.outerRule(slingBaseClassRule).around(new CQUserAgentRule());
 
     static {
         GraniteBackwardsCompatibility.translateGranitePropertiesToSling();

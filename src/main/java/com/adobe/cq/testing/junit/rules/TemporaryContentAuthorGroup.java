@@ -20,6 +20,7 @@ import com.adobe.cq.testing.client.CQSecurityClient;
 import com.adobe.cq.testing.client.security.Authorizable;
 import com.adobe.cq.testing.client.security.CQPermissions;
 import com.adobe.cq.testing.client.security.Group;
+import org.apache.http.HttpStatus;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.util.poller.Polling;
@@ -99,11 +100,31 @@ public class TemporaryContentAuthorGroup extends ExternalResource {
 
             @Override
             public Boolean call() throws Exception {
-                group = securityClient.createGroup((groupName), 201);
+                group = createGroup(groupName);
+
                 // set permissions
                 permissionsObj.changePermissions(group.getId(), CONTENT_NODE, true, true, true, false,
                         false, false, false, 200);
                 return true;
+            }
+
+            private Group createGroup(String groupName) throws InterruptedException, ClientException {
+                try {
+                    group = securityClient.createGroup((groupName), 201);
+                } catch (ClientException e) {
+                    if (HttpStatus.SC_CONFLICT == e.getHttpStatusCode()) {
+                        LOG.warn("409 Conflict detected at group {} creation.", groupName);
+                        if (Group.exists(securityClient, groupName)) {
+                            LOG.warn("409 Conflict group {} already exists. Using it.", groupName);
+                            group = new Group(securityClient, groupName);
+                        } else {
+                            throw e;
+                        }
+                    } else {
+                        throw e;
+                    }
+                }
+                return group;
             }
         }
 

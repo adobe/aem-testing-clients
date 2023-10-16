@@ -44,7 +44,7 @@ public class LoginUtil {
      */
     public static HttpResponse doGetWithLoginToken(String loginToken, CQClient cqClient, String testPage) throws IOException {
         // We uses plain Http Client to avoid integration testing framework side effects.
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
 
         HttpGet get = new HttpGet(cqClient.getUrl(testPage));
 
@@ -69,7 +69,7 @@ public class LoginUtil {
      */
     public static <T extends AbstractSlingClient> String getLoginToken(T graniteClient, String targetPage)
             throws IOException {
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost post = buildFormAuthPost(
                 graniteClient,
                 graniteClient.getUser(), graniteClient.getPassword(),

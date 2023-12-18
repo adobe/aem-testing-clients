@@ -68,6 +68,18 @@ public class CQAssert {
         }
     }
 
+    /**
+     * Tests if the {code}path{code} does not exist on the server connected by  {code}client{code}.
+     * <br>
+     * To do this it tries to reach the page for  {code}timeout{code} milliseconds with  {code}waitInterval{code}
+     * milliseconds pause between each request.
+     *
+     * @param client The client used for requesting the page.
+     * @param path The path to the page
+     * @param timeout How long we should try to reach the page in milliseconds.
+     * @param delay Time between request retries in milliseconds.
+     * @throws InterruptedException to mark this method as waiting
+     */
     public static void assertPathDoesNotExistWithTimeout(final CQClient client, final String path,
                                                          final long timeout, final long delay) throws InterruptedException {
         try {
@@ -76,6 +88,36 @@ public class CQAssert {
                 public Boolean call() {
                     try {
                         return !client.exists(path);
+                    } catch(Throwable e) {
+                        return false;
+                    }
+                }
+            }.poll(timeout, delay);
+        } catch (TimeoutException e) {
+            Assert.fail("Timeout reached while waiting for path to be deleted: " + path);
+        }
+    }
+
+    /**
+     * Tests if the {code}path{code} exists on the server connected by  {code}client{code}.
+     * <br>
+     * To do this it tries to reach the page for  {code}timeout{code} milliseconds with  {code}waitInterval{code}
+     * milliseconds pause between each request.
+     *
+     * @param client The client used for requesting the page.
+     * @param path The path to the page
+     * @param timeout How long we should try to reach the page in milliseconds.
+     * @param delay Time between request retries in milliseconds.
+     * @throws InterruptedException to mark this method as waiting
+     */
+    public static void assertPathExistWithTimeout(final CQClient client, final String path,
+                                                         final long timeout, final long delay) throws InterruptedException {
+        try {
+            new Polling() {
+                @Override
+                public Boolean call() {
+                    try {
+                        return client.exists(path);
                     } catch(Throwable e) {
                         return false;
                     }

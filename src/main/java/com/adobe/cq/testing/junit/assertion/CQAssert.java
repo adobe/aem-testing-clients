@@ -124,7 +124,7 @@ public class CQAssert {
                 }
             }.poll(timeout, delay);
         } catch (TimeoutException e) {
-            Assert.fail("Timeout reached while waiting for path to be deleted: " + path);
+            Assert.fail("Timeout reached while waiting for path to be created: " + path);
         }
     }
 

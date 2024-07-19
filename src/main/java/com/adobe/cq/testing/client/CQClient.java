@@ -148,6 +148,9 @@ public class CQClient extends SlingClient {
         try {
             createPolling.poll(timeout, delay);
         } catch (TimeoutException e) {
+            if (createPolling.getLastException() != null) {
+                LOG.error("Page creation timed out. Last Exception: ", createPolling.getLastException());
+            }
             throw new ClientException("Failed to create page " + pageName + " in " + createPolling.getWaited(), e);
         }
         return createPolling.response;
@@ -203,6 +206,9 @@ public class CQClient extends SlingClient {
         try {
             deletePagePolling.poll(timeout, delay);
         } catch (TimeoutException e) {
+            if (deletePagePolling.getLastException() != null) {
+                LOG.error("Page deletion timed out. Last Exception: ", deletePagePolling.getLastException());
+            }
             throw new ClientException("Could not delete page " + pagePath + " as user " + getUser(), e);
         }
 

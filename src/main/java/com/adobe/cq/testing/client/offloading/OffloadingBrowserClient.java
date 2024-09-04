@@ -141,15 +141,19 @@ public class OffloadingBrowserClient extends CQClient {
         enableDisableTopic(slingId, topic, enable);
 
         // wait for the action to be registered
+        Polling topicPolling = new Polling() {
+            @Override
+            public Boolean call() throws Exception {
+                OffloadingInstanceConfiguration instance = getInstance(slingId);
+                return (enable && instance.topics.contains(topic)) || (!enable && !instance.topics.contains(topic));
+            }
+        };
         try {
-            new Polling() {
-                @Override
-                public Boolean call() throws Exception {
-                    OffloadingInstanceConfiguration instance = getInstance(slingId);
-                    return (enable && instance.topics.contains(topic)) || (!enable && !instance.topics.contains(topic));
-                }
-            }.poll(timeout, 100);
+            topicPolling.poll(timeout, 100);
         } catch (TimeoutException e) {
+            if (topicPolling.getLastException() != null) {
+                LOG.error("Topic registration failed. Last Exception: ", topicPolling.getLastException());
+            }
             throw new ClientException(enable ? "Enabling" : "Disabling"
                     + " the topic did not register in the Offloading Browser.");
         }

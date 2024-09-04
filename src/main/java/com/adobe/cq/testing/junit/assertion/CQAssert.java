@@ -23,6 +23,8 @@ import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.poller.Polling;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +35,7 @@ import java.util.concurrent.TimeoutException;
  * Contains CQ specific Asserts for testing.
  */
 public class CQAssert {
+    public static Logger LOG = LoggerFactory.getLogger(CQAssert.class);
 
     /**
      * Tests if the page at  {code}path{code} exists on the server connected by  {code}client{code} and is
@@ -50,20 +53,20 @@ public class CQAssert {
      */
     public static void assertCQPageExistsWithTimeout(final CQClient client, final String path,
                                                      final long timeout, final long delay) throws InterruptedException {
+        Polling pageExistsPolling = new Polling() {
+            @Override
+            public Boolean call() {
+                // Get page and verify that it is a valid CQPage
+                assertIsCQPage(client, path);
+                return true;
+            }
+        };
         try {
-            new Polling() {
-                @Override
-                public Boolean call() {
-                    try {
-                        // Get page and verify that it is a valid CQPage
-                        assertIsCQPage(client, path);
-                        return true;
-                    } catch(Throwable e) {
-                        return false;
-                    }
-                }
-            }.poll(timeout, delay);
+            pageExistsPolling.poll(timeout, delay);
         } catch (TimeoutException e) {
+            if (pageExistsPolling.getLastException() != null) {
+                LOG.error("Page existence check timed out. Last Exception: ", pageExistsPolling.getLastException());
+            }
             Assert.fail("Timeout reached while waiting for CQ page " + path);
         }
     }
@@ -82,18 +85,18 @@ public class CQAssert {
      */
     public static void assertPathDoesNotExistWithTimeout(final CQClient client, final String path,
                                                          final long timeout, final long delay) throws InterruptedException {
+        Polling pageExistsPolling = new Polling() {
+            @Override
+            public Boolean call() throws Exception {
+                return !client.exists(path);
+            }
+        };
         try {
-            new Polling() {
-                @Override
-                public Boolean call() {
-                    try {
-                        return !client.exists(path);
-                    } catch(Throwable e) {
-                        return false;
-                    }
-                }
-            }.poll(timeout, delay);
+            pageExistsPolling.poll(timeout, delay);
         } catch (TimeoutException e) {
+            if (pageExistsPolling.getLastException() != null) {
+                LOG.error("Page existence check timed out. Last Exception: ", pageExistsPolling.getLastException());
+            }
             Assert.fail("Timeout reached while waiting for path to be deleted: " + path);
         }
     }
@@ -112,18 +115,18 @@ public class CQAssert {
      */
     public static void assertPathExistWithTimeout(final CQClient client, final String path,
                                                          final long timeout, final long delay) throws InterruptedException {
+        Polling pathExistsPolling = new Polling() {
+            @Override
+            public Boolean call() throws Exception {
+                return client.exists(path);
+            }
+        };
         try {
-            new Polling() {
-                @Override
-                public Boolean call() {
-                    try {
-                        return client.exists(path);
-                    } catch(Throwable e) {
-                        return false;
-                    }
-                }
-            }.poll(timeout, delay);
+            pathExistsPolling.poll(timeout, delay);
         } catch (TimeoutException e) {
+            if (pathExistsPolling.getLastException() != null) {
+                LOG.error("Path existence check timed out. Last Exception: ", pathExistsPolling.getLastException());
+            }
             Assert.fail("Timeout reached while waiting for path to be created: " + path);
         }
     }

@@ -4,6 +4,10 @@
 [![javadoc](https://javadoc.io/badge2/com.adobe.cq/cq-testing-clients-64/javadoc.svg)](https://javadoc.io/doc/com.adobe.cq/cq-testing-clients-64)
 
 # AEM testing clients
+
+> [!WARNING]
+> This branch is not maintained anymore.
+
 HTTP testing clients and utilities for AEM, based on [sling.testing.clients](https://github.com/apache/sling-org-apache-sling-testing-clients).
 
 ## How to use

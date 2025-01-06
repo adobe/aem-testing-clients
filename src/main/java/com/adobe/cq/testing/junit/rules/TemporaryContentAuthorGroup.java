@@ -24,7 +24,6 @@ import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.util.poller.Polling;
 import org.junit.rules.ExternalResource;
-import org.ops4j.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,7 @@ public class TemporaryContentAuthorGroup extends ExternalResource {
      */
     public TemporaryContentAuthorGroup(Supplier<SlingClient> creatorSupplier) {
         if (creatorSupplier == null) {
-            throw new NullArgumentException("creatorSupplier is null");
+            throw new IllegalArgumentException("creatorSupplier is null");
         }
 
         this.creatorSupplier = creatorSupplier;

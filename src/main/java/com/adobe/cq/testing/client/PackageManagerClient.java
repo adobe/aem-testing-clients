@@ -205,16 +205,17 @@ public class PackageManagerClient extends CQClient {
 
         @Override
         public int hashCode() {
+            final int hash_multiplier = 31;
             int result = path != null ? path.hashCode() : 0;
-            result = 31 * result + (name != null ? name.hashCode() : 0);
-            result = 31 * result + (version != null ? version.hashCode() : 0);
-            result = 31 * result + (group != null ? group.hashCode() : 0);
-            result = 31 * result + (description != null ? description.hashCode() : 0);
-            result = 31 * result + (filter != null ? filter.hashCode() : 0);
-            result = 31 * result + (requiresRestart != null ? requiresRestart.hashCode() : 0);
-            result = 31 * result + (requiresRoot != null ? requiresRoot.hashCode() : 0);
-            result = 31 * result + (buildCount != null ? buildCount.hashCode() : 0);
-            result = 31 * result + (builtWith != null ? builtWith.hashCode() : 0);
+            result = hash_multiplier * result + (name != null ? name.hashCode() : 0);
+            result = hash_multiplier * result + (version != null ? version.hashCode() : 0);
+            result = hash_multiplier * result + (group != null ? group.hashCode() : 0);
+            result = hash_multiplier * result + (description != null ? description.hashCode() : 0);
+            result = hash_multiplier * result + (filter != null ? filter.hashCode() : 0);
+            result = hash_multiplier * result + (requiresRestart != null ? requiresRestart.hashCode() : 0);
+            result = hash_multiplier * result + (requiresRoot != null ? requiresRoot.hashCode() : 0);
+            result = hash_multiplier * result + (buildCount != null ? buildCount.hashCode() : 0);
+            result = hash_multiplier * result + (builtWith != null ? builtWith.hashCode() : 0);
             return result;
         }
 

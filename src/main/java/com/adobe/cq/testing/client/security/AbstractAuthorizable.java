@@ -135,6 +135,8 @@ public abstract class AbstractAuthorizable implements Authorizable {
         return doPost(formEntry, expectedStatus);
     }
 
+    // Provides utility methods to create and retrieve details about users or groups (Authorizable).
+
     public <T extends SecurityClient> Authorizable create(T client,
                                                           Class<? extends AbstractAuthorizable> authorizableClass,
                                                           String authorizableId,
@@ -179,6 +181,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
         }
         return propsNode;
     }
+
 
     /**
      * POST request to AuthorizableServlet.
@@ -324,6 +327,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
             // base path
             authorizablePath = intermediatePath;
         }
+
         authorizablePath += "/" + escapeIllegalJcrChars(authorizableId);
 
         return authorizablePath;
@@ -339,7 +343,6 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @param authorizableHomePath the home path of the authorizable
      * @return authorizable url
      * @throws ClientException if the request failed
-     *
      */
     protected static String encodePathToURL(String authorizableHomePath) throws ClientException {
         String authorizableUrl = "";
@@ -443,3 +446,5 @@ public abstract class AbstractAuthorizable implements Authorizable {
         return buffer.toString();
     }
 }
+
+

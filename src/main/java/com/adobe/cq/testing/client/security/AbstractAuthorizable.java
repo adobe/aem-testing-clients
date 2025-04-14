@@ -135,6 +135,8 @@ public abstract class AbstractAuthorizable implements Authorizable {
         return doPost(formEntry, expectedStatus);
     }
 
+    // Provides utility methods to create and retrieve details about users or groups (Authorizable).
+
     public <T extends SecurityClient> Authorizable create(T client,
                                                           Class<? extends AbstractAuthorizable> authorizableClass,
                                                           String authorizableId,
@@ -144,29 +146,22 @@ public abstract class AbstractAuthorizable implements Authorizable {
     }
 
     public Map<String, Authorizable> getMemberOf() throws ClientException, InterruptedException {
-        JsonNode authorizableNode = JsonUtils.getJsonNodeFromString(getJsonAsString(Authorizable
-                .MEMBER_OF, SC_OK));
-        JsonNode propsNode = null;
-        if (authorizableNode != null) {
-            propsNode = authorizableNode.get(Authorizable.MEMBER_OF);
-        }
-        return buildAuthorizableList(propsNode);
+    return getAuthorizablesByKey(Authorizable.MEMBER_OF);
     }
 
     public Map<String, Authorizable> getMembers() throws ClientException, InterruptedException {
-        JsonNode authorizableNode = JsonUtils.getJsonNodeFromString(getJsonAsString(Authorizable.MEMBERS, SC_OK));
-        JsonNode propsNode = null;
-        if (authorizableNode != null) {
-            propsNode = authorizableNode.get(Authorizable.MEMBERS);
-        }
-        return buildAuthorizableList(propsNode);
+        return getAuthorizablesByKey(Authorizable.MEMBERS);
     }
 
     public Map<String, Authorizable> getImpersonators() throws ClientException, InterruptedException {
-        JsonNode authorizableNode = JsonUtils.getJsonNodeFromString(getJsonAsString(Authorizable.IMPERSONATORS, SC_OK));
+        return getAuthorizablesByKey(Authorizable.IMPERSONATORS);
+    }
+
+    private Map<String, Authorizable> getAuthorizablesByKey(String key) throws ClientException, InterruptedException {
+        JsonNode authorizableNode = JsonUtils.getJsonNodeFromString(getJsonAsString(key, SC_OK));
         JsonNode propsNode = null;
         if (authorizableNode != null) {
-            propsNode = authorizableNode.get(Authorizable.IMPERSONATORS);
+            propsNode = authorizableNode.get(key);
         }
         return buildAuthorizableList(propsNode);
     }
@@ -186,6 +181,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
         }
         return propsNode;
     }
+
 
     /**
      * POST request to AuthorizableServlet.
@@ -331,6 +327,7 @@ public abstract class AbstractAuthorizable implements Authorizable {
             // base path
             authorizablePath = intermediatePath;
         }
+
         authorizablePath += "/" + escapeIllegalJcrChars(authorizableId);
 
         return authorizablePath;
@@ -346,7 +343,6 @@ public abstract class AbstractAuthorizable implements Authorizable {
      * @param authorizableHomePath the home path of the authorizable
      * @return authorizable url
      * @throws ClientException if the request failed
-     *
      */
     protected static String encodePathToURL(String authorizableHomePath) throws ClientException {
         String authorizableUrl = "";
@@ -430,16 +426,19 @@ public abstract class AbstractAuthorizable implements Authorizable {
 
     private static String escapeIllegalJcrChars(String name) {
         final String illegal = "%/:[]*|\t\r\n";
+        final int hex_radix = 16;
+        final int min_length_for_dot = 3;
+        final int buffer_growth_factor = 2;
 
-        StringBuilder buffer = new StringBuilder(name.length() * 2);
+        StringBuilder buffer = new StringBuilder(name.length() * buffer_growth_factor);
         for (int i = 0; i < name.length(); i++) {
             char ch = name.charAt(i);
             if (illegal.indexOf(ch) != -1
-                    || (ch == '.' && name.length() < 3)
+                    || (ch == '.' && name.length() < min_length_for_dot)
                     || (ch == ' ' && (i == 0 || i == name.length() - 1))) {
                 buffer.append('%');
-                buffer.append(Character.toUpperCase(Character.forDigit(ch / 16, 16)));
-                buffer.append(Character.toUpperCase(Character.forDigit(ch % 16, 16)));
+                buffer.append(Character.toUpperCase(Character.forDigit(ch / hex_radix, hex_radix)));
+                buffer.append(Character.toUpperCase(Character.forDigit(ch % hex_radix, hex_radix)));
             } else {
                 buffer.append(ch);
             }
@@ -447,3 +446,5 @@ public abstract class AbstractAuthorizable implements Authorizable {
         return buffer.toString();
     }
 }
+
+

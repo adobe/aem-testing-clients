@@ -15,6 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
+import com.adobe.cq.testing.client.model.CommentConfig;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.NameValuePair;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -71,35 +72,34 @@ public class CommunityClient extends CQClient {
      * Configures the Comment component.
      *
      * @param commentPath    path to the comment component
-     * @param defaultMessage the topic for the comments
-     * @param isModerated    true if comments are moderated
-     * @param allowReplies   true if replies are allowed
-     * @param displayAsTree  true if the comments are displayed as tree
-     * @param closed         true if topic is closed (no posting of comments possible anymore)
+     * @param config         configuration options for the comment component
+     *                       (e.g., moderation, replies, tree view, etc.)
      * @param expectedStatus list of allowed HTTP Status to be returned. If not set,
      *                       http status 200 (OK) is assumed.
      * @return Sling response
      * @throws ClientException If something fails during request/response cycle
      */
-    public SlingHttpResponse configureCommentComponent(String commentPath, String defaultMessage,
-                                                       boolean isModerated,
-                                                       boolean allowReplies, boolean displayAsTree, boolean closed,
+    public SlingHttpResponse configureCommentComponent(String commentPath, CommentConfig config,
                                                        int... expectedStatus)
             throws ClientException {
         FormEntityBuilder feb = FormEntityBuilder.create();
         for (NameValuePair val : new SlingParameter("./allowRepliesToComments")
-                .value(Boolean.valueOf(allowReplies).toString()).delete().typeHint("Boolean").toNameValuePairs())
+                .value(Boolean.toString(config.isAllowReplies())).delete().typeHint("Boolean").toNameValuePairs())
             feb.addParameter(val.getName(), val.getValue());
-        for (NameValuePair val : new SlingParameter("./moderateComments").value(Boolean.valueOf(isModerated).toString())
+
+        for (NameValuePair val : new SlingParameter("./moderateComments").value(Boolean.toString(config.isModerated()))
                 .typeHint("Boolean").delete().toNameValuePairs())
             feb.addParameter(val.getName(), val.getValue());
+
         for (NameValuePair val : new SlingParameter("./displayCommentsAsTree")
-                .value(Boolean.valueOf(displayAsTree).toString()).typeHint("Boolean").delete().toNameValuePairs())
+                .value(Boolean.toString(config.isDisplayAsTree())).typeHint("Boolean").delete().toNameValuePairs())
             feb.addParameter(val.getName(), val.getValue());
-        for (NameValuePair val : new SlingParameter("./closed").value(Boolean.valueOf(closed).toString())
+
+        for (NameValuePair val : new SlingParameter("./closed").value(Boolean.toString(config.isClosed()))
                 .typeHint("Boolean").delete().toNameValuePairs())
             feb.addParameter(val.getName(), val.getValue());
-        for (NameValuePair val : new SlingParameter("./defaultMessage").value(defaultMessage).toNameValuePairs())
+
+        for (NameValuePair val : new SlingParameter("./defaultMessage").value(config.getDefaultMessage()).toNameValuePairs())
             feb.addParameter(val.getName(), val.getValue());
 
         return doPost(commentPath, feb.build(), HttpUtils.getExpectedStatus(SC_OK, expectedStatus));

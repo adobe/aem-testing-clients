@@ -90,33 +90,20 @@ public class TemporaryUser extends ExternalResource {
         CQSecurityClient securityClient = creatorSupplier.get().adaptTo(CQSecurityClient.class);
         Group[] assignedGroups = Arrays.stream(groups).map(getGroupFunction(securityClient)).toArray(Group[]::new);
 
-        class CreateUserPolling extends Polling {
-            String username;
-            String password;
-            User user;
+        String[] username = new String[1];
+        String[] password = new String[1];
+        User[] createdUser = new User[1];
 
-            @Override
-            public Boolean call() throws Exception {
-                username = generateName();
-                password = generatePassword();
-                usersToDelete.get().add(username);
-                user = securityClient.createUser(username, password, assignedGroups);
-                return true;
-            }
-        }
+        new Polling(() -> {
+            username[0] = generateName();
+            password[0] = generatePassword();
+            usersToDelete.get().add(username[0]);
+            createdUser[0] = securityClient.createUser(username[0], password[0], assignedGroups);
+            return true;
+        }).poll(SECONDS.toMillis(20), SECONDS.toMillis(1));
 
-        CreateUserPolling p = new CreateUserPolling();
-        try {
-            p.poll(SECONDS.toMillis(20), SECONDS.toMillis(1));
-        } catch (TimeoutException e) {
-            LOG.error("Timeout of 20s reached while trying to create user." +
-                    " List of exceptions: " + p.getExceptions(), e);
-            deleteUsers();
-            throw e;
-        }
-
-        LOG.info("Created user {} at {}", p.user.getId(), p.user.getHomePath());
-        userClient.set(new CQClient(securityClient.getUrl(), p.username, p.password));
+        LOG.info("Created user {} at {}", createdUser[0].getId(), createdUser[0].getHomePath());
+        userClient.set(new CQClient(securityClient.getUrl(), username[0] ,password[0]));
     }
 
     @Override

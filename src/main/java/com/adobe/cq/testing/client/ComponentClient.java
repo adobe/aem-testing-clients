@@ -16,38 +16,8 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.components.AbstractComponent;
-import com.adobe.cq.testing.client.components.collab.Ratings;
-import com.adobe.cq.testing.client.components.commerce.ShoppingCart;
-import com.adobe.cq.testing.client.components.foundation.Carousel;
-import com.adobe.cq.testing.client.components.foundation.Chart;
-import com.adobe.cq.testing.client.components.foundation.Download;
-import com.adobe.cq.testing.client.components.foundation.External;
-import com.adobe.cq.testing.client.components.foundation.Flash;
-import com.adobe.cq.testing.client.components.foundation.Image;
-import com.adobe.cq.testing.client.components.foundation.List;
-import com.adobe.cq.testing.client.components.foundation.ParSys;
-import com.adobe.cq.testing.client.components.foundation.Reference;
-import com.adobe.cq.testing.client.components.foundation.Search;
-import com.adobe.cq.testing.client.components.foundation.Sitemap;
-import com.adobe.cq.testing.client.components.foundation.Slideshow;
-import com.adobe.cq.testing.client.components.foundation.Table;
-import com.adobe.cq.testing.client.components.foundation.Text;
-import com.adobe.cq.testing.client.components.foundation.TextImage;
-import com.adobe.cq.testing.client.components.foundation.Title;
-import com.adobe.cq.testing.client.components.foundation.form.Address;
-import com.adobe.cq.testing.client.components.foundation.form.Captcha;
-import com.adobe.cq.testing.client.components.foundation.form.Checkbox;
-import com.adobe.cq.testing.client.components.foundation.form.Dropdown;
-import com.adobe.cq.testing.client.components.foundation.form.End;
-import com.adobe.cq.testing.client.components.foundation.form.FileUpload;
-import com.adobe.cq.testing.client.components.foundation.form.Hidden;
-import com.adobe.cq.testing.client.components.foundation.form.ImageButton;
-import com.adobe.cq.testing.client.components.foundation.form.ImageUpload;
-import com.adobe.cq.testing.client.components.foundation.form.Password;
-import com.adobe.cq.testing.client.components.foundation.form.RadioGroup;
-import com.adobe.cq.testing.client.components.foundation.form.Start;
-import com.adobe.cq.testing.client.components.foundation.parsys.ColCtrl;
-import com.adobe.cq.testing.client.components.tagging.TagCloud;
+import com.adobe.cq.testing.client.registry.ComponentRegistry;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -57,7 +27,7 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
 
 import java.lang.reflect.Constructor;
 import java.net.URI;
-import java.util.HashMap;
+
 
 public class ComponentClient extends CQClient {
 
@@ -72,51 +42,6 @@ public class ComponentClient extends CQClient {
     public static final String ORDER_LAST = "last";
     public static final String ORDER_BEFORE_PREFIX = "before ";
     public static final String ORDER_AFTER_PREFIX = "after ";
-
-    private static HashMap<String,Class<? extends AbstractComponent>> components = new HashMap<>();
-    // registers all known component wrappers
-    static {
-        // foundation components
-        components.put(Carousel.RESOURCE_TYPE,Carousel.class);
-        components.put(Chart.RESOURCE_TYPE, Chart.class);
-        components.put(ColCtrl.RESOURCE_TYPE,ColCtrl.class);
-        components.put(Download.RESOURCE_TYPE,Download.class);
-        components.put(External.RESOURCE_TYPE,External.class);
-        components.put(Flash.RESOURCE_TYPE,Flash.class);
-        components.put(Image.RESOURCE_TYPE,Image.class);
-        components.put(List.RESOURCE_TYPE,List.class);
-        components.put(Reference.RESOURCE_TYPE,Reference.class);
-        components.put(Search.RESOURCE_TYPE,Search.class);
-        components.put(Sitemap.RESOURCE_TYPE,Sitemap.class);
-        components.put(Slideshow.RESOURCE_TYPE,Slideshow.class);
-        components.put(Table.RESOURCE_TYPE,Table.class);
-        components.put(Text.RESOURCE_TYPE,Text.class);
-        components.put(TextImage.RESOURCE_TYPE,TextImage.class);
-        components.put(Title.RESOURCE_TYPE,Title.class);
-        components.put(TagCloud.RESOURCE_TYPE,TagCloud.class);
-        components.put(ParSys.RESOURCE_TYPE,ParSys.class);
-        // form components
-        components.put(Start.RESOURCE_TYPE,Start.class);
-        components.put(End.RESOURCE_TYPE,End.class);
-        components.put(com.adobe.cq.testing.client.components.foundation.form.Text.RESOURCE_TYPE,
-                com.adobe.cq.testing.client.components.foundation.form.Text.class);
-        components.put(Address.RESOURCE_TYPE,Address.class);
-        components.put(Captcha.RESOURCE_TYPE,Captcha.class);
-        components.put(Checkbox.RESOURCE_TYPE,Checkbox.class);
-        components.put(Dropdown.RESOURCE_TYPE,Dropdown.class);
-        components.put(FileUpload.RESOURCE_TYPE,FileUpload.class);
-        components.put(ImageUpload.RESOURCE_TYPE,ImageUpload.class);
-        components.put(Hidden.RESOURCE_TYPE,Hidden.class);
-        components.put(ImageButton.RESOURCE_TYPE,ImageButton.class);
-        components.put(Password.RESOURCE_TYPE,Password.class);
-        components.put(RadioGroup.RESOURCE_TYPE,RadioGroup.class);
-        components.put(Start.RESOURCE_TYPE,Start.class);
-        // collab components
-        components.put(Ratings.RESOURCE_TYPE,Ratings.class);
-        // commerce components
-        components.put(Address.RESOURCE_TYPE,Address.class);
-        components.put(ShoppingCart.RESOURCE_TYPE,ShoppingCart.class);
-    }
 
     public ComponentClient(CloseableHttpClient http, SlingClientConfig config) throws ClientException {
         super(http, config);
@@ -261,7 +186,8 @@ public class ComponentClient extends CQClient {
                     "sling:resourceType property was found!");
         }
         // get the class
-        Class<? extends AbstractComponent> compClass = getCompClassByResourceType(node.get("sling:resourceType").textValue());
+        String resourceType = node.get("sling:resourceType").textValue();
+        Class<? extends AbstractComponent> compClass = ComponentRegistry.getComponentClass(resourceType);
         
         // no class found ?
         if (compClass == null) return null;
@@ -308,19 +234,7 @@ public class ComponentClient extends CQClient {
      * @param c the corresponding component wrapper class
      */
     public void registerComponent(String resourceType, Class<? extends AbstractComponent> c){
-        components.put(resourceType,c);
-    }
-
-    /**
-     * Returns the component wrapper class, that has been registered with this resourceType or
-     * null if no such resourceType is known. you can register additional component wrappers
-     * using {@link #registerComponent(String, Class)}}.
-     * 
-     * @param resourceType resource type to look up
-     * @return  the corresponding component wrapper class or null if not fund
-     */
-    public Class<? extends AbstractComponent>  getCompClassByResourceType(String resourceType){
-        return components.get(resourceType);
+        ComponentRegistry.registerComponent(resourceType,c);
     }
 
     /**

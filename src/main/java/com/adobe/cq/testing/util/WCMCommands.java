@@ -545,7 +545,7 @@ public class WCMCommands {
         // title of new launch section
         feb.addParameter("path", path);
 
-        return executeWCMCommand(CMD_CREATE_LAUNCH, feb, expectedStatus);
+        return executeWCMCommand(CMD_DELETE_LAUNCH, feb, expectedStatus);
     }
 
 

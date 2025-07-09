@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runners.model.Statement;
 
 import java.net.URI;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
@@ -38,7 +37,7 @@ public class TemporaryUserTest {
 
         TemporaryUser temporaryUserRule = new TemporaryUser(() -> {
             try {
-                return new SlingClient(URI.create(String.format("http://localhost:%d", aemService.port())),"","");
+                return new SlingClient(URI.create(String.format("http://localhost:%d", aemService.port())), "", "");
             } catch (ClientException e) {
                 e.printStackTrace();
                 return null;
@@ -55,10 +54,6 @@ public class TemporaryUserTest {
 
     @Test
     public void testAuthorizableInstability() throws Throwable {
-        AtomicInteger getGroupCalls = new AtomicInteger();
-        AtomicInteger checkUserCalls = new AtomicInteger();
-        AtomicInteger createUserCalls = new AtomicInteger();
-
         aemService.stubFor(get(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
                 .withQueryParam("query", equalTo("{\"condition\":[{\"named\":\"my-group\"}]}"))
                 .inScenario("get-groups")
@@ -121,7 +116,7 @@ public class TemporaryUserTest {
 
         TemporaryUser temporaryUserRule = new TemporaryUser(() -> {
             try {
-                return new SlingClient(URI.create(String.format("http://localhost:%d", aemService.port())),"","");
+                return new SlingClient(URI.create(String.format("http://localhost:%d", aemService.port())), "", "");
             } catch (ClientException e) {
                 e.printStackTrace();
                 return null;
@@ -134,5 +129,15 @@ public class TemporaryUserTest {
             }
         }, null);
         statement.evaluate();
+
+        verify(exactly(2),
+                getRequestedFor(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
+                        .withQueryParam("query", equalTo("{\"condition\":[{\"named\":\"my-group\"}]}")));
+        verify(exactly(6),
+                getRequestedFor(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
+                        .withQueryParam("query", containing("testuser")));
+        verify(exactly(2), postRequestedFor(urlEqualTo("/libs/granite/security/post/authorizables.html")));
+        verify(exactly(1), postRequestedFor(urlEqualTo("/home/groups/my-group.rw.html")));
+        verify(exactly(2), postRequestedFor(urlEqualTo("/home/user/a/abcdef.rw.html")));
     }
 }

@@ -8,10 +8,10 @@ import org.junit.Test;
 import java.net.URI;
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class TogglesClientTest {
 

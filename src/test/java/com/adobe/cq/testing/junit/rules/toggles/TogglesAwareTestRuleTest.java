@@ -7,8 +7,8 @@ import org.junit.*;
 
 import java.net.URI;
 
-import static org.junit.Assert.fail;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.Assert.fail;
 
 public class TogglesAwareTestRuleTest {
 

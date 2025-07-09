@@ -1,40 +1,30 @@
 package com.adobe.cq.testing.junit.rules.toggles;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 
 import java.net.URI;
 
 import static org.junit.Assert.fail;
-import static spark.Spark.awaitInitialization;
-import static spark.Spark.awaitStop;
-import static spark.Spark.get;
-import static spark.Spark.port;
-import static spark.Spark.stop;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class TogglesAwareTestRuleTest {
 
-    @BeforeClass
-    public static void startServer() {
-        port(0);
-        get("etc.clientlibs/toggles.json", (req, res) -> "{\"enabled\":[\"a\", \"b\", \"c\"]}");
-        awaitInitialization();
-    }
-
-    @AfterClass
-    public static void stopServer() {
-        stop();
-        awaitStop();
-    }
+    @ClassRule
+    public static WireMockRule togglesService = new WireMockRule();
 
     @Rule
     public TogglesAwareTestRule togglesAwareTestRule = new TogglesAwareTestRule(() -> {
+        togglesService.stubFor(get(urlEqualTo("/etc.clientlibs/toggles.json"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"enabled\":[\"a\", \"b\", \"c\"]}")));
+
         try {
-            return new SlingClient(URI.create(String.format("http://localhost:%d", port())), "", "");
+            return new SlingClient(URI.create(String.format("http://localhost:%d", togglesService.port())), "", "");
         } catch (ClientException e) {
             return null;
         }

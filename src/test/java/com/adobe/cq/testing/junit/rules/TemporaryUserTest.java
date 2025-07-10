@@ -1,47 +1,43 @@
 package com.adobe.cq.testing.junit.rules;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.model.Statement;
-import spark.Spark;
 
 import java.net.URI;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static spark.Spark.get;
-import static spark.Spark.port;
-import static spark.Spark.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 
 public class TemporaryUserTest {
 
-    @Before
-    public void startServer() {
-        port(0);
-    }
-
-    @After
-    public void stopServer() {
-        Spark.stop();
-        Spark.awaitStop();
-    }
+    @Rule
+    public WireMockRule aemService = new WireMockRule();
 
     @Test
     public void testUserIsCreated() throws Throwable {
-        get("/libs/granite/security/search/authorizables.json",
-                (req, res) -> "{ \"authorizables\": [{ \"home\": \"/home/users/dummy\"}] }");
-        post("/libs/granite/security/post/authorizables.html", (req, res) -> {
-            res.status(201);
-            return "{}";
-        });
-        post("/home/users/dummy.rw.html", (req, res) -> "{}");
-        Spark.awaitInitialization();
+        aemService.stubFor(get(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{ \"authorizables\": [{ \"home\": \"/home/users/dummy\"}] }")));
+        aemService.stubFor(post(urlEqualTo("/libs/granite/security/post/authorizables.html"))
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{}")));
+        aemService.stubFor(post(urlEqualTo("/home/users/dummy.rw.html"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{}")));
 
         TemporaryUser temporaryUserRule = new TemporaryUser(() -> {
             try {
-                return new SlingClient(URI.create(String.format("http://localhost:%d", port())),"","");
+                return new SlingClient(URI.create(String.format("http://localhost:%d", aemService.port())), "", "");
             } catch (ClientException e) {
                 e.printStackTrace();
                 return null;
@@ -58,49 +54,69 @@ public class TemporaryUserTest {
 
     @Test
     public void testAuthorizableInstability() throws Throwable {
-        AtomicInteger getGroupCalls = new AtomicInteger();
-        AtomicInteger checkUserCalls = new AtomicInteger();
-        AtomicInteger createUserCalls = new AtomicInteger();
+        aemService.stubFor(get(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
+                .withQueryParam("query", equalTo("{\"condition\":[{\"named\":\"my-group\"}]}"))
+                .inScenario("get-groups")
+                .whenScenarioStateIs(STARTED)
+                .willReturn(aResponse()
+                        .withStatus(500)
+                        .withBody(""))
+                .willSetStateTo("retry"));
+        aemService.stubFor(get(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
+                .withQueryParam("query", equalTo("{\"condition\":[{\"named\":\"my-group\"}]}"))
+                .inScenario("get-groups")
+                .whenScenarioStateIs("retry")
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"authorizables\":[{\"home\":\"/home/groups/my-group\"}]}")));
 
-        get("/libs/granite/security/search/authorizables.json", (req, res) -> {
+        aemService.stubFor(get(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
+                .withQueryParam("query", containing("testuser"))
+                .inScenario("get-user")
+                .whenScenarioStateIs(STARTED)
+                .willReturn(aResponse()
+                        .withStatus(404)
+                        .withBody(""))
+                .willSetStateTo("retry"));
+        aemService.stubFor(get(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
+                .withQueryParam("query", containing("testuser"))
+                .inScenario("get-user")
+                .whenScenarioStateIs("retry")
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{ \"authorizables\": [{ \"home\": \"/home/user/a/abcdef\"}] }")));
 
-            if (req.queryParams("query").equals("{\"condition\":[{\"named\":\"my-group\"}]}")) {
-                // Request to instantiate the Group
-                if (getGroupCalls.incrementAndGet() == 1) {
-                    res.status(500);
-                    return "";
-                }
-                return "{ \"authorizables\": [{ \"home\": \"/home/groups/my-group\"}] }";
-            } else if (req.queryParams("query").contains("testuser")) {
-                // Request to check that the user exists
-                if (checkUserCalls.incrementAndGet() == 1) {
-                    res.status(404);
-                    return "";
-                }
+        aemService.stubFor(post(urlEqualTo("/libs/granite/security/post/authorizables.html"))
+                .inScenario("create-user")
+                .whenScenarioStateIs(STARTED)
+                .willReturn(aResponse()
+                        .withStatus(407)
+                        .withBody(""))
+                .willSetStateTo("retry"));
+        aemService.stubFor(post(urlEqualTo("/libs/granite/security/post/authorizables.html"))
+                .inScenario("create-user")
+                .whenScenarioStateIs("retry")
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{}")));
 
-                return "{ \"authorizables\": [{ \"home\": \"/home/user/a/abcdef\"}] }";
-            }
-
-            res.status(400);
-            return "";
-        });
-        post("/libs/granite/security/post/authorizables.html", (req, res) -> {
-            // Request to create the user
-            if (createUserCalls.incrementAndGet() == 1) {
-                res.status(407);
-                return "";
-            }
-
-            res.status(201);
-            return "{}";
-        });
-        post("/home/groups/my-group.rw.html", (req, res) -> "{}"); // Upgrade Group
-        post("/home/user/a/abcdef.rw.html", (req, res) -> "{}"); // Delete User
-        Spark.awaitInitialization();
+        aemService.stubFor(post(urlEqualTo("/home/groups/my-group.rw.html"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{}")));
+        aemService.stubFor(post(urlEqualTo("/home/user/a/abcdef.rw.html"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{}")));
 
         TemporaryUser temporaryUserRule = new TemporaryUser(() -> {
             try {
-                return new SlingClient(URI.create(String.format("http://localhost:%d", port())),"","");
+                return new SlingClient(URI.create(String.format("http://localhost:%d", aemService.port())), "", "");
             } catch (ClientException e) {
                 e.printStackTrace();
                 return null;
@@ -113,5 +129,15 @@ public class TemporaryUserTest {
             }
         }, null);
         statement.evaluate();
+
+        verify(exactly(2),
+                getRequestedFor(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
+                        .withQueryParam("query", equalTo("{\"condition\":[{\"named\":\"my-group\"}]}")));
+        verify(exactly(6),
+                getRequestedFor(urlPathEqualTo("/libs/granite/security/search/authorizables.json"))
+                        .withQueryParam("query", containing("testuser")));
+        verify(exactly(2), postRequestedFor(urlEqualTo("/libs/granite/security/post/authorizables.html")));
+        verify(exactly(1), postRequestedFor(urlEqualTo("/home/groups/my-group.rw.html")));
+        verify(exactly(2), postRequestedFor(urlEqualTo("/home/user/a/abcdef.rw.html")));
     }
 }

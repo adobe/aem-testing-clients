@@ -17,95 +17,95 @@ package com.adobe.cq.testing.client.jobs;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-
 public class TopicStat {
 
-    String topicName;
-    long lastActivated;
-    long lastFinished;
-    int finishedJobs;
-    int failedJobs;
-    int cancelledJobs;
-    long avgProcessingTime;
-    long avgWaitingTime;
+  String topicName;
+  long lastActivated;
+  long lastFinished;
+  int finishedJobs;
+  int failedJobs;
+  int cancelledJobs;
+  long avgProcessingTime;
+  long avgWaitingTime;
 
-    public TopicStat(String topicName, long lastActivated, long lastFinished, int finishedJobs, int failedJobs, int cancelledJobs,
-                     long avgProcessingTime, long avgWaitingTime) {
-        this.topicName = topicName;
-        this.lastActivated = lastActivated;
-        this.lastFinished = lastFinished;
-        this.finishedJobs = finishedJobs;
-        this.failedJobs = failedJobs;
-        this.cancelledJobs = cancelledJobs;
-        this.avgProcessingTime = avgProcessingTime;
-        this.avgWaitingTime = avgWaitingTime;
-    }
+  public TopicStat(
+      String topicName,
+      long lastActivated,
+      long lastFinished,
+      int finishedJobs,
+      int failedJobs,
+      int cancelledJobs,
+      long avgProcessingTime,
+      long avgWaitingTime) {
+    this.topicName = topicName;
+    this.lastActivated = lastActivated;
+    this.lastFinished = lastFinished;
+    this.finishedJobs = finishedJobs;
+    this.failedJobs = failedJobs;
+    this.cancelledJobs = cancelledJobs;
+    this.avgProcessingTime = avgProcessingTime;
+    this.avgWaitingTime = avgWaitingTime;
+  }
 
+  /**
+   * Constructor from a {@link JsonNode} object Format :
+   *
+   * <pre>{@code
+   * {
+   * topic: "/my/topic/name",
+   * last_activated: 1375793524795,
+   * last_finished: -1,
+   * finished_jobs: 0,
+   * failed_jobs: 4,
+   * cancelled_jobs: 0,
+   * avg_processing_time: 0,
+   * avg_waiting_time: 1522
+   * }
+   *
+   * }</pre>
+   *
+   * @param topicJson the topic JSON node
+   */
+  public TopicStat(JsonNode topicJson) {
+    this.topicName = topicJson.get("topic").textValue();
+    this.lastActivated = topicJson.get("last_activated").longValue();
+    this.lastFinished = topicJson.get("last_finished").longValue();
+    this.finishedJobs = topicJson.get("finished_jobs").intValue();
+    this.failedJobs = topicJson.get("failed_jobs").intValue();
+    this.cancelledJobs = topicJson.get("cancelled_jobs").intValue();
+    this.avgProcessingTime = topicJson.get("avg_processing_time").longValue();
+    this.avgWaitingTime = topicJson.get("avg_waiting_time").longValue();
+  }
 
+  public String getTopicName() {
+    return topicName;
+  }
 
+  public long getLastActivated() {
+    return lastActivated;
+  }
 
-    /**
-     * Constructor from a {@link JsonNode} object
-     * Format :
-     *
-     * <pre>
-     *     {@code
-              {
-                topic: "/my/topic/name",
-                last_activated: 1375793524795,
-                last_finished: -1,
-                finished_jobs: 0,
-                failed_jobs: 4,
-                cancelled_jobs: 0,
-                avg_processing_time: 0,
-                avg_waiting_time: 1522
-              }
-     *     }
-     * </pre>
-     *
-     * @param topicJson  the topic JSON node
-     */
-    public TopicStat(JsonNode topicJson) {
-        this.topicName = topicJson.get("topic").textValue();
-        this.lastActivated = topicJson.get("last_activated").longValue();
-        this.lastFinished = topicJson.get("last_finished").longValue();
-        this.finishedJobs = topicJson.get("finished_jobs").intValue();
-        this.failedJobs = topicJson.get("failed_jobs").intValue();
-        this.cancelledJobs = topicJson.get("cancelled_jobs").intValue();
-        this.avgProcessingTime = topicJson.get("avg_processing_time").longValue();
-        this.avgWaitingTime = topicJson.get("avg_waiting_time").longValue();
-    }
+  public long getLastFinished() {
+    return lastFinished;
+  }
 
-    public String getTopicName() {
-        return topicName;
-    }
+  public int getFinishedJobs() {
+    return finishedJobs;
+  }
 
-    public long getLastActivated() {
-        return lastActivated;
-    }
+  public int getFailedJobs() {
+    return failedJobs;
+  }
 
-    public long getLastFinished() {
-        return lastFinished;
-    }
+  public int getCancelledJobs() {
+    return cancelledJobs;
+  }
 
-    public int getFinishedJobs() {
-        return finishedJobs;
-    }
+  public long getAvgProcessingTime() {
+    return avgProcessingTime;
+  }
 
-    public int getFailedJobs() {
-        return failedJobs;
-    }
-
-    public int getCancelledJobs() {
-        return cancelledJobs;
-    }
-
-    public long getAvgProcessingTime() {
-        return avgProcessingTime;
-    }
-
-    public long getAvgWaitingTime() {
-        return avgWaitingTime;
-    }
-
+  public long getAvgWaitingTime() {
+    return avgWaitingTime;
+  }
 }

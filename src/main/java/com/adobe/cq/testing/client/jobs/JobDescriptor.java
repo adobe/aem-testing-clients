@@ -16,98 +16,100 @@
 package com.adobe.cq.testing.client.jobs;
 
 public class JobDescriptor {
-    String id;
-    String name;
-    String topic;
-    String queueName;
-    long createTime;
-    long startTime;
-    int maxRetries;
-    int retryCount;
+  String id;
+  String name;
+  String topic;
+  String queueName;
+  long createTime;
+  long startTime;
+  int maxRetries;
+  int retryCount;
 
-    String createdBy;
+  String createdBy;
 
-    String targetInstanceId;
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
-        this.id = id;
-    }
+  String targetInstanceId;
 
-    public String getName() {
-        return name;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getTopic() {
-        return topic;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getQueueName() {
-        return queueName;
-    }
+  public String getTopic() {
+    return topic;
+  }
 
-    public void setQueueName(String queueName) {
-        this.queueName = queueName;
-    }
+  public void setTopic(String topic) {
+    this.topic = topic;
+  }
 
-    public long getCreateTime() {
-        return createTime;
-    }
+  public String getQueueName() {
+    return queueName;
+  }
 
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
+  public void setQueueName(String queueName) {
+    this.queueName = queueName;
+  }
 
-    public long getStartTime() {
-        return startTime;
-    }
+  public long getCreateTime() {
+    return createTime;
+  }
 
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
-    }
+  public void setCreateTime(long createTime) {
+    this.createTime = createTime;
+  }
 
-    public int getMaxRetries() {
-        return maxRetries;
-    }
+  public long getStartTime() {
+    return startTime;
+  }
 
-    public void setMaxRetries(int maxRetries) {
-        this.maxRetries = maxRetries;
-    }
+  public void setStartTime(long startTime) {
+    this.startTime = startTime;
+  }
 
-    public int getRetryCount() {
-        return retryCount;
-    }
+  public int getMaxRetries() {
+    return maxRetries;
+  }
 
-    public void setRetryCount(int retryCount) {
-        this.retryCount = retryCount;
-    }
+  public void setMaxRetries(int maxRetries) {
+    this.maxRetries = maxRetries;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public int getRetryCount() {
+    return retryCount;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setRetryCount(int retryCount) {
+    this.retryCount = retryCount;
+  }
 
-    public String getTargetInstanceId() {
-        return targetInstanceId;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public void setTargetInstanceId(String targetInstanceId) {
-        this.targetInstanceId = targetInstanceId;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public boolean isStarted() {
-        return (this.getStartTime() > 0);
-    }
+  public String getTargetInstanceId() {
+    return targetInstanceId;
+  }
+
+  public void setTargetInstanceId(String targetInstanceId) {
+    this.targetInstanceId = targetInstanceId;
+  }
+
+  public boolean isStarted() {
+    return (this.getStartTime() > 0);
+  }
 }

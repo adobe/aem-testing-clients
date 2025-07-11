@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.junit.assertion;
 
-public class FoundationAssert extends ComponentAssert {
-
-}
+public class FoundationAssert extends ComponentAssert {}

@@ -20,44 +20,45 @@ import com.adobe.cq.testing.client.components.AbstractComponent;
 
 /**
  * Wraps the Profile Detailed Name foundation component, providing methods for editing it. See
- * {@code /libs/foundation/components/profile/form/names} in the repository for implementation details.
+ * {@code /libs/foundation/components/profile/form/names} in the repository for implementation
+ * details.
  */
-public class ProfileDetailedName extends AbstractComponent{
+public class ProfileDetailedName extends AbstractComponent {
 
-    public static final String RESOURCE_TYPE = "foundation/components/profile/form/names";
+  public static final String RESOURCE_TYPE = "foundation/components/profile/form/names";
 
-    public static final String PROP_TITLE = "title";
-    public static final String PROP_FAMILY_NAME_TITLE = "familyNameTitle";
-    public static final String PROP_GIVEN_NAME_TITLE = "givenNameTitle";
-    public static final String PROP_HONORIC_PREFIX_TITLE = "honoricPrefixTitle";
-    public static final String PROP_HONORIC_SUFFIX_TITLE = "honoricSuffixTitle";
-    public static final String PROP_MIDDLE_NAME_TITLE = "middleNameTitle";
-    
-    public static final String PROP_TITLE_VALUE = "title";
-    public static final String PROP_FAMILY_NAME_TITLE_VALUE = "familyNameTitle";
-    public static final String PROP_GIVEN_NAME_TITLE_VALUE = "givenNameTitle";
-    public static final String PROP_HONORIC_PREFIX_TITLE_VALUE = "honoricPrefixTitle";
-    public static final String PROP_HONORIC_SUFFIX_TITLE_VALUE = "honoricSuffixTitle";
-    public static final String PROP_MIDDLE_NAME_TITLE_VALUE = "middleNameTitle";
-    
-    
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The ComponentClient that will be used for sending the requests.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (order,int...)} has been called.
-     */
-    public ProfileDetailedName(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
+  public static final String PROP_TITLE = "title";
+  public static final String PROP_FAMILY_NAME_TITLE = "familyNameTitle";
+  public static final String PROP_GIVEN_NAME_TITLE = "givenNameTitle";
+  public static final String PROP_HONORIC_PREFIX_TITLE = "honoricPrefixTitle";
+  public static final String PROP_HONORIC_SUFFIX_TITLE = "honoricSuffixTitle";
+  public static final String PROP_MIDDLE_NAME_TITLE = "middleNameTitle";
 
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  public static final String PROP_TITLE_VALUE = "title";
+  public static final String PROP_FAMILY_NAME_TITLE_VALUE = "familyNameTitle";
+  public static final String PROP_GIVEN_NAME_TITLE_VALUE = "givenNameTitle";
+  public static final String PROP_HONORIC_PREFIX_TITLE_VALUE = "honoricPrefixTitle";
+  public static final String PROP_HONORIC_SUFFIX_TITLE_VALUE = "honoricSuffixTitle";
+  public static final String PROP_MIDDLE_NAME_TITLE_VALUE = "middleNameTitle";
 
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The ComponentClient that will be used for sending the requests.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (order,int...)} has been called.
+   */
+  public ProfileDetailedName(
+      ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
+
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 }

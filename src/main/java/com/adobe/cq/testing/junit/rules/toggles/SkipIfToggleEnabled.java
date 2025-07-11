@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Adobe
+ * Copyright 2021 Adobe Systems Incorporated
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to mark a test that should be skipped if a toggle is enabled.
- * This is meant for tests that rely on a feature that changes once
- * the toggle is enabled.
+ * Annotation to mark a test that should be skipped if a toggle is enabled. This is meant for tests
+ * that rely on a feature that changes once the toggle is enabled.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface SkipIfToggleEnabled {
-    /**
-     * The toggle that is required for the test to be skipped
-     * @return the toggle name
-     */
-    String value();
+  /**
+   * The toggle that is required for the test to be skipped
+   *
+   * @return the toggle name
+   */
+  String value();
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.junit.rules;
 
 import org.apache.sling.testing.junit.rules.instance.Instance;
@@ -23,30 +22,28 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 public class CQAuthorClassRule implements TestRule {
-    /** Granite rules to be executed at class level */
-    public final CQClassRule cqClassRule;
+  /** Granite rules to be executed at class level */
+  public final CQClassRule cqClassRule;
 
-    /** ExistingInstance to reserve an Author */
-    public final Instance authorRule;
+  /** ExistingInstance to reserve an Author */
+  public final Instance authorRule;
 
-    protected TestRule ruleChain;
+  protected TestRule ruleChain;
 
-    public CQAuthorClassRule() {
-        this(false);
-    }
+  public CQAuthorClassRule() {
+    this(false);
+  }
 
-    public CQAuthorClassRule(boolean forceBasicAuth) {
-        super();
-        cqClassRule = new CQClassRule();
-        authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuth)
-                .withRunMode("author");
+  public CQAuthorClassRule(boolean forceBasicAuth) {
+    super();
+    cqClassRule = new CQClassRule();
+    authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("author");
 
-        ruleChain = RuleChain.outerRule(cqClassRule)
-                .around(authorRule);
-    }
+    ruleChain = RuleChain.outerRule(cqClassRule).around(authorRule);
+  }
 
-    @Override
-    public Statement apply(Statement base, Description description) {
-        return ruleChain.apply(base, description);
-    }
+  @Override
+  public Statement apply(Statement base, Description description) {
+    return ruleChain.apply(base, description);
+  }
 }

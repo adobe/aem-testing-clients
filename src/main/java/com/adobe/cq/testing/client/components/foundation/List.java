@@ -18,52 +18,50 @@ package com.adobe.cq.testing.client.components.foundation;
 import com.adobe.cq.testing.client.ComponentClient;
 
 /**
- * Wraps the List foundation component, providing methods for editing it. See
- * {@code /libs/foundation/components/list} in the repository for implementation details.
+ * Wraps the List foundation component, providing methods for editing it. See {@code
+ * /libs/foundation/components/list} in the repository for implementation details.
  */
 public class List extends AbstractFoundationComponent {
 
-    public static final String RESOURCE_TYPE = "foundation/components/list";
-    public static final String OPT_LIST_FROM_CHILDREN = "children";
-    public static final String OPT_LIST_FIXED_LIST = "static";
-    public static final String OPT_LIST_SEARCH = "search";
-    public static final String OPT_LIST_QUERY_BUILDER = "querybuilder";
+  public static final String RESOURCE_TYPE = "foundation/components/list";
+  public static final String OPT_LIST_FROM_CHILDREN = "children";
+  public static final String OPT_LIST_FIXED_LIST = "static";
+  public static final String OPT_LIST_SEARCH = "search";
+  public static final String OPT_LIST_QUERY_BUILDER = "querybuilder";
 
-    public static final String PROP_LIST_FROM = "listFrom";
-    public static final String PROP_PARENT_PAGE = "parentPage";
-    public static final String PROP_ANCESTOR_PAGE = "ancestorPage";
-    public static final String PROP_DISPLAY_AS = "displayAs";
-    public static final String PROP_ORDER_BY = "orderBy";
-    public static final String PROP_LIMIT = "limit";
-    public static final String PROP_FEED_ENABLED = "feedEnabled";
-    public static final String PROP_PAGE_MAX = "pageMax";
-    public static final String PROP_SEARCH_IN = "searchIn";
-    public static final String PROP_PAGES = "pages";
-    public static final String PROP_PAGES_DEL = "pages@Delete";
-    public static final String PROP_QUERY = "query";
-    public static final String PROP_SAVED_QUERY = "savedquery";
-    public static final String PROP_TAG_SEARCHROOT = "tagsSearchRoot";
+  public static final String PROP_LIST_FROM = "listFrom";
+  public static final String PROP_PARENT_PAGE = "parentPage";
+  public static final String PROP_ANCESTOR_PAGE = "ancestorPage";
+  public static final String PROP_DISPLAY_AS = "displayAs";
+  public static final String PROP_ORDER_BY = "orderBy";
+  public static final String PROP_LIMIT = "limit";
+  public static final String PROP_FEED_ENABLED = "feedEnabled";
+  public static final String PROP_PAGE_MAX = "pageMax";
+  public static final String PROP_SEARCH_IN = "searchIn";
+  public static final String PROP_PAGES = "pages";
+  public static final String PROP_PAGES_DEL = "pages@Delete";
+  public static final String PROP_QUERY = "query";
+  public static final String PROP_SAVED_QUERY = "savedquery";
+  public static final String PROP_TAG_SEARCHROOT = "tagsSearchRoot";
 
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The {@link com.adobe.cq.testing.client.FoundationClient FoundationClient} that's
+   *     creating this instance.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (String,int...)} has been called.
+   */
+  public List(ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The {@link com.adobe.cq.testing.client.FoundationClient FoundationClient} that's
-     *                 creating this
-     *                 instance.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (String,int...)}
-     *                 has been called.
-     */
-    public List(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
-
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 }

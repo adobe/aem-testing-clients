@@ -17,90 +17,93 @@ package com.adobe.cq.testing.client.workflow;
 
 import com.adobe.cq.testing.client.WorkflowClient;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.Date;
 
-/**
- * Simple wrapper around the History Item info returned by the server
- */
+/** Simple wrapper around the History Item info returned by the server */
 public class HistoryItem {
-	
-	public static final String STATUS_ACTIVE = "Active";
 
-	public static final String STATUS_COMPLETED = "Completed";
-	
-    private JsonNode rootNode = null;
+  public static final String STATUS_ACTIVE = "Active";
 
-    /**
-     * the only constructor
-     *
-     * @param rootNode the JSON node containing all the infos
-     */
-    public HistoryItem(JsonNode rootNode){
-        this.rootNode = rootNode;
-    }
+  public static final String STATUS_COMPLETED = "Completed";
 
-    /**
-     * The status of this history item (i.e Active, Completed etc..)
-     * @return status
-     */
-    public String getStatus() {
-        if (rootNode.get("status") == null)return null;
-        return rootNode.get("status").asText();
-    }
+  private JsonNode rootNode = null;
 
-    /**
-     * The title of the step that is related to this history item
-     * @return process title
-     */
-    public String getProcess() {
-        if (rootNode.get("process") == null)return null;
-        return rootNode.get("process").asText();
-    }
+  /**
+   * the only constructor
+   *
+   * @param rootNode the JSON node containing all the infos
+   */
+  public HistoryItem(JsonNode rootNode) {
+    this.rootNode = rootNode;
+  }
 
-    /**
-     * The user id that performed this step in the history item
-     * @return userid
-     */
-    public String getUser() {
-        if (rootNode.get("user") == null)return null;
-        return rootNode.get("user").asText();
-    }
+  /**
+   * The status of this history item (i.e Active, Completed etc..)
+   *
+   * @return status
+   */
+  public String getStatus() {
+    if (rootNode.get("status") == null) return null;
+    return rootNode.get("status").asText();
+  }
 
-    /**
-     * The action of this history item (i.e NodeTransition etc..)
-     * @return comment
-     */
-    public String getAction() {
-        if (rootNode.get("action") == null)return null;
-        return rootNode.get("action").asText();
-    }
+  /**
+   * The title of the step that is related to this history item
+   *
+   * @return process title
+   */
+  public String getProcess() {
+    if (rootNode.get("process") == null) return null;
+    return rootNode.get("process").asText();
+  }
 
-    /**
-     * The comment information available in the history item
-     * @return comment
-     */
-    public String getComment() {
-        if (rootNode.get("comment") == null)return null;
-        return rootNode.get("comment").asText();
-    }
+  /**
+   * The user id that performed this step in the history item
+   *
+   * @return userid
+   */
+  public String getUser() {
+    if (rootNode.get("user") == null) return null;
+    return rootNode.get("user").asText();
+  }
 
-    /**
-     * The start date of this history item
-     * @return start date
-     */
-    public Date getStartDate(){
-        if (rootNode.get("startTime") == null)return null;
-        return WorkflowClient.parseJSONDate(rootNode.get("startTime").asText());
-    }
+  /**
+   * The action of this history item (i.e NodeTransition etc..)
+   *
+   * @return comment
+   */
+  public String getAction() {
+    if (rootNode.get("action") == null) return null;
+    return rootNode.get("action").asText();
+  }
 
-    /**
-     * The end date of this history item
-     * @return end date
-     */
-    public Date getEndDate(){
-        if (rootNode.get("endTime") == null)return null;
-        return WorkflowClient.parseJSONDate(rootNode.get("endTime").asText());
-    }
+  /**
+   * The comment information available in the history item
+   *
+   * @return comment
+   */
+  public String getComment() {
+    if (rootNode.get("comment") == null) return null;
+    return rootNode.get("comment").asText();
+  }
 
+  /**
+   * The start date of this history item
+   *
+   * @return start date
+   */
+  public Date getStartDate() {
+    if (rootNode.get("startTime") == null) return null;
+    return WorkflowClient.parseJSONDate(rootNode.get("startTime").asText());
+  }
+
+  /**
+   * The end date of this history item
+   *
+   * @return end date
+   */
+  public Date getEndDate() {
+    if (rootNode.get("endTime") == null) return null;
+    return WorkflowClient.parseJSONDate(rootNode.get("endTime").asText());
+  }
 }

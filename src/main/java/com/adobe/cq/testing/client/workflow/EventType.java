@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.client.workflow;
 
-
 public enum EventType {
-    Created("1"), Modified("16"), Removed("2");
+  Created("1"),
+  Modified("16"),
+  Removed("2");
 
-    private final String name;
-    private EventType(String name) {
-        this.name = name;
-    }
-    public String toString() {
-        return name;
-    }
+  private final String name;
+
+  private EventType(String name) {
+    this.name = name;
+  }
+
+  public String toString() {
+    return name;
+  }
 }

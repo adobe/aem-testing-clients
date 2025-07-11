@@ -17,23 +17,20 @@ package com.adobe.cq.testing.client.security;
 
 import java.util.HashMap;
 
-/**
- * Interface to define and load user's profile properties
- */
+/** Interface to define and load user's profile properties */
 public interface Profile {
 
-    /**
-     * Get profile properties
-     *
-     * @return map with profile properties
-     */
-    public HashMap<String, String> getProperties();
+  /**
+   * Get profile properties
+   *
+   * @return map with profile properties
+   */
+  public HashMap<String, String> getProperties();
 
-    /**
-     * Set profile properties
-     *
-     * @param propertiesMap map with profile properties
-     */
-    public void setProperties(HashMap<String, String> propertiesMap);
-
+  /**
+   * Set profile properties
+   *
+   * @param propertiesMap map with profile properties
+   */
+  public void setProperties(HashMap<String, String> propertiesMap);
 }

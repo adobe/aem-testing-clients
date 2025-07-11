@@ -20,23 +20,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ClassRuleUtils {
-    public static final Logger LOG = LoggerFactory.getLogger(ClassRuleUtils.class);
+  public static final Logger LOG = LoggerFactory.getLogger(ClassRuleUtils.class);
 
-    /**
-     * Create a new {@code Instance} object depending on the default auth mechanism
-     * @param forceBasicAuth set to true to always use basic auth
-     * @return the instance object
-     */
-    public static Instance newInstanceRule(boolean forceBasicAuth) {
-        return new ConfigurableInstance(forceBasicAuth);
-    }
+  /**
+   * Create a new {@code Instance} object depending on the default auth mechanism
+   *
+   * @param forceBasicAuth set to true to always use basic auth
+   * @return the instance object
+   */
+  public static Instance newInstanceRule(boolean forceBasicAuth) {
+    return new ConfigurableInstance(forceBasicAuth);
+  }
 
-    /**
-     * Create a new {@code Instance} object depending on the default auth mechanism
-     *
-     * @return the instance object
-     */
-    public static Instance newInstanceRule() {
-        return newInstanceRule(false);
-    }
+  /**
+   * Create a new {@code Instance} object depending on the default auth mechanism
+   *
+   * @return the instance object
+   */
+  public static Instance newInstanceRule() {
+    return newInstanceRule(false);
+  }
 }

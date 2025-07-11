@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.junit.category;
 
 /**
- * Used to mark a test as unstable. The behaviour is defined externally. e.g. filtering out those tests
+ * Used to mark a test as unstable. The behaviour is defined externally. e.g. filtering out those
+ * tests
  */
-public interface FlakyTest {
-}
+public interface FlakyTest {}

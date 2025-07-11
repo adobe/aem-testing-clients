@@ -20,54 +20,54 @@ import java.util.Set;
 
 public class OffloadingInstanceConfiguration {
 
-    public String slingId;
-    public String ip;
-    public String port;
-    public String cluster;
-    public Set<String> topics;
+  public String slingId;
+  public String ip;
+  public String port;
+  public String cluster;
+  public Set<String> topics;
 
+  public OffloadingInstanceConfiguration() {
+    topics = new HashSet<>();
+  }
 
-    public OffloadingInstanceConfiguration() {
-        topics = new HashSet<>();
-    }
+  public OffloadingInstanceConfiguration(
+      String slingId, String ip, String port, String cluster, Set<String> topics) {
+    this.slingId = slingId;
+    this.ip = ip;
+    this.port = port;
+    this.cluster = cluster;
+    this.topics = topics;
+  }
 
-    public OffloadingInstanceConfiguration(String slingId, String ip, String port, String cluster, Set<String> topics) {
-        this.slingId = slingId;
-        this.ip = ip;
-        this.port = port;
-        this.cluster = cluster;
-        this.topics = topics;
-    }
+  public OffloadingInstanceConfiguration(String ip, String port) {
+    this.ip = ip;
+    this.port = port;
+    this.slingId = null;
+    this.cluster = null;
+    this.topics = new HashSet<>();
+  }
 
-    public OffloadingInstanceConfiguration(String ip, String port) {
-        this.ip = ip;
-        this.port = port;
-        this.slingId = null;
-        this.cluster = null;
-        this.topics = new HashSet<>();
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof OffloadingInstanceConfiguration)) return false;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OffloadingInstanceConfiguration)) return false;
+    OffloadingInstanceConfiguration that = (OffloadingInstanceConfiguration) o;
 
-        OffloadingInstanceConfiguration that = (OffloadingInstanceConfiguration) o;
+    if (slingId != null && that.slingId != null && !this.slingId.equals(that.slingId)) return false;
+    if (ip != null && that.ip != null && !this.ip.equals(that.ip)) return false;
+    if (port != null && that.port != null && !this.port.equals(that.port)) return false;
+    if (cluster != null && that.cluster != null && !this.cluster.equals(that.cluster)) return false;
 
-        if (slingId != null && that.slingId != null && !this.slingId.equals(that.slingId)) return false;
-        if (ip != null && that.ip != null && !this.ip.equals(that.ip)) return false;
-        if (port != null && that.port != null && !this.port.equals(that.port)) return false;
-        if (cluster != null && that.cluster != null && !this.cluster.equals(that.cluster)) return false;
+    return true;
+  }
 
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = slingId != null ? slingId.hashCode() : 0;
-        result = 31 * result + (ip != null ? ip.hashCode() : 0);
-        result = 31 * result + (port != null ? port.hashCode() : 0);
-        result = 31 * result + (cluster != null ? cluster.hashCode() : 0);
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    int result = slingId != null ? slingId.hashCode() : 0;
+    result = 31 * result + (ip != null ? ip.hashCode() : 0);
+    result = 31 * result + (port != null ? port.hashCode() : 0);
+    result = 31 * result + (cluster != null ? cluster.hashCode() : 0);
+    return result;
+  }
 }

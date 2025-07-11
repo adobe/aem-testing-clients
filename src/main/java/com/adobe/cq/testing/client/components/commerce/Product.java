@@ -19,31 +19,31 @@ import com.adobe.cq.testing.client.ComponentClient;
 import com.adobe.cq.testing.client.components.AbstractComponent;
 import org.apache.sling.testing.clients.ClientException;
 
-/**
- * Wraps the product commerce component, providing methods for editing it.
- */
+/** Wraps the product commerce component, providing methods for editing it. */
 public class Product extends AbstractComponent {
 
-    public static final String RESOURCE_TYPE = "commerce/components/product";
-    public static final String PROP_PRODUCT_DATA = "productData";
+  public static final String RESOURCE_TYPE = "commerce/components/product";
+  public static final String PROP_PRODUCT_DATA = "productData";
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The {@link com.adobe.cq.testing.client.FoundationClient FoundationClient} that's creating
-     *                 GraniteClientthis instance.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create(String, int...)}
-     *                 has been called.
-     * @throws ClientException if the request fails
-     */
-    public Product(ComponentClient client, String pagePath, String location, String nameHint) throws ClientException {
-        super(client, pagePath, location, nameHint);
-    }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The {@link com.adobe.cq.testing.client.FoundationClient FoundationClient} that's
+   *     creating GraniteClientthis instance.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create(String, int...)} has been called.
+   * @throws ClientException if the request fails
+   */
+  public Product(ComponentClient client, String pagePath, String location, String nameHint)
+      throws ClientException {
+    super(client, pagePath, location, nameHint);
+  }
 
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 }

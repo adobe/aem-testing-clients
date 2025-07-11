@@ -17,68 +17,66 @@ package com.adobe.cq.testing.client.jobs;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Nonnull;
 
-/**
- * POJO that describes active jobs statistics and topic statistics in sling
- */
+/** POJO that describes active jobs statistics and topic statistics in sling */
 public class JobsStatistics {
-    public List<JobQueueStat> jobQueues;
-    public List<TopicStat> topics;
+  public List<JobQueueStat> jobQueues;
+  public List<TopicStat> topics;
 
-    public List<JobQueueStat> getJobQueues() {
-        return jobQueues;
+  public List<JobQueueStat> getJobQueues() {
+    return jobQueues;
+  }
+
+  public void setJobQueues(List<JobQueueStat> jobQueues) {
+    this.jobQueues = jobQueues;
+  }
+
+  @Nonnull
+  public List<TopicStat> getTopics() {
+    return topics;
+  }
+
+  /**
+   * Get a specific topic statistic
+   *
+   * @param topic string representation of the job topic
+   * @return null if topic statistic is not found
+   */
+  public TopicStat getTopic(@Nonnull String topic) {
+    TopicStat foundTopicStat = null;
+    for (TopicStat topicStat : this.getTopics()) {
+      if (topic.equals(topicStat.getTopicName())) {
+        foundTopicStat = topicStat;
+      }
     }
+    return foundTopicStat;
+  }
 
-    public void setJobQueues(List<JobQueueStat> jobQueues) {
-        this.jobQueues = jobQueues;
-    }
+  public void setTopics(List<TopicStat> topics) {
+    this.topics = topics;
+  }
 
-    @Nonnull
-    public List<TopicStat> getTopics() {
-        return topics;
-    }
+  public JobsStatistics() {
+    this.jobQueues = new ArrayList<>();
+    this.topics = new ArrayList<>();
+  }
 
-    /**
-     * Get a specific topic statistic
-     *
-     * @param topic string representation of the job topic
-     * @return null if topic statistic is not found
-     */
-    public TopicStat getTopic(@Nonnull String topic) {
-        TopicStat foundTopicStat = null;
-        for (TopicStat topicStat : this.getTopics()) {
-            if (topic.equals(topicStat.getTopicName())) {
-                foundTopicStat = topicStat;
-            }
-        }
-        return foundTopicStat;
-    }
+  /**
+   * Add a job queue statistics entry tot his statistics container
+   *
+   * @param stats statistics
+   */
+  public void addJobQueueStat(JobQueueStat stats) {
+    this.jobQueues.add(stats);
+  }
 
-    public void setTopics(List<TopicStat> topics) {
-        this.topics = topics;
-    }
-
-    public JobsStatistics() {
-        this.jobQueues = new ArrayList<>();
-        this.topics = new ArrayList<>();
-    }
-
-    /**
-     * Add a job queue statistics entry tot his statistics container
-     * @param stats statistics
-     */
-    public void addJobQueueStat(JobQueueStat stats) {
-        this.jobQueues.add(stats);
-    }
-
-    /**
-     * Add a topic statistics element to this statistics container
-     * @param stats statistics
-     */
-    public void addTopicStat(TopicStat stats) {
-        this.topics.add(stats);
-    }
-
+  /**
+   * Add a topic statistics element to this statistics container
+   *
+   * @param stats statistics
+   */
+  public void addTopicStat(TopicStat stats) {
+    this.topics.add(stats);
+  }
 }

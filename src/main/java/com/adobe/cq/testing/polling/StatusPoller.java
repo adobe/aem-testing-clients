@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.polling;
 
 import org.apache.sling.testing.clients.ClientException;
@@ -23,21 +22,21 @@ import org.apache.sling.testing.clients.util.poller.Polling;
 
 public class StatusPoller extends Polling {
 
-    public Exception storedException;
-    SlingHttpResponse response;
-    int status;
-    String pagePath;
-    private SlingClient client;
+  public Exception storedException;
+  SlingHttpResponse response;
+  int status;
+  String pagePath;
+  private SlingClient client;
 
-    public StatusPoller(final String pagePath, final SlingClient client, final int expectedStatus) {
-        super();
-        this.pagePath = pagePath;
-        this.status = expectedStatus;
-        this.client = client;
-    }
+  public StatusPoller(final String pagePath, final SlingClient client, final int expectedStatus) {
+    super();
+    this.pagePath = pagePath;
+    this.status = expectedStatus;
+    this.client = client;
+  }
 
-    @Override
-    public Boolean call() throws ClientException {
-        return client.doGet(pagePath, status).getStatusLine().getStatusCode() == status;
-    }
+  @Override
+  public Boolean call() throws ClientException {
+    return client.doGet(pagePath, status).getStatusLine().getStatusCode() == status;
+  }
 }

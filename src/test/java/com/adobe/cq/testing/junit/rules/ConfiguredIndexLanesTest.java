@@ -16,6 +16,9 @@
 package com.adobe.cq.testing.junit.rules;
 
 import com.adobe.cq.testing.client.CQClient;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.indexing.IndexingClient;
@@ -28,73 +31,74 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 @RunWith(Parameterized.class)
 public class ConfiguredIndexLanesTest {
-    private static final String[] EXPECTED_INDEX_LANE_NAMES = new String[]{"async", "fulltext-async"};
+  private static final String[] EXPECTED_INDEX_LANE_NAMES =
+      new String[] {"async", "fulltext-async"};
 
-    @Parameterized.Parameters (name = "{index}: {1} with basicAuth {0}")
-    public static Collection input() {
-        return Arrays.asList(new Object[][]{
-                {true, "author"},
-                {false, "author"},
-                {true, "publish"},
-                {false, "publish"},
+  @Parameterized.Parameters(name = "{index}: {1} with basicAuth {0}")
+  public static Collection input() {
+    return Arrays.asList(
+        new Object[][] {
+          {true, "author"},
+          {false, "author"},
+          {true, "publish"},
+          {false, "publish"},
         });
+  }
+
+  public ConfiguredIndexLanesTest(boolean useBasicAuth, String runMode) {
+    boolean isAuthor = !"publish".equals(runMode);
+
+    InstanceConfiguration defaultConfig;
+    if (isAuthor) {
+      // non-publish implies author
+      runMode = "author";
+      defaultConfig = CQClassRule.DEFAULT_AUTHOR_CONFIG;
+    } else {
+      runMode = "publish";
+      defaultConfig = CQClassRule.DEFAULT_PUBLISH_CONFIG;
     }
+    instance =
+        ClassRuleUtils.newInstanceRule(useBasicAuth).withRunMode(runMode).orDefault(defaultConfig);
+  }
 
-    public ConfiguredIndexLanesTest(boolean useBasicAuth, String runMode) {
-        boolean isAuthor = !"publish".equals(runMode);
+  @Rule public Instance instance;
 
-        InstanceConfiguration defaultConfig;
-        if (isAuthor) {
-            //non-publish implies author
-            runMode = "author";
-            defaultConfig = CQClassRule.DEFAULT_AUTHOR_CONFIG;
-        } else {
-            runMode = "publish";
-            defaultConfig = CQClassRule.DEFAULT_PUBLISH_CONFIG;
-        }
-        instance = ClassRuleUtils.newInstanceRule(useBasicAuth)
-                .withRunMode(runMode).orDefault(defaultConfig);
-    }
+  @Test
+  public void basics() throws ClientException {
+    SlingClient client = instance.getClient(SlingClient.class, "admin", "admin");
 
-    @Rule
-    public Instance instance;
+    IndexingClient indexingClient = client.adaptTo(IndexingClient.class);
 
-    @Test
-    public void basics() throws ClientException {
-        SlingClient client = instance.getClient(SlingClient.class, "admin", "admin");
+    List<String> laneNames = indexingClient.getLaneNames();
+    Assert.assertEquals(
+        "Incorrect number of configured index lanes",
+        EXPECTED_INDEX_LANE_NAMES.length,
+        laneNames.size());
+    Assert.assertThat(laneNames, CoreMatchers.hasItems(EXPECTED_INDEX_LANE_NAMES));
+  }
 
-        IndexingClient indexingClient = client.adaptTo(IndexingClient.class);
+  @Test
+  public void cachedClient() throws ClientException {
+    // just create a client to create a cache entry.
+    instance.getClient(CQClient.class, "admin", "admin");
 
-        List<String> laneNames = indexingClient.getLaneNames();
-        Assert.assertEquals("Incorrect number of configured index lanes",
-                EXPECTED_INDEX_LANE_NAMES.length, laneNames.size());
-        Assert.assertThat(laneNames, CoreMatchers.hasItems(EXPECTED_INDEX_LANE_NAMES));
-    }
+    // .... rest of the test is same as basics test
+    basics();
+  }
 
-    @Test
-    public void cachedClient() throws ClientException {
-        // just create a client to create a cache entry.
-        instance.getClient(CQClient.class, "admin", "admin");
+  @Test
+  public void basicsAdminClient() throws ClientException {
+    SlingClient client = instance.getAdminClient(SlingClient.class);
 
-        // .... rest of the test is same as basics test
-        basics();
-    }
+    IndexingClient indexingClient = client.adaptTo(IndexingClient.class);
 
-    @Test
-    public void basicsAdminClient() throws ClientException {
-        SlingClient client = instance.getAdminClient(SlingClient.class);
-
-        IndexingClient indexingClient = client.adaptTo(IndexingClient.class);
-
-        List<String> laneNames = indexingClient.getLaneNames();
-        Assert.assertEquals("Incorrect number of configured index lanes",
-                EXPECTED_INDEX_LANE_NAMES.length, laneNames.size());
-        Assert.assertThat(laneNames, CoreMatchers.hasItems(EXPECTED_INDEX_LANE_NAMES));
-    }
+    List<String> laneNames = indexingClient.getLaneNames();
+    Assert.assertEquals(
+        "Incorrect number of configured index lanes",
+        EXPECTED_INDEX_LANE_NAMES.length,
+        laneNames.size());
+    Assert.assertThat(laneNames, CoreMatchers.hasItems(EXPECTED_INDEX_LANE_NAMES));
+  }
 }

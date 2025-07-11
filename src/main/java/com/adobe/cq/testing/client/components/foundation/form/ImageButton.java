@@ -19,40 +19,40 @@ import com.adobe.cq.testing.client.ComponentClient;
 
 public class ImageButton extends AbstractFormFieldComponent {
 
-    public static final String RESOURCE_TYPE = "foundation/components/form/imagebutton";
-    public static final String RESOURCE_SUPEER_TYPE = "foundation/components/form/defaults/field";
-    public static final String RESOURCE_NAME = "imagebutton";
+  public static final String RESOURCE_TYPE = "foundation/components/form/imagebutton";
+  public static final String RESOURCE_SUPEER_TYPE = "foundation/components/form/defaults/field";
+  public static final String RESOURCE_NAME = "imagebutton";
 
-    public static final String SRC_PROP_NAME = "src";
+  public static final String SRC_PROP_NAME = "src";
 
-    /** The path to the image source of this image button */
-    private String src = "";
+  /** The path to the image source of this image button */
+  private String src = "";
 
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The ComponentClient that will be used for sending the requests.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (order,int...)} has been called.
+   */
+  public ImageButton(ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The ComponentClient that will be used for sending the requests.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (order,int...)} has been called.
-     */
-    public ImageButton(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  public String getSrc() {
+    return src;
+  }
 
-    public String getSrc() {
-        return src;
-    }
-
-    public void setSrc(String src) {
-        this.src = src;
-    }
+  public void setSrc(String src) {
+    this.src = src;
+  }
 }

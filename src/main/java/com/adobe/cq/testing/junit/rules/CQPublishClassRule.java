@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.junit.rules;
 
 import org.apache.sling.testing.junit.rules.instance.Instance;
@@ -22,33 +21,29 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import static com.adobe.cq.testing.junit.rules.CQClassRule.DEFAULT_PUBLISH_CONFIG;
-
-
 public class CQPublishClassRule implements TestRule {
-    /** CQ rules to be executed at class level */
-    public final CQClassRule cqClassRule;
+  /** CQ rules to be executed at class level */
+  public final CQClassRule cqClassRule;
 
-    /** ExistingInstance to reserve a Publish */
-    public final Instance publishRule;
+  /** ExistingInstance to reserve a Publish */
+  public final Instance publishRule;
 
-    protected TestRule ruleChain;
+  protected TestRule ruleChain;
 
-    public CQPublishClassRule() {
-        this(false);
-    }
+  public CQPublishClassRule() {
+    this(false);
+  }
 
-    public CQPublishClassRule(boolean forceBasicAuth) {
-        super();
-        cqClassRule = new CQClassRule();
-        publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuth)
-                .withRunMode("publish");
+  public CQPublishClassRule(boolean forceBasicAuth) {
+    super();
+    cqClassRule = new CQClassRule();
+    publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuth).withRunMode("publish");
 
-        ruleChain = RuleChain.outerRule(cqClassRule)
-                .around(publishRule);
-    }
-    @Override
-    public Statement apply(Statement base, Description description) {
-        return ruleChain.apply(base, description);
-    }
+    ruleChain = RuleChain.outerRule(cqClassRule).around(publishRule);
+  }
+
+  @Override
+  public Statement apply(Statement base, Description description) {
+    return ruleChain.apply(base, description);
+  }
 }

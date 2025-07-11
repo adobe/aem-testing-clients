@@ -13,60 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/**
- *
- */
 package com.adobe.cq.testing.util;
 
+import java.nio.charset.Charset;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.nio.charset.Charset;
-
 public class MultiPartNameValuePair extends BasicNameValuePair {
-    /**
-     * Serial Version Uid
-     */
-    private static final long    serialVersionUID    = 1L;
-    private String    mimetype, charset;
+  /** Serial Version Uid */
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Generates a replica of BasicNameValuePair
-     *
-     * @param name name
-     * @param value value
-     */
-    public MultiPartNameValuePair(String name, String value){
-        super(name, value);
-    }
+  private String mimetype, charset;
 
-    /**
-     * Generates a customized NameValuePair for multipart entities.
-     *
-     * @param name name
-     * @param value value
-     * @param mimetype mime type
-     * @param charset charset
-     */
-    public MultiPartNameValuePair(String name, String value, String mimetype, String charset) {
-        super(name, value);
-        this.mimetype = mimetype;
-        this.charset = charset;
-    }
+  /**
+   * Generates a replica of BasicNameValuePair
+   *
+   * @param name name
+   * @param value value
+   */
+  public MultiPartNameValuePair(String name, String value) {
+    super(name, value);
+  }
 
+  /**
+   * Generates a customized NameValuePair for multipart entities.
+   *
+   * @param name name
+   * @param value value
+   * @param mimetype mime type
+   * @param charset charset
+   */
+  public MultiPartNameValuePair(String name, String value, String mimetype, String charset) {
+    super(name, value);
+    this.mimetype = mimetype;
+    this.charset = charset;
+  }
 
-    /**
-     * @return the mimetype
-     */
-    public String getMimetype() {
-        return mimetype;
-    }
+  /**
+   * @return the mimetype
+   */
+  public String getMimetype() {
+    return mimetype;
+  }
 
-    /**
-     * @return the charset
-     */
-    public Charset getCharset() {
-        return Charset.forName(charset);
-    }
-
+  /**
+   * @return the charset
+   */
+  public Charset getCharset() {
+    return Charset.forName(charset);
+  }
 }

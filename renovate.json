@@ -2,5 +2,18 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^pom.xml$/"
+      ],
+      "matchStrings": [
+        "<google-java-format.version>(?<currentValue>.*?)</google-java-format.version>"
+      ],
+      "depNameTemplate": "com.google.googlejavaformat:google-java-format",
+      "datasourceTemplate": "maven"
+    }
   ]
 }

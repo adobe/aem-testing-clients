@@ -22,22 +22,19 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-/**
- * Base rule to be used on every test.
- * It chains the {@link SlingRule}.
- */
+/** Base rule to be used on every test. It chains the {@link SlingRule}. */
 public class CQRule implements TestRule {
-    public final SlingRule slingBaseRule;
+  public final SlingRule slingBaseRule;
 
-    protected TestRule cqRuleChain;
+  protected TestRule cqRuleChain;
 
-    public CQRule(Instance... instances) {
-        this.slingBaseRule = new SlingRule(instances);
-        this.cqRuleChain = RuleChain.outerRule(slingBaseRule);
-    }
+  public CQRule(Instance... instances) {
+    this.slingBaseRule = new SlingRule(instances);
+    this.cqRuleChain = RuleChain.outerRule(slingBaseRule);
+  }
 
-    @Override
-    public Statement apply(Statement base, Description description) {
-        return cqRuleChain.apply(base, description);
-    }
+  @Override
+  public Statement apply(Statement base, Description description) {
+    return cqRuleChain.apply(base, description);
+  }
 }

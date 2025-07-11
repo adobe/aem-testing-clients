@@ -15,86 +15,115 @@
  */
 package com.adobe.cq.testing.client.security;
 
+import static org.apache.http.HttpStatus.SC_OK;
+
 import com.adobe.cq.testing.client.SecurityClient;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.Constants;
+import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.URLParameterBuilder;
 
-import static org.apache.http.HttpStatus.SC_OK;
-
 public class CQPermissions extends Permissions {
 
-    public <T extends SecurityClient> CQPermissions(T client) {
-        super(client);
-    }
+  public <T extends SecurityClient> CQPermissions(T client) {
+    super(client);
+  }
 
-    /**
-     * Changes permissions for an authorizable.
-     *
-     * @param authorizableId the authorizable id
-     * @param path           path
-     * @param read           read permission
-     * @param modify         modify permission
-     * @param create         createGroup permission
-     * @param delete         delete permission
-     * @param acl_read       read acl
-     * @param acl_edit       edit acl
-     * @param replicate      replication
-     * @param expectedStatus list of allowed HTTP Status to be returned. If not set,
-     *                       http status 200 (OK) is assumed.
-     * @return Json node containing resulting permissions
-     * @throws ClientException
-     *          If something fails during request/response cycle
-     */
-    public JsonNode changePermissions(String authorizableId, String path, boolean read, boolean modify, boolean create,
-                                      boolean delete, boolean acl_read, boolean acl_edit, boolean replicate,
-                                      int... expectedStatus) throws ClientException {
-        final String postPath = "/.cqactions.html";
+  /**
+   * Changes permissions for an authorizable.
+   *
+   * @param authorizableId the authorizable id
+   * @param path path
+   * @param read read permission
+   * @param modify modify permission
+   * @param create createGroup permission
+   * @param delete delete permission
+   * @param acl_read read acl
+   * @param acl_edit edit acl
+   * @param replicate replication
+   * @param expectedStatus list of allowed HTTP Status to be returned. If not set, http status 200
+   *     (OK) is assumed.
+   * @return Json node containing resulting permissions
+   * @throws ClientException If something fails during request/response cycle
+   */
+  public JsonNode changePermissions(
+      String authorizableId,
+      String path,
+      boolean read,
+      boolean modify,
+      boolean create,
+      boolean delete,
+      boolean acl_read,
+      boolean acl_edit,
+      boolean replicate,
+      int... expectedStatus)
+      throws ClientException {
+    final String postPath = "/.cqactions.html";
 
-        client.doPost(postPath, FormEntityBuilder.create()
-                .addParameter("authorizableId", authorizableId)
-                .addParameter("changelog", "path:" + path + "," +
-                              "read:" + Boolean.toString(read) + "," +
-                              "modify:" + Boolean.toString(modify) + "," +
-                              "create:" + Boolean.toString(create) + "," +
-                              "delete:" + Boolean.toString(delete) + "," +
-                              "acl_read:" + Boolean.toString(acl_read) + "," +
-                              "acl_edit:" + Boolean.toString(acl_edit) + "," +
-                              "replicate:" + Boolean.toString(replicate) + "")
-                .build(),
-                HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+    client.doPost(
+        postPath,
+        FormEntityBuilder.create()
+            .addParameter("authorizableId", authorizableId)
+            .addParameter(
+                "changelog",
+                "path:"
+                    + path
+                    + ","
+                    + "read:"
+                    + Boolean.toString(read)
+                    + ","
+                    + "modify:"
+                    + Boolean.toString(modify)
+                    + ","
+                    + "create:"
+                    + Boolean.toString(create)
+                    + ","
+                    + "delete:"
+                    + Boolean.toString(delete)
+                    + ","
+                    + "acl_read:"
+                    + Boolean.toString(acl_read)
+                    + ","
+                    + "acl_edit:"
+                    + Boolean.toString(acl_edit)
+                    + ","
+                    + "replicate:"
+                    + Boolean.toString(replicate)
+                    + "")
+            .build(),
+        HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
 
-        return getPermissions(authorizableId, path, 0, 200);
-    }
+    return getPermissions(authorizableId, path, 0, 200);
+  }
 
-    /**
-     * Get permissions for an authorizable.
-     *
-     * @param authorizableId the Id of the authorizable
-     * @param path           path
-     * @param depth          depth
-     * @param expectedStatus list of allowed HTTP Status to be returned. If not set,
-     *                       http status 200 (OK) is assumed.
-     * @return the root {@link JsonNode}
-     * @throws ClientException If something fails during request/response cycle
-     */
-    public JsonNode getPermissions(String authorizableId, String path, int depth, int... expectedStatus) throws
-            ClientException {
-        final String getPath = "/.cqactions.json";
-        URLParameterBuilder params = URLParameterBuilder.create();
-        params.add("authorizableId", authorizableId);
-        params.add("path", path);
-        params.add(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8);
-        params.add("depth", "" + depth);
-        params.add("predicate", "useradmin");
+  /**
+   * Get permissions for an authorizable.
+   *
+   * @param authorizableId the Id of the authorizable
+   * @param path path
+   * @param depth depth
+   * @param expectedStatus list of allowed HTTP Status to be returned. If not set, http status 200
+   *     (OK) is assumed.
+   * @return the root {@link JsonNode}
+   * @throws ClientException If something fails during request/response cycle
+   */
+  public JsonNode getPermissions(
+      String authorizableId, String path, int depth, int... expectedStatus) throws ClientException {
+    final String getPath = "/.cqactions.json";
+    URLParameterBuilder params = URLParameterBuilder.create();
+    params.add("authorizableId", authorizableId);
+    params.add("path", path);
+    params.add(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8);
+    params.add("depth", "" + depth);
+    params.add("predicate", "useradmin");
 
-        SlingHttpResponse exec = client.doGet(getPath, params.getList(), HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+    SlingHttpResponse exec =
+        client.doGet(getPath, params.getList(), HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
 
-        return JsonUtils.getJsonNodeFromString(exec.getContent());
-    }
+    return JsonUtils.getJsonNodeFromString(exec.getContent());
+  }
 }

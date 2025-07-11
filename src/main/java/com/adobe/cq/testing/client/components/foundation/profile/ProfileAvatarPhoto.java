@@ -19,35 +19,37 @@ import com.adobe.cq.testing.client.ComponentClient;
 import com.adobe.cq.testing.client.components.AbstractComponent;
 
 /**
- * Wraps the Profile Avatar Photo foundation component, providing methods for editing it. See
- * {@code /libs/foundation/components/profile/form/avatar} in the repository for implementation details.
+ * Wraps the Profile Avatar Photo foundation component, providing methods for editing it. See {@code
+ * /libs/foundation/components/profile/form/avatar} in the repository for implementation details.
  */
-public class ProfileAvatarPhoto extends AbstractComponent{
+public class ProfileAvatarPhoto extends AbstractComponent {
 
-    public static final String RESOURCE_TYPE = "foundation/components/profile/form/avatar";
+  public static final String RESOURCE_TYPE = "foundation/components/profile/form/avatar";
 
-    public static final String PROP_TITLE = "jcr:title";
-    public static final String PROP_TITLE_DELETE_PHOTO = "deleteTitle";
-    
-    public static final String PROP_TITLE_VALUE = "Upload Avatar Photo";
-    public static final String PROP_TITLE_DELETE_PHOTO_VALUE = "Delete Avatar Photo";
+  public static final String PROP_TITLE = "jcr:title";
+  public static final String PROP_TITLE_DELETE_PHOTO = "deleteTitle";
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The ComponentClient that will be used for sending the requests.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (order,int...)} has been called.
-     */
-    public ProfileAvatarPhoto(ComponentClient client, String pagePath, String location, String nameHint) {
-            super(client, pagePath, location, nameHint);
-    }
+  public static final String PROP_TITLE_VALUE = "Upload Avatar Photo";
+  public static final String PROP_TITLE_DELETE_PHOTO_VALUE = "Delete Avatar Photo";
 
-     @Override
-     public String getResourceType() {
-        return RESOURCE_TYPE;
-     }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The ComponentClient that will be used for sending the requests.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (order,int...)} has been called.
+   */
+  public ProfileAvatarPhoto(
+      ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
+
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 }

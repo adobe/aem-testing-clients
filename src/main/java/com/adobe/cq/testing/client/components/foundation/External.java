@@ -18,39 +18,38 @@ package com.adobe.cq.testing.client.components.foundation;
 import com.adobe.cq.testing.client.ComponentClient;
 
 /**
- * Wraps the External foundation component, providing methods for editing it. See
- * {@code /libs/foundation/components/external} in the repository for implementation details.
+ * Wraps the External foundation component, providing methods for editing it. See {@code
+ * /libs/foundation/components/external} in the repository for implementation details.
  */
 public class External extends AbstractFoundationComponent {
 
-    public static final String RESOURCE_TYPE = "foundation/components/external";
+  public static final String RESOURCE_TYPE = "foundation/components/external";
 
-    public static final String PROP_TARGET = "target";
-    public static final String PROP_PASSPARAMS = "passparams";
-    public static final String PROP_INCLUSION = "inclusion";
-    public static final String PROP_LIMIT = "limit";
-    public static final String PROP_WIDTH = "width";
-    public static final String PROP_HEIGHT = "height";
+  public static final String PROP_TARGET = "target";
+  public static final String PROP_PASSPARAMS = "passparams";
+  public static final String PROP_INCLUSION = "inclusion";
+  public static final String PROP_LIMIT = "limit";
+  public static final String PROP_WIDTH = "width";
+  public static final String PROP_HEIGHT = "height";
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The {@link com.adobe.cq.testing.client.FoundationClient FoundationClient} that's
-     *                 creating this
-     *                 instance.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (String,int...)} has been called.
-     */
-    public External(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The {@link com.adobe.cq.testing.client.FoundationClient FoundationClient} that's
+   *     creating this instance.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (String,int...)} has been called.
+   */
+  public External(ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
 
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
-
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 }

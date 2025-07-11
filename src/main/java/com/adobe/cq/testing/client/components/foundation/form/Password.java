@@ -19,26 +19,28 @@ import com.adobe.cq.testing.client.ComponentClient;
 
 public class Password extends AbstractFormFieldComponent {
 
-    public static final String RESOURCE_TYPE = "foundation/components/form/password";
+  public static final String RESOURCE_TYPE = "foundation/components/form/password";
 
-    /** The form input type */
-    public static final String TYPE = "password";
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The ComponentClient that will be used for sending the requests.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (order,int...)} has been called.
-     */
-    public Password(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
+  /** The form input type */
+  public static final String TYPE = "password";
 
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The ComponentClient that will be used for sending the requests.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (order,int...)} has been called.
+   */
+  public Password(ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
+
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 }

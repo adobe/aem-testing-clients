@@ -26,36 +26,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Make a snapshot of the OSGi configuration of a given bundle and restore it to its original state after test execution.
+ * Make a snapshot of the OSGi configuration of a given bundle and restore it to its original state
+ * after test execution.
  */
 public class OsgiConfigRestoreRule extends ExternalResource {
 
-    private final Logger logger = LoggerFactory.getLogger(OsgiConfigRestoreRule.class);
-    private final String pid;
-    private final Instance quickstartRule;
-    private SlingClient client;
-    private InstanceConfigCacheImpl configs;
+  private final Logger logger = LoggerFactory.getLogger(OsgiConfigRestoreRule.class);
+  private final String pid;
+  private final Instance quickstartRule;
+  private SlingClient client;
+  private InstanceConfigCacheImpl configs;
 
-    public OsgiConfigRestoreRule(Instance quickstartRule, String pid) {
-        super();
-        this.pid = pid;
-        this.quickstartRule = quickstartRule;
+  public OsgiConfigRestoreRule(Instance quickstartRule, String pid) {
+    super();
+    this.pid = pid;
+    this.quickstartRule = quickstartRule;
+  }
+
+  @Override
+  protected void before() throws ClientException, InstanceConfigException, InterruptedException {
+    this.client = this.quickstartRule.getAdminClient(SlingClient.class);
+    this.configs = new InstanceConfigCacheImpl();
+    this.configs.add(new OsgiInstanceConfig(this.client, this.pid));
+  }
+
+  @Override
+  protected void after() {
+    try {
+      this.configs.restore();
+    } catch (InstanceConfigException | InterruptedException e) {
+      logger.error("Could not restore OSGi config.", e);
     }
-
-    @Override
-    protected void before() throws ClientException, InstanceConfigException, InterruptedException {
-        this.client = this.quickstartRule.getAdminClient(SlingClient.class);
-        this.configs = new InstanceConfigCacheImpl();
-        this.configs.add(new OsgiInstanceConfig(this.client, this.pid));
-    }
-
-    @Override
-    protected void after() {
-        try {
-            this.configs.restore();
-        } catch (InstanceConfigException | InterruptedException e) {
-            logger.error("Could not restore OSGi config.", e);
-        }
-    }
-
+  }
 }

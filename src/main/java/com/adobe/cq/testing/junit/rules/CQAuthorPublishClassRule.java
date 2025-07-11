@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.junit.rules;
 
 import org.apache.sling.testing.junit.rules.instance.Instance;
@@ -24,45 +23,43 @@ import org.junit.runners.model.Statement;
 
 public class CQAuthorPublishClassRule implements TestRule {
 
-    /** Granite rules to be executed at class level */
-    public final CQClassRule cqClassRule;
+  /** Granite rules to be executed at class level */
+  public final CQClassRule cqClassRule;
 
-    /** ExistingInstance to reserve an Author */
-    public final Instance authorRule;
+  /** ExistingInstance to reserve an Author */
+  public final Instance authorRule;
 
-    /** ExistingInstance to reserve a Publish */
-    public final Instance publishRule;
+  /** ExistingInstance to reserve a Publish */
+  public final Instance publishRule;
 
-    protected TestRule ruleChain;
+  protected TestRule ruleChain;
 
-    public CQAuthorPublishClassRule() {
-        this(false);
-    }
+  public CQAuthorPublishClassRule() {
+    this(false);
+  }
 
-    /**
-     * @param forceBasicAuth Force basic authentication for author and publish instances.
-     */
-    public CQAuthorPublishClassRule(boolean forceBasicAuth) {
-        this(forceBasicAuth, forceBasicAuth);
-    }
+  /**
+   * @param forceBasicAuth Force basic authentication for author and publish instances.
+   */
+  public CQAuthorPublishClassRule(boolean forceBasicAuth) {
+    this(forceBasicAuth, forceBasicAuth);
+  }
 
-    /**
-     * @param forceBasicAuthAuthor Force basic authentication for author instance.
-     * @param forceBasicAuthPublish Force basic authentication for publish instance.
-     */
-    public CQAuthorPublishClassRule(boolean forceBasicAuthAuthor, boolean forceBasicAuthPublish) {
-        super();
-        cqClassRule = new CQClassRule();
-        authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuthAuthor).withRunMode("author");
-        publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuthPublish).withRunMode("publish");
+  /**
+   * @param forceBasicAuthAuthor Force basic authentication for author instance.
+   * @param forceBasicAuthPublish Force basic authentication for publish instance.
+   */
+  public CQAuthorPublishClassRule(boolean forceBasicAuthAuthor, boolean forceBasicAuthPublish) {
+    super();
+    cqClassRule = new CQClassRule();
+    authorRule = ClassRuleUtils.newInstanceRule(forceBasicAuthAuthor).withRunMode("author");
+    publishRule = ClassRuleUtils.newInstanceRule(forceBasicAuthPublish).withRunMode("publish");
 
-        ruleChain = RuleChain.outerRule(cqClassRule)
-                .around(authorRule)
-                .around(publishRule);
-    }
+    ruleChain = RuleChain.outerRule(cqClassRule).around(authorRule).around(publishRule);
+  }
 
-    @Override
-    public Statement apply(Statement base, Description description) {
-        return ruleChain.apply(base, description);
-    }
+  @Override
+  public Statement apply(Statement base, Description description) {
+    return ruleChain.apply(base, description);
+  }
 }

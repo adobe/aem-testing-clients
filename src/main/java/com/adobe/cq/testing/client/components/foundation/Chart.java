@@ -19,48 +19,48 @@ import com.adobe.cq.testing.client.ComponentClient;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 
 /**
- * Wraps the Chart foundation component, providing methods for editing it. See
- * {@code /libs/foundation/components/chart} in the repository for implementation details.
+ * Wraps the Chart foundation component, providing methods for editing it. See {@code
+ * /libs/foundation/components/chart} in the repository for implementation details.
  */
 public class Chart extends AbstractFoundationComponent {
 
-    public static final String RESOURCE_TYPE = "foundation/components/chart";
-    public static final String PROP_CHART_DATA = "chartData";
-    public static final String PROP_CHART_TYPE = "chartType";
-    public static final String PROP_CHART_ALT = "chartAlt";
-    public static final String PROP_CHART_WIDTH = "chartWidth";
-    public static final String PROP_CHART_HEIGHT = "chartHeight";
+  public static final String RESOURCE_TYPE = "foundation/components/chart";
+  public static final String PROP_CHART_DATA = "chartData";
+  public static final String PROP_CHART_TYPE = "chartType";
+  public static final String PROP_CHART_ALT = "chartAlt";
+  public static final String PROP_CHART_WIDTH = "chartWidth";
+  public static final String PROP_CHART_HEIGHT = "chartHeight";
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The {@link com.adobe.cq.testing.client.FoundationClient FoundationClient} that's
-     *                 creating this
-     *                 instance.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after
-     *                 {@link #create(String,int...)} has been called.
-     */
-    public Chart(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The {@link com.adobe.cq.testing.client.FoundationClient FoundationClient} that's
+   *     creating this instance.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create(String,int...)} has been called.
+   */
+  public Chart(ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
 
-    /**
-     * Adds an additional parameter {@code parentResourceType} to get properly inherited styles.
-     *
-     * @param order order
-     * @return FormEntityBuilder to be used for the create POST request.
-     */
-    public FormEntityBuilder getCreateFormEntity(String order) {
-        return super.getCreateFormEntity(order)
-                // The following param is required to get the proper styles inherited
-                .addParameter("parentResourceType", "foundation/components/parsys");
-    }
+  /**
+   * Adds an additional parameter {@code parentResourceType} to get properly inherited styles.
+   *
+   * @param order order
+   * @return FormEntityBuilder to be used for the create POST request.
+   */
+  public FormEntityBuilder getCreateFormEntity(String order) {
+    return super.getCreateFormEntity(order)
+        // The following param is required to get the proper styles inherited
+        .addParameter("parentResourceType", "foundation/components/parsys");
+  }
 
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 }

@@ -57,7 +57,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.19.1</jackson.version>
-        <google-java-format.version>1.27.0</google-java-format.version>
+        <google-java-format.version>1.24.0</google-java-format.version>
     </properties>
 
     <build>

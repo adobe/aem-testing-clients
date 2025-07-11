@@ -16,28 +16,27 @@
 package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.security.CQAuthorizableManager;
+import java.net.URI;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-
 public class CQSecurityClient extends SecurityClient {
 
-    public static Logger LOG = LoggerFactory.getLogger(CQSecurityClient.class);
+  public static Logger LOG = LoggerFactory.getLogger(CQSecurityClient.class);
 
-    public CQSecurityClient(CloseableHttpClient http, SlingClientConfig config) throws ClientException {
-        super(http, config);
-    }
+  public CQSecurityClient(CloseableHttpClient http, SlingClientConfig config)
+      throws ClientException {
+    super(http, config);
+  }
 
-    public CQSecurityClient(URI serverUrl, String user, String password) throws ClientException {
-        super(serverUrl, user, password);
-    }
+  public CQSecurityClient(URI serverUrl, String user, String password) throws ClientException {
+    super(serverUrl, user, password);
+  }
 
-    public CQAuthorizableManager getManager() {
-        return new CQAuthorizableManager(this);
-    }
+  public CQAuthorizableManager getManager() {
+    return new CQAuthorizableManager(this);
+  }
 }
-

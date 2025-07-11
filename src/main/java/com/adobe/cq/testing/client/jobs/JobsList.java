@@ -20,58 +20,58 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class JobsList extends LinkedList<JobDescriptor> {
-    List<JobDescriptor> active;
-    List<JobDescriptor> queued;
+  List<JobDescriptor> active;
+  List<JobDescriptor> queued;
 
-    public JobsList() {
-        super();
-        this.active = new LinkedList<>();
-        this.queued = new LinkedList<>();
+  public JobsList() {
+    super();
+    this.active = new LinkedList<>();
+    this.queued = new LinkedList<>();
+  }
+
+  public JobsList(List<JobDescriptor> active, List<JobDescriptor> queued) {
+    super(active);
+    this.addAll(queued);
+    this.active = active;
+    this.queued = queued;
+  }
+
+  public JobsList(Collection<? extends JobDescriptor> c) {
+    super(c);
+    for (JobDescriptor j : c) {
+      if (j.isStarted()) {
+        active.add(j);
+      } else {
+        queued.add(j);
+      }
+    }
+  }
+
+  @Override
+  public boolean add(JobDescriptor jobDescriptor) {
+    boolean added = super.add(jobDescriptor);
+    if (jobDescriptor.isStarted()) {
+      active.add(jobDescriptor);
+    } else {
+      queued.add(jobDescriptor);
     }
 
-    public JobsList(List<JobDescriptor> active, List<JobDescriptor> queued) {
-        super(active);
-        this.addAll(queued);
-        this.active = active;
-        this.queued = queued;
-    }
+    return added;
+  }
 
-    public JobsList(Collection<? extends JobDescriptor> c) {
-        super(c);
-        for (JobDescriptor j : c) {
-            if (j.isStarted()) {
-                active.add(j);
-            } else {
-                queued.add(j);
-            }
-        }
-    }
+  public List<JobDescriptor> getActive() {
+    return active;
+  }
 
-    @Override
-    public boolean add(JobDescriptor jobDescriptor) {
-        boolean added = super.add(jobDescriptor);
-        if (jobDescriptor.isStarted()) {
-            active.add(jobDescriptor);
-        } else {
-            queued.add(jobDescriptor);
-        }
+  public void setActive(List<JobDescriptor> active) {
+    this.active = active;
+  }
 
-        return added;
-    }
+  public List<JobDescriptor> getQueued() {
+    return queued;
+  }
 
-    public List<JobDescriptor> getActive() {
-        return active;
-    }
-
-    public void setActive(List<JobDescriptor> active) {
-        this.active = active;
-    }
-
-    public List<JobDescriptor> getQueued() {
-        return queued;
-    }
-
-    public void setQueued(List<JobDescriptor> queued) {
-        this.queued = queued;
-    }
+  public void setQueued(List<JobDescriptor> queued) {
+    this.queued = queued;
+  }
 }

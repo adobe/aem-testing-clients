@@ -15,21 +15,19 @@
  */
 package com.adobe.cq.testing.client;
 
+import java.net.URI;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 
-import java.net.URI;
-
-/**
- * Generic client
- */
+/** Generic client */
 public class OffloadingClient extends CQClient {
-    public OffloadingClient(CloseableHttpClient http, SlingClientConfig config) throws ClientException {
-        super(http, config);
-    }
+  public OffloadingClient(CloseableHttpClient http, SlingClientConfig config)
+      throws ClientException {
+    super(http, config);
+  }
 
-    public OffloadingClient(URI serverUrl, String user, String password) throws ClientException {
-        super(serverUrl, user, password);
-    }
+  public OffloadingClient(URI serverUrl, String user, String password) throws ClientException {
+    super(serverUrl, user, password);
+  }
 }

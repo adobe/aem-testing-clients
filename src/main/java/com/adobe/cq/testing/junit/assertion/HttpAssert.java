@@ -15,74 +15,78 @@
  */
 package com.adobe.cq.testing.junit.assertion;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.junit.Assert;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.junit.Assert;
 
 public class HttpAssert {
 
-    public static void assertContentTypeEquals(HttpResponse response) {
-        Header contentType = response.getFirstHeader("Content-Type");
+  public static void assertContentTypeEquals(HttpResponse response) {
+    Header contentType = response.getFirstHeader("Content-Type");
 
-        // since wie accept html as reponse the <tt>Content-Type</tt> header should be set to <tt>text/html</tt>.
-        Assert.assertEquals("Response Header 'Content-Type' is not properly set!", "text/html;charset=utf-8",
-                contentType.getValue().replace(" ", "").toLowerCase());
-    }
+    // since wie accept html as reponse the <tt>Content-Type</tt> header should be set to
+    // <tt>text/html</tt>.
+    Assert.assertEquals(
+        "Response Header 'Content-Type' is not properly set!",
+        "text/html;charset=utf-8",
+        contentType.getValue().replace(" ", "").toLowerCase());
+  }
 
-    public static URL parseURL(String pathOrURL) {
-        try {
-            return new URL(pathOrURL);
-        } catch (MalformedURLException e) {
-            try {
-                return new URL(new URL("http://localhost"), pathOrURL);
-            } catch (MalformedURLException e1) {
-                Assert.fail("URL is malformed: " + pathOrURL);
-                return null;
-            }
-        }
-    }
-
-    public static String extractPath(String pathOrURL) {
-        URL parsedUrl = parseURL(pathOrURL);
-        if (parsedUrl != null) {
-            return parsedUrl.getPath();
-        }
-
+  public static URL parseURL(String pathOrURL) {
+    try {
+      return new URL(pathOrURL);
+    } catch (MalformedURLException e) {
+      try {
+        return new URL(new URL("http://localhost"), pathOrURL);
+      } catch (MalformedURLException e1) {
+        Assert.fail("URL is malformed: " + pathOrURL);
         return null;
+      }
+    }
+  }
+
+  public static String extractPath(String pathOrURL) {
+    URL parsedUrl = parseURL(pathOrURL);
+    if (parsedUrl != null) {
+      return parsedUrl.getPath();
     }
 
-    public static void assertURLPathEquals(String expected, String loc) throws MalformedURLException {
-        Assert.assertEquals("Redirect target of Form Authentication response is wrong!",
-                extractPath(expected), extractPath(loc));
+    return null;
+  }
+
+  public static void assertURLPathEquals(String expected, String loc) throws MalformedURLException {
+    Assert.assertEquals(
+        "Redirect target of Form Authentication response is wrong!",
+        extractPath(expected),
+        extractPath(loc));
+  }
+
+  public static Map<String, String> parseParameters(String query) {
+    Map<String, String> parameters = new HashMap<>();
+    if (query == null) {
+      return parameters;
     }
 
-    public static Map<String, String> parseParameters(String query) {
-        Map<String, String> parameters = new HashMap<>();
-        if (query == null) {
-            return parameters;
-        }
+    for (String paramAndValue : query.split("&")) {
+      String[] pair = paramAndValue.split("=");
 
-        for (String paramAndValue : query.split("&")) {
-            String[] pair = paramAndValue.split("=");
-
-            if (pair.length == 2) {
-                parameters.put(pair[0], pair[1]);
-            }
-        }
-
-        return parameters;
+      if (pair.length == 2) {
+        parameters.put(pair[0], pair[1]);
+      }
     }
 
-    public static void assertParameter(String pathOrURL, String parameter, String value) {
-        URL url = parseURL(pathOrURL);
+    return parameters;
+  }
 
-        Map<String, String> params = parseParameters(url != null ? url.getQuery() : null);
+  public static void assertParameter(String pathOrURL, String parameter, String value) {
+    URL url = parseURL(pathOrURL);
 
-        Assert.assertTrue(params.get(parameter).matches(value));
-    }
+    Map<String, String> params = parseParameters(url != null ? url.getQuery() : null);
+
+    Assert.assertTrue(params.get(parameter).matches(value));
+  }
 }

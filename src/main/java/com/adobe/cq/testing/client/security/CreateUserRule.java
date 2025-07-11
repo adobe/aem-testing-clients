@@ -1,9 +1,27 @@
+/*
+ * Copyright 2025 Adobe Systems Incorporated
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.adobe.cq.testing.client.security;
 
 import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.CQSecurityClient;
 import com.adobe.cq.testing.client.SecurityClient;
-import org.apache.sling.testing.clients.ClientException;
+import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.util.config.InstanceConfig;
 import org.apache.sling.testing.clients.util.config.InstanceConfigCache;
@@ -14,11 +32,6 @@ import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
-
 /**
  * Create and cleanup at the end a user belonging to the Authors group
  *
@@ -26,131 +39,135 @@ import java.util.function.Supplier;
  */
 @Deprecated
 public class CreateUserRule extends ExternalResource implements UserRule {
-    private static final Logger LOG = LoggerFactory.getLogger(CreateUserRule.class);
-    private Instance instanceRule;
-    private CQSecurityClient adminAuthor;
-    private final String[] groups;
-    private ThreadLocal<CQClient> userClient = new ThreadLocal<>();
-    private ThreadLocal<InstanceConfigCache> usersToDelete = new ThreadLocal<>();
+  private static final Logger LOG = LoggerFactory.getLogger(CreateUserRule.class);
+  private Instance instanceRule;
+  private CQSecurityClient adminAuthor;
+  private final String[] groups;
+  private ThreadLocal<CQClient> userClient = new ThreadLocal<>();
+  private ThreadLocal<InstanceConfigCache> usersToDelete = new ThreadLocal<>();
 
-    public CreateUserRule(Instance instanceRule, String... groups) {
-        this.instanceRule = instanceRule;
-        this.groups = groups;
+  public CreateUserRule(Instance instanceRule, String... groups) {
+    this.instanceRule = instanceRule;
+    this.groups = groups;
+  }
+
+  private class UserCreateCallable implements Callable<Boolean> {
+    private final Group[] assignedGroups;
+    private final InstanceConfigCache userConfigs = new InstanceConfigCacheImpl();
+    private final SecurityClient client;
+    private NewRandomUserInstanceConfig successfulUserConfig;
+
+    public UserCreateCallable(SecurityClient client, Group[] assignedGroups) {
+      this.client = client;
+      this.assignedGroups = assignedGroups;
     }
 
-    private class UserCreateCallable implements Callable<Boolean> {
-        private final Group[] assignedGroups;
-        private final InstanceConfigCache userConfigs = new InstanceConfigCacheImpl();
-        private final SecurityClient client;
-        private NewRandomUserInstanceConfig successfulUserConfig;
+    public String getUsername() {
+      return (null != successfulUserConfig) ? successfulUserConfig.getUsername() : null;
+    }
 
-        public UserCreateCallable(SecurityClient client, Group[] assignedGroups) {
-            this.client = client;
-            this.assignedGroups = assignedGroups;
-        }
+    public String getPassword() {
+      return (null != successfulUserConfig) ? successfulUserConfig.getPassword() : null;
+    }
 
-        public String getUsername() {
-            return (null != successfulUserConfig) ? successfulUserConfig.getUsername() : null;
-        }
+    public InstanceConfigCache getUserConfigs() {
+      return userConfigs;
+    }
 
-        public String getPassword() {
-            return (null != successfulUserConfig) ? successfulUserConfig.getPassword() : null;
-        }
-
-        public InstanceConfigCache getUserConfigs() {
-            return userConfigs;
-        }
-
-        public NewRandomUserInstanceConfig getSuccessfulUserConfig() {
-            return successfulUserConfig;
-        }
-
-        @Override
-        public Boolean call() throws Exception {
-            final NewRandomUserInstanceConfig config = new NewRandomUserInstanceConfig(client, assignedGroups);
-            userConfigs.add(config);
-            config.save();
-            successfulUserConfig = config;
-            return true;
-        }
+    public NewRandomUserInstanceConfig getSuccessfulUserConfig() {
+      return successfulUserConfig;
     }
 
     @Override
-    protected void before() throws Throwable {
-        adminAuthor = instanceRule.getAdminClient(CQSecurityClient.class);
-        Group[] assignedGroups = Arrays.stream(groups).map(this::getGroup).toArray(Group[]::new);
-        UserCreateCallable c = new UserCreateCallable(adminAuthor, assignedGroups);
-
-        Polling p = new Polling(c);
-        try {
-            p.poll(10000, 1000);
-        } catch (TimeoutException e) {
-            LOG.error("Could not create user. List of exceptions: " + p.getExceptions(), e);
-            usersToDelete.set(c.getUserConfigs());
-            // After is not called by JUnit if before() throws
-            after();
-            throw e;
-        }
-        usersToDelete.set(c.getUserConfigs());
-        Thread.sleep(500);
-
-        // Wait until user exists
-        new Polling(() -> c.getSuccessfulUserConfig().getUser().exists()).poll(5000, 500);
-        userClient.set(new CQClient(adminAuthor.getUrl(), c.getUsername(), c.getPassword()));
+    public Boolean call() throws Exception {
+      final NewRandomUserInstanceConfig config =
+          new NewRandomUserInstanceConfig(client, assignedGroups);
+      userConfigs.add(config);
+      config.save();
+      successfulUserConfig = config;
+      return true;
     }
+  }
 
-    @Override
-    protected void after() {
-        // Go through all the attempted users
-        LOG.info("Cleaning up all attempted user creations");
-        for (InstanceConfig userConfig : usersToDelete.get()) {
-            final NewRandomUserInstanceConfig cfg;
-            if (!(userConfig instanceof NewRandomUserInstanceConfig)) {
-                continue;
-            }
-            // TODO: Sling testing clients needs parameter type for InstanceConfig and InstanceConfigCache
-            cfg = (NewRandomUserInstanceConfig) userConfig;
+  @Override
+  protected void before() throws Throwable {
+    adminAuthor = instanceRule.getAdminClient(CQSecurityClient.class);
+    Group[] assignedGroups = Arrays.stream(groups).map(this::getGroup).toArray(Group[]::new);
+    UserCreateCallable c = new UserCreateCallable(adminAuthor, assignedGroups);
 
-            try {
-                // poll their deletion until it doesn't exist
-                new Polling(() -> {
-                    cfg.restore();
-                    return !User.exists(adminAuthor, cfg.getUsername());
-                }).poll(5000, 500);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+    Polling p = new Polling(c);
+    try {
+      p.poll(10000, 1000);
+    } catch (TimeoutException e) {
+      LOG.error("Could not create user. List of exceptions: " + p.getExceptions(), e);
+      usersToDelete.set(c.getUserConfigs());
+      // After is not called by JUnit if before() throws
+      after();
+      throw e;
     }
+    usersToDelete.set(c.getUserConfigs());
+    Thread.sleep(500);
 
-    @Override
-    public CQClient getClient() {
-        return this.userClient.get();
+    // Wait until user exists
+    new Polling(() -> c.getSuccessfulUserConfig().getUser().exists()).poll(5000, 500);
+    userClient.set(new CQClient(adminAuthor.getUrl(), c.getUsername(), c.getPassword()));
+  }
+
+  @Override
+  protected void after() {
+    // Go through all the attempted users
+    LOG.info("Cleaning up all attempted user creations");
+    for (InstanceConfig userConfig : usersToDelete.get()) {
+      final NewRandomUserInstanceConfig cfg;
+      if (!(userConfig instanceof NewRandomUserInstanceConfig)) {
+        continue;
+      }
+      // TODO: Sling testing clients needs parameter type for InstanceConfig and InstanceConfigCache
+      cfg = (NewRandomUserInstanceConfig) userConfig;
+
+      try {
+        // poll their deletion until it doesn't exist
+        new Polling(
+                () -> {
+                  cfg.restore();
+                  return !User.exists(adminAuthor, cfg.getUsername());
+                })
+            .poll(5000, 500);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     }
+  }
 
-    /**
-     * @return a <code>SlingClient</code> Supplier
-     */
-    public Supplier<SlingClient> getClientSupplier() {
-        class ClientSupplier implements Supplier<SlingClient>{
-            private final CreateUserRule userRule;
-            public ClientSupplier(CreateUserRule userRule) {
-                this.userRule = userRule;
-            }
+  @Override
+  public CQClient getClient() {
+    return this.userClient.get();
+  }
 
-            @Override
-            public SlingClient get() {
-                return this.userRule.getClient();
-            }
-        }
-        return new ClientSupplier(this);
+  /**
+   * @return a <code>SlingClient</code> Supplier
+   */
+  public Supplier<SlingClient> getClientSupplier() {
+    class ClientSupplier implements Supplier<SlingClient> {
+      private final CreateUserRule userRule;
+
+      public ClientSupplier(CreateUserRule userRule) {
+        this.userRule = userRule;
+      }
+
+      @Override
+      public SlingClient get() {
+        return this.userRule.getClient();
+      }
     }
+    return new ClientSupplier(this);
+  }
 
-    private Group getGroup(String groupName) {
-        try {
-            return new Group(adminAuthor, groupName);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+  private Group getGroup(String groupName) {
+    try {
+      return new Group(adminAuthor, groupName);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
+  }
 }

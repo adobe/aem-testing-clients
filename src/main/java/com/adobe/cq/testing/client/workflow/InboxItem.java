@@ -15,96 +15,94 @@
  */
 package com.adobe.cq.testing.client.workflow;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.Date;
 
-/**
- * Simple wrapper for the return JSON representing a work item in a users inbox.
- */
+/** Simple wrapper for the return JSON representing a work item in a users inbox. */
 public class InboxItem {
 
-    private JsonNode rootNode = null;
+  private JsonNode rootNode = null;
 
-    /**
-     * The only Constructor.
-     *
-     * @param rootNode the JSON node containing the data.
-     */
-    public InboxItem(JsonNode rootNode){
-        this.rootNode = rootNode;
-    }
+  /**
+   * The only Constructor.
+   *
+   * @param rootNode the JSON node containing the data.
+   */
+  public InboxItem(JsonNode rootNode) {
+    this.rootNode = rootNode;
+  }
 
-    /**
-     * returns the URI of this work item
-     *
-     * @return the URI of the work item
-     */
-    public String getUri() {
-        if (rootNode.get("uri") == null)return null;
-        return rootNode.get("uri").asText();
-    }
+  /**
+   * returns the URI of this work item
+   *
+   * @return the URI of the work item
+   */
+  public String getUri() {
+    if (rootNode.get("uri") == null) return null;
+    return rootNode.get("uri").asText();
+  }
 
-    /**
-     * returns the current assignee for this work item.
-     * @return  current assignee
-     */
-    public String  getCurrentAssignee(){
-        if (rootNode.get("currentAssignee") == null)return null;
-        return rootNode.get("currentAssignee").asText();
-    }
+  /**
+   * returns the current assignee for this work item.
+   *
+   * @return current assignee
+   */
+  public String getCurrentAssignee() {
+    if (rootNode.get("currentAssignee") == null) return null;
+    return rootNode.get("currentAssignee").asText();
+  }
 
-    /**
-     * The start date when this work item was started
-     *
-     * @return   the start date
-     */
-    public Date getStartTime(){
-        if (rootNode.get("startTime") == null)return null;
-        Date startTime = new Date();
-        startTime.setTime(Long.parseLong(rootNode.get("startTime").asText()));
-        return startTime;
-    }
+  /**
+   * The start date when this work item was started
+   *
+   * @return the start date
+   */
+  public Date getStartTime() {
+    if (rootNode.get("startTime") == null) return null;
+    Date startTime = new Date();
+    startTime.setTime(Long.parseLong(rootNode.get("startTime").asText()));
+    return startTime;
+  }
 
-    /**
-     * the end date when this work item was completed
-     *
-     * @return the end date
-     */
-    public Date getEndTime(){
-        if (rootNode.get("endTime") == null)return null;
-        Date endTime = new Date();
-        endTime.setTime(Long.parseLong(rootNode.get("endTime").asText()));
-        return endTime;
-    }
+  /**
+   * the end date when this work item was completed
+   *
+   * @return the end date
+   */
+  public Date getEndTime() {
+    if (rootNode.get("endTime") == null) return null;
+    Date endTime = new Date();
+    endTime.setTime(Long.parseLong(rootNode.get("endTime").asText()));
+    return endTime;
+  }
 
-    /**
-     * the payload type, either URL or JCR_PATH.
-     *
-     * @return the type of payload reference
-     */
-    public String getPayloadType(){
-        if (rootNode.get("payloadType") == null)return null;
-        return rootNode.get("payloadType").asText();
-    }
+  /**
+   * the payload type, either URL or JCR_PATH.
+   *
+   * @return the type of payload reference
+   */
+  public String getPayloadType() {
+    if (rootNode.get("payloadType") == null) return null;
+    return rootNode.get("payloadType").asText();
+  }
 
-    /**
-     * the reference to the payload
-     * @return payload reference
-     */
-    public String getPayload(){
-        if (rootNode.get("payload") == null)return null;
-        return rootNode.get("payload").asText();
-    }
+  /**
+   * the reference to the payload
+   *
+   * @return payload reference
+   */
+  public String getPayload() {
+    if (rootNode.get("payload") == null) return null;
+    return rootNode.get("payload").asText();
+  }
 
-    /**
-     * the comment set for this work item
-     * @return the comment
-     */
-    public String getComment(){
-        if (rootNode.get("comment") == null)return null;
-        return rootNode.get("comment").asText();
-    }
-
+  /**
+   * the comment set for this work item
+   *
+   * @return the comment
+   */
+  public String getComment() {
+    if (rootNode.get("comment") == null) return null;
+    return rootNode.get("comment").asText();
+  }
 }

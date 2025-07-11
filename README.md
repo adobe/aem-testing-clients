@@ -37,4 +37,4 @@ For building from sources, clone the repository and use maven:
 mvn clean install
 ```
 
-PRs and issues are welcome, please reade our [CONTRIBUTING guideline](CONTRIBUTING.md). 
+PRs and issues are welcome, please reade our [CONTRIBUTING guideline](CONTRIBUTING.md).

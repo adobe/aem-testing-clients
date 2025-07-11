@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.junit.category;
 
-/**
- * Tests marked with this are not designed to work on a backwards-compatibility setup
- */
-public interface BackwardsCompatibilityIgnore {
-}
+/** Tests marked with this are not designed to work on a backwards-compatibility setup */
+public interface BackwardsCompatibilityIgnore {}

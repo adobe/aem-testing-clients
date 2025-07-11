@@ -17,31 +17,28 @@ package com.adobe.cq.testing.client.security;
 
 import org.apache.sling.testing.clients.ClientException;
 
-/**
- * Define and load group's profile properties
- */
+/** Define and load group's profile properties */
 public class GroupProfile extends AbstractProfile {
 
-    public static final String PROPERTY_GIVEN_NAME = "givenName";
-    public static final String PROPERTY_ABOUT_ME = "aboutMe";
+  public static final String PROPERTY_GIVEN_NAME = "givenName";
+  public static final String PROPERTY_ABOUT_ME = "aboutMe";
 
-    /**
-     * Default constructor for an existing group
-     *
-     * @param authorizable any {@link Authorizable} extending the {@link AbstractAuthorizable}
-     * @param <T> authorizable type
-     * @throws ClientException if the group details failed to load
-     *
-     */
-    public <T extends AbstractAuthorizable> GroupProfile(T authorizable) throws ClientException {
-        super(authorizable);
-    }
+  /**
+   * Default constructor for an existing group
+   *
+   * @param authorizable any {@link Authorizable} extending the {@link AbstractAuthorizable}
+   * @param <T> authorizable type
+   * @throws ClientException if the group details failed to load
+   */
+  public <T extends AbstractAuthorizable> GroupProfile(T authorizable) throws ClientException {
+    super(authorizable);
+  }
 
-    public void setGivenName(String givenName) {
-        profileProps.put(PROPERTY_GIVEN_NAME, givenName);
-    }
+  public void setGivenName(String givenName) {
+    profileProps.put(PROPERTY_GIVEN_NAME, givenName);
+  }
 
-    public void setAboutMe(String aboutMe) {
-        profileProps.put(PROPERTY_ABOUT_ME, aboutMe);
-    }
+  public void setAboutMe(String aboutMe) {
+    profileProps.put(PROPERTY_ABOUT_ME, aboutMe);
+  }
 }

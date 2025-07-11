@@ -16,6 +16,7 @@
 package com.adobe.cq.testing.junit.rules;
 
 import com.adobe.cq.testing.util.GraniteBackwardsCompatibility;
+import java.net.URI;
 import org.apache.sling.testing.clients.instance.InstanceConfiguration;
 import org.apache.sling.testing.junit.rules.SlingClassRule;
 import org.junit.rules.RuleChain;
@@ -23,28 +24,27 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import java.net.URI;
-
 /**
- * Junit rule to be used in every test class (to be applied at class level).
- * It chains the {@link SlingClassRule}.
+ * Junit rule to be used in every test class (to be applied at class level). It chains the {@link
+ * SlingClassRule}.
  */
 public class CQClassRule implements TestRule {
-    public static final InstanceConfiguration DEFAULT_AUTHOR_CONFIG =
-            new InstanceConfiguration(URI.create("http://localhost:4502"), "author");
-    public static final InstanceConfiguration DEFAULT_PUBLISH_CONFIG =
-            new InstanceConfiguration(URI.create("http://localhost:4503"), "publish");
+  public static final InstanceConfiguration DEFAULT_AUTHOR_CONFIG =
+      new InstanceConfiguration(URI.create("http://localhost:4502"), "author");
+  public static final InstanceConfiguration DEFAULT_PUBLISH_CONFIG =
+      new InstanceConfiguration(URI.create("http://localhost:4503"), "publish");
 
-    public final SlingClassRule slingBaseClassRule = new SlingClassRule();
+  public final SlingClassRule slingBaseClassRule = new SlingClassRule();
 
-    protected TestRule ruleChain = RuleChain.outerRule(slingBaseClassRule).around(new CQUserAgentRule());
+  protected TestRule ruleChain =
+      RuleChain.outerRule(slingBaseClassRule).around(new CQUserAgentRule());
 
-    static {
-        GraniteBackwardsCompatibility.translateGranitePropertiesToSling();
-    }
+  static {
+    GraniteBackwardsCompatibility.translateGranitePropertiesToSling();
+  }
 
-    @Override
-    public Statement apply(Statement base, Description description) {
-        return ruleChain.apply(base, description);
-    }
+  @Override
+  public Statement apply(Statement base, Description description) {
+    return ruleChain.apply(base, description);
+  }
 }

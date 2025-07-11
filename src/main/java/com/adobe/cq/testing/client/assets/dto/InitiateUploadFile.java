@@ -13,120 +13,124 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.client.assets.dto;
 
+import java.util.Collections;
+import java.util.List;
+import javax.annotation.Nonnull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
-
-/**
- * Part of a successful initiateUpload response, mapped by ObjectMapper from the response JSON.
- */
+/** Part of a successful initiateUpload response, mapped by ObjectMapper from the response JSON. */
 public class InitiateUploadFile {
 
-    private String fileName = "";
-    private long minPartSize;
-    private long maxPartSize;
-    private List<String> uploadURIs = Collections.emptyList();
-    private String mimeType = "";
-    private String uploadToken = "";
+  private String fileName = "";
+  private long minPartSize;
+  private long maxPartSize;
+  private List<String> uploadURIs = Collections.emptyList();
+  private String mimeType = "";
+  private String uploadToken = "";
 
-    @Nonnull
-    public String getFileName() {
-        return fileName;
-    }
+  @Nonnull
+  public String getFileName() {
+    return fileName;
+  }
 
-    public void setFileName(@Nonnull String fileName) {
-        this.fileName = fileName;
-    }
+  public void setFileName(@Nonnull String fileName) {
+    this.fileName = fileName;
+  }
 
-    public long getMinPartSize() {
-        return minPartSize;
-    }
+  public long getMinPartSize() {
+    return minPartSize;
+  }
 
-    public void setMinPartSize(long minPartSize) {
-        this.minPartSize = minPartSize;
-    }
+  public void setMinPartSize(long minPartSize) {
+    this.minPartSize = minPartSize;
+  }
 
-    public long getMaxPartSize() {
-        return maxPartSize;
-    }
+  public long getMaxPartSize() {
+    return maxPartSize;
+  }
 
-    public void setMaxPartSize(long maxPartSize) {
-        this.maxPartSize = maxPartSize;
-    }
+  public void setMaxPartSize(long maxPartSize) {
+    this.maxPartSize = maxPartSize;
+  }
 
-    @Nonnull
-    public List<String> getUploadURIs() {
-        return uploadURIs;
-    }
+  @Nonnull
+  public List<String> getUploadURIs() {
+    return uploadURIs;
+  }
 
-    public void setUploadURIs(@Nonnull List<String> uploadURIs) {
-        this.uploadURIs = uploadURIs;
-    }
+  public void setUploadURIs(@Nonnull List<String> uploadURIs) {
+    this.uploadURIs = uploadURIs;
+  }
 
-    @Nonnull
-    public String getMimeType() {
-        return mimeType;
-    }
+  @Nonnull
+  public String getMimeType() {
+    return mimeType;
+  }
 
-    public void setMimeType(@Nonnull String mimeType) {
-        this.mimeType = mimeType;
-    }
+  public void setMimeType(@Nonnull String mimeType) {
+    this.mimeType = mimeType;
+  }
 
-    @Nonnull
-    public String getUploadToken() {
-        return uploadToken;
-    }
+  @Nonnull
+  public String getUploadToken() {
+    return uploadToken;
+  }
 
-    public void setUploadToken(@Nonnull String uploadToken) {
-        this.uploadToken = uploadToken;
-    }
+  public void setUploadToken(@Nonnull String uploadToken) {
+    this.uploadToken = uploadToken;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
 
-        if (o == null || getClass() != o.getClass()) return false;
+    if (o == null || getClass() != o.getClass()) return false;
 
-        InitiateUploadFile that = (InitiateUploadFile) o;
+    InitiateUploadFile that = (InitiateUploadFile) o;
 
-        return new EqualsBuilder()
-                .append(minPartSize, that.minPartSize)
-                .append(maxPartSize, that.maxPartSize)
-                .append(fileName, that.fileName)
-                .append(uploadURIs, that.uploadURIs)
-                .append(mimeType, that.mimeType)
-                .append(uploadToken, that.uploadToken)
-                .isEquals();
-    }
+    return new EqualsBuilder()
+        .append(minPartSize, that.minPartSize)
+        .append(maxPartSize, that.maxPartSize)
+        .append(fileName, that.fileName)
+        .append(uploadURIs, that.uploadURIs)
+        .append(mimeType, that.mimeType)
+        .append(uploadToken, that.uploadToken)
+        .isEquals();
+  }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(fileName)
-                .append(minPartSize)
-                .append(maxPartSize)
-                .append(uploadURIs)
-                .append(mimeType)
-                .append(uploadToken)
-                .toHashCode();
-    }
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37)
+        .append(fileName)
+        .append(minPartSize)
+        .append(maxPartSize)
+        .append(uploadURIs)
+        .append(mimeType)
+        .append(uploadToken)
+        .toHashCode();
+  }
 
-    @Override
-    public String toString() {
-        return "InitiateUploadFile{" +
-                "fileName='" + fileName + '\'' +
-                ", minPartSize=" + minPartSize +
-                ", maxPartSize=" + maxPartSize +
-                ", uploadURIs=" + uploadURIs +
-                ", mimeType='" + mimeType + '\'' +
-                ", uploadToken='" + uploadToken + '\'' +
-                '}';
-    }
-
+  @Override
+  public String toString() {
+    return "InitiateUploadFile{"
+        + "fileName='"
+        + fileName
+        + '\''
+        + ", minPartSize="
+        + minPartSize
+        + ", maxPartSize="
+        + maxPartSize
+        + ", uploadURIs="
+        + uploadURIs
+        + ", mimeType='"
+        + mimeType
+        + '\''
+        + ", uploadToken='"
+        + uploadToken
+        + '\''
+        + '}';
+  }
 }

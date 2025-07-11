@@ -15,35 +15,29 @@
  */
 package com.adobe.cq.testing.util;
 
+import static org.apache.http.HttpStatus.SC_OK;
+
 import com.adobe.cq.testing.client.CQClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.util.JsonUtils;
 
-import static org.apache.http.HttpStatus.SC_OK;
-
-/**
- * Utility to get a CSRF token needed in some POST methods.
- */
+/** Utility to get a CSRF token needed in some POST methods. */
 public final class CSRFUtils {
 
-    private CSRFUtils() {
-    }
+  private CSRFUtils() {}
 
-    private static final String TOKEN_SERVLET_ENDPOINT = "/libs/granite/csrf/token.json";
+  private static final String TOKEN_SERVLET_ENDPOINT = "/libs/granite/csrf/token.json";
 
-    /**
-     * csrf token parameter to be use in POST request
-     */
-    public static final String PARAM_CSRF_TOKEN = ":cq_csrf_token";
+  /** csrf token parameter to be use in POST request */
+  public static final String PARAM_CSRF_TOKEN = ":cq_csrf_token";
 
-    /**
-     *
-     * @param client Client to use
-     * @return CSRF token
-     * @throws ClientException if the request fails
-     */
-    public static String createCSRFToken(final CQClient client) throws ClientException {
-        String content = client.doGet(TOKEN_SERVLET_ENDPOINT, SC_OK).getContent();
-        return JsonUtils.getJsonNodeFromString(content).path("token").textValue();
-    }
+  /**
+   * @param client Client to use
+   * @return CSRF token
+   * @throws ClientException if the request fails
+   */
+  public static String createCSRFToken(final CQClient client) throws ClientException {
+    String content = client.doGet(TOKEN_SERVLET_ENDPOINT, SC_OK).getContent();
+    return JsonUtils.getJsonNodeFromString(content).path("token").textValue();
+  }
 }

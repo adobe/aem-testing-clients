@@ -19,6 +19,9 @@ import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.JsonClient;
 import com.adobe.cq.testing.util.TestUtil;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.TimeoutException;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.util.JsonUtils;
 import org.apache.sling.testing.clients.util.poller.Polling;
@@ -26,433 +29,466 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.TimeoutException;
-
-
-/**
- * Contains CQ specific Asserts for testing.
- */
+/** Contains CQ specific Asserts for testing. */
 public class CQAssert {
-    public static Logger LOG = LoggerFactory.getLogger(CQAssert.class);
+  public static Logger LOG = LoggerFactory.getLogger(CQAssert.class);
 
-    /**
-     * Tests if the page at  {code}path{code} exists on the server connected by  {code}client{code} and is
-     * a valid CQ Page. It does this by requesting the JSON tree of the page node, verifying if it
-     * has all needed properties and subnodes of CQ Page.<br>
-     * <br>
-     * To do this it tries to reach the page for  {code}timeout{code} milliseconds with  {code}waitInterval{code}
-     * milliseconds pause between each request.
-     *
-     * @param client The client used for requesting the page.
-     * @param path The path to the page
-     * @param timeout How long we should try to reach the page in milliseconds.
-     * @param delay Time between request retries in milliseconds.
-     * @throws InterruptedException to mark this method as waiting
-     */
-    public static void assertCQPageExistsWithTimeout(final CQClient client, final String path,
-                                                     final long timeout, final long delay) throws InterruptedException {
-        Polling pageExistsPolling = new Polling() {
-            @Override
-            public Boolean call() {
-                // Get page and verify that it is a valid CQPage
-                assertIsCQPage(client, path);
-                return true;
-            }
+  /**
+   * Tests if the page at {code}path{code} exists on the server connected by {code}client{code} and
+   * is a valid CQ Page. It does this by requesting the JSON tree of the page node, verifying if it
+   * has all needed properties and subnodes of CQ Page.<br>
+   * <br>
+   * To do this it tries to reach the page for {code}timeout{code} milliseconds with
+   * {code}waitInterval{code} milliseconds pause between each request.
+   *
+   * @param client The client used for requesting the page.
+   * @param path The path to the page
+   * @param timeout How long we should try to reach the page in milliseconds.
+   * @param delay Time between request retries in milliseconds.
+   * @throws InterruptedException to mark this method as waiting
+   */
+  public static void assertCQPageExistsWithTimeout(
+      final CQClient client, final String path, final long timeout, final long delay)
+      throws InterruptedException {
+    Polling pageExistsPolling =
+        new Polling() {
+          @Override
+          public Boolean call() {
+            // Get page and verify that it is a valid CQPage
+            assertIsCQPage(client, path);
+            return true;
+          }
         };
-        try {
-            pageExistsPolling.poll(timeout, delay);
-        } catch (TimeoutException e) {
-            if (pageExistsPolling.getLastException() != null) {
-                LOG.error("Page existence check timed out. Last Exception: ", pageExistsPolling.getLastException());
-            }
-            Assert.fail("Timeout reached while waiting for CQ page " + path);
-        }
+    try {
+      pageExistsPolling.poll(timeout, delay);
+    } catch (TimeoutException e) {
+      if (pageExistsPolling.getLastException() != null) {
+        LOG.error(
+            "Page existence check timed out. Last Exception: ",
+            pageExistsPolling.getLastException());
+      }
+      Assert.fail("Timeout reached while waiting for CQ page " + path);
     }
+  }
 
-    /**
-     * Tests if the {code}path{code} does not exist on the server connected by  {code}client{code}.
-     * <br>
-     * To do this it tries to reach the page for  {code}timeout{code} milliseconds with  {code}waitInterval{code}
-     * milliseconds pause between each request.
-     *
-     * @param client The client used for requesting the page.
-     * @param path The path to the page
-     * @param timeout How long we should try to reach the page in milliseconds.
-     * @param delay Time between request retries in milliseconds.
-     * @throws InterruptedException to mark this method as waiting
-     */
-    public static void assertPathDoesNotExistWithTimeout(final CQClient client, final String path,
-                                                         final long timeout, final long delay) throws InterruptedException {
-        Polling pageExistsPolling = new Polling() {
-            @Override
-            public Boolean call() throws Exception {
-                return !client.exists(path);
-            }
+  /**
+   * Tests if the {code}path{code} does not exist on the server connected by {code}client{code}.
+   * <br>
+   * To do this it tries to reach the page for {code}timeout{code} milliseconds with
+   * {code}waitInterval{code} milliseconds pause between each request.
+   *
+   * @param client The client used for requesting the page.
+   * @param path The path to the page
+   * @param timeout How long we should try to reach the page in milliseconds.
+   * @param delay Time between request retries in milliseconds.
+   * @throws InterruptedException to mark this method as waiting
+   */
+  public static void assertPathDoesNotExistWithTimeout(
+      final CQClient client, final String path, final long timeout, final long delay)
+      throws InterruptedException {
+    Polling pageExistsPolling =
+        new Polling() {
+          @Override
+          public Boolean call() throws Exception {
+            return !client.exists(path);
+          }
         };
-        try {
-            pageExistsPolling.poll(timeout, delay);
-        } catch (TimeoutException e) {
-            if (pageExistsPolling.getLastException() != null) {
-                LOG.error("Page existence check timed out. Last Exception: ", pageExistsPolling.getLastException());
-            }
-            Assert.fail("Timeout reached while waiting for path to be deleted: " + path);
-        }
+    try {
+      pageExistsPolling.poll(timeout, delay);
+    } catch (TimeoutException e) {
+      if (pageExistsPolling.getLastException() != null) {
+        LOG.error(
+            "Page existence check timed out. Last Exception: ",
+            pageExistsPolling.getLastException());
+      }
+      Assert.fail("Timeout reached while waiting for path to be deleted: " + path);
     }
+  }
 
-    /**
-     * Tests if the {code}path{code} exists on the server connected by  {code}client{code}.
-     * <br>
-     * To do this it tries to reach the page for  {code}timeout{code} milliseconds with  {code}waitInterval{code}
-     * milliseconds pause between each request.
-     *
-     * @param client The client used for requesting the page.
-     * @param path The path to the page
-     * @param timeout How long we should try to reach the page in milliseconds.
-     * @param delay Time between request retries in milliseconds.
-     * @throws InterruptedException to mark this method as waiting
-     */
-    public static void assertPathExistWithTimeout(final CQClient client, final String path,
-                                                         final long timeout, final long delay) throws InterruptedException {
-        Polling pathExistsPolling = new Polling() {
-            @Override
-            public Boolean call() throws Exception {
-                return client.exists(path);
-            }
+  /**
+   * Tests if the {code}path{code} exists on the server connected by {code}client{code}. <br>
+   * To do this it tries to reach the page for {code}timeout{code} milliseconds with
+   * {code}waitInterval{code} milliseconds pause between each request.
+   *
+   * @param client The client used for requesting the page.
+   * @param path The path to the page
+   * @param timeout How long we should try to reach the page in milliseconds.
+   * @param delay Time between request retries in milliseconds.
+   * @throws InterruptedException to mark this method as waiting
+   */
+  public static void assertPathExistWithTimeout(
+      final CQClient client, final String path, final long timeout, final long delay)
+      throws InterruptedException {
+    Polling pathExistsPolling =
+        new Polling() {
+          @Override
+          public Boolean call() throws Exception {
+            return client.exists(path);
+          }
         };
-        try {
-            pathExistsPolling.poll(timeout, delay);
-        } catch (TimeoutException e) {
-            if (pathExistsPolling.getLastException() != null) {
-                LOG.error("Path existence check timed out. Last Exception: ", pathExistsPolling.getLastException());
-            }
-            Assert.fail("Timeout reached while waiting for path to be created: " + path);
-        }
+    try {
+      pathExistsPolling.poll(timeout, delay);
+    } catch (TimeoutException e) {
+      if (pathExistsPolling.getLastException() != null) {
+        LOG.error(
+            "Path existence check timed out. Last Exception: ",
+            pathExistsPolling.getLastException());
+      }
+      Assert.fail("Timeout reached while waiting for path to be created: " + path);
+    }
+  }
+
+  /**
+   * Tests if a folder exists at the location {code}path{code} with named {code}folderTitle{code}.
+   * It verifies by requesting the json output of the node and verifying that all nodes and
+   * properties are properly created.
+   *
+   * @param client The client used to request the json for the folder node.
+   * @param path Path to the folder in question.
+   * @param folderTitle Title of the folder to verify.
+   */
+  public static void assertFolderExists(final CQClient client, String path, String folderTitle) {
+
+    // Get the root node as JsonNode object
+    JsonNode rootNode = null;
+    try {
+      rootNode = client.adaptTo(JsonClient.class).doGetJson(path, 1);
+    } catch (ClientException e) {
+      Assert.fail("Request for " + path + " failed!");
     }
 
-    /**
-     * Tests if a folder exists at the location  {code}path{code} with named  {code}folderTitle{code}.
-     * It verifies by requesting the json output of the node and verifying that all nodes and properties
-     * are properly created.
-     *
-     * @param client      The client used to request the json for the folder node.
-     * @param path        Path to the folder in question.
-     * @param folderTitle Title of the folder to verify.
-     */
-    public static void assertFolderExists(final CQClient client, String path, String folderTitle)  {
+    // check if jcr:primaryType is set to sling:OrderedFolder
+    String primaryType = rootNode.get("jcr:primaryType").asText();
 
-        // Get the root node as JsonNode object
-        JsonNode rootNode = null;
-        try {
-            rootNode = client.adaptTo(JsonClient.class).doGetJson(path, 1);
-        } catch (ClientException e) {
-            Assert.fail("Request for " + path + " failed!");
-        }
+    Assert.assertTrue(
+        "jcr:primaryType of folder node "
+            + path
+            + " is neither sling:OrderedFolder nor Sling:Folder",
+        ("sling:OrderedFolder".equals(primaryType) || "sling:Folder".equals(primaryType)));
 
-        // check if jcr:primaryType is set to sling:OrderedFolder
-        String primaryType = rootNode.get("jcr:primaryType").asText();
+    // check if jcr:content node exists
+    Assert.assertTrue(
+        "No jcr:content node found below " + path + "!",
+        !rootNode.path("jcr:content").isMissingNode());
 
-        Assert.assertTrue("jcr:primaryType of folder node " + path + " is neither sling:OrderedFolder nor Sling:Folder",
-                ("sling:OrderedFolder".equals(primaryType) ||"sling:Folder".equals(primaryType) ));
+    // doGet the content node
+    JsonNode contentNode = rootNode.path("jcr:content");
 
-        // check if jcr:content node exists
-        Assert.assertTrue("No jcr:content node found below " + path + "!",
-                !rootNode.path("jcr:content").isMissingNode());
+    // check if jcr:primaryType is set to cq:PageContent
+    Assert.assertEquals(
+        "jcr:primaryType of jcr:content node below " + path + " is not set to nt:unstructured!",
+        "nt:unstructured",
+        contentNode.get("jcr:primaryType").textValue());
 
-        // doGet the content node
-        JsonNode contentNode = rootNode.path("jcr:content");
+    // check if jcr:title is set
+    Assert.assertNotNull(
+        "jcr:title property is not set in jcr:content node below " + path + "!",
+        contentNode.get("jcr:title"));
 
-        // check if jcr:primaryType is set to cq:PageContent
-        Assert.assertEquals("jcr:primaryType of jcr:content node below " + path +
-                " is not set to nt:unstructured!",
-                "nt:unstructured", contentNode.get("jcr:primaryType").textValue());
+    // check if jcr:title is set to the folder title
+    Assert.assertEquals(
+        "jcr:title of jcr:content node below "
+            + path
+            + " is not set folder title "
+            + folderTitle
+            + "!",
+        folderTitle,
+        contentNode.get("jcr:title").textValue());
+  }
 
-        // check if jcr:title is set
-        Assert.assertNotNull("jcr:title property is not set in jcr:content node below " +
-                path + "!", contentNode.get("jcr:title"));
+  /**
+   * Tests if a File exists at the location {code}path{code}. It verifies by requesting the json
+   * output of the node and verifying that all nodes and properties are properly created.<br>
+   * <br>
+   * It also makes a binary compare between the original file data and the requested file. <br>
+   *
+   * @param client The client used to request the json for the folder node.
+   * @param path Path to the file in question.
+   * @param fileData The file's contents that were uploaded.
+   * @param mimeType file mime type
+   */
+  public static void assertFileExists(
+      final CQClient client, String path, InputStream fileData, String mimeType) {
 
-        // check if jcr:title is set to the folder title
-        Assert.assertEquals("jcr:title of jcr:content node below " + path +
-                " is not set folder title " + folderTitle + "!",
-                folderTitle, contentNode.get("jcr:title").textValue());
+    // Get the root node as JsonNode object
+    JsonNode node = null;
+    try {
+      node = client.adaptTo(JsonClient.class).doGetJson(path, -1);
+    } catch (ClientException e) {
+      Assert.fail("Request for " + path + " failed");
     }
 
-    /**
-     * Tests if a File exists at the location  {code}path{code}. It verifies by requesting the json output
-     * of the node and verifying that all nodes and properties are properly created.<br>
-     * <br>
-     * It also makes a binary compare between the original file data and the requested file.
-     * <br>
-     *
-     * @param client   The client used to request the json for the folder node.
-     * @param path     Path to the file in question.
-     * @param fileData The file's contents that were uploaded.
-     * @param mimeType file mime type
-     */
-    public static void assertFileExists(final CQClient client, String path, InputStream fileData, String mimeType) {
+    // check if jcr:primaryType is set to sling:OrderedFolder
+    Assert.assertEquals(
+        "jcr:primaryType of folder node " + path + " is not set to sling:OrderedFolder!",
+        "sling:OrderedFolder",
+        node.get("jcr:primaryType").asText());
 
-        // Get the root node as JsonNode object
-        JsonNode node = null;
-        try {
-            node = client.adaptTo(JsonClient.class).doGetJson(path, -1);
-        } catch (ClientException e) {
-            Assert.fail("Request for " + path + " failed");
-        }
+    // check if file node exists
+    Assert.assertTrue("No file node found below " + path + "!", !node.path("file").isMissingNode());
 
-        // check if jcr:primaryType is set to sling:OrderedFolder
-        Assert.assertEquals("jcr:primaryType of folder node " + path + " is not set to sling:OrderedFolder!",
-                "sling:OrderedFolder", node.get("jcr:primaryType").asText());
+    // Get the file node
+    node = node.path("file");
+    path += "/file";
 
-        // check if file node exists
-        Assert.assertTrue("No file node found below " + path + "!",
-                !node.path("file").isMissingNode());
+    // check if jcr:primaryType is set to nt:file
+    Assert.assertEquals(
+        "jcr:primaryType of file node below " + path + " is not set to nt:file!",
+        "nt:file",
+        node.get("jcr:primaryType").textValue());
 
+    // check if jcr:content node exists
+    Assert.assertTrue(
+        "No jcr:content node found below " + path + "!", !node.path("jcr:content").isMissingNode());
 
-        // Get the file node
-        node = node.path("file");
-        path += "/file";
+    // Get the jcr:content node
+    node = node.path("jcr:content");
+    path += "/jcr:content";
 
-        // check if jcr:primaryType is set to nt:file
-        Assert.assertEquals("jcr:primaryType of file node below " + path +
-                " is not set to nt:file!",
-                "nt:file", node.get("jcr:primaryType").textValue());
+    // check if jcr:mimeType is set correctly
+    Assert.assertEquals(
+        "jcr:mimeType is not set to " + mimeType, mimeType, node.path("jcr:mimeType").textValue());
 
-        // check if jcr:content node exists
-        Assert.assertTrue("No jcr:content node found below " + path + "!",
-                !node.path("jcr:content").isMissingNode());
+    // check if jcr:primaryType is set to nt:resource
+    Assert.assertEquals(
+        "jcr:primaryType of jcr:content node below " + path + " is not set to nt:resource!",
+        "nt:resource",
+        node.path("jcr:primaryType").textValue());
 
-        // Get the jcr:content node
-        node = node.path("jcr:content");
-        path += "/jcr:content";
+    try {
+      InputStream in = client.doStreamGet(path, null, null).getEntity().getContent();
+      Assert.assertTrue(
+          "The original file and the requested file are not the same",
+          TestUtil.binaryCompare(fileData, in));
+    } catch (IOException | ClientException e) {
+      throw new AssertionError(e);
+    }
+  }
 
-        // check if jcr:mimeType is set correctly
-        Assert.assertEquals("jcr:mimeType is not set to " + mimeType,
-                mimeType, node.path("jcr:mimeType").textValue());
+  /**
+   * Tests if a Asset exists at the location {code}path{code}. It verifies by requesting the json
+   * output of the node and verifying that all nodes and properties are properly created.<br>
+   * <br>
+   * It also makes a binary compare between the original file data and the requested rendition named
+   * {code}original{code}.<br>
+   * <br>
+   * NOTE: This assert makes no assumptions about the type of the uploaded file (image, pdf, etc) so
+   * it only verifies if the {code}Metadata{code} node and {code}renditions{code} folder was
+   * created. It does not verify extracted Metadata or check what renditions have been created. The
+   * only rendition verified is the one named {code}original{code} through binary compare with the
+   * original file.
+   *
+   * @param client The client used to request the json for the folder node.
+   * @param path Path to the asset in question.
+   * @param fileData The file's contents that were uploaded.
+   * @param mimeType file mime type
+   */
+  public static void assertAssetExists(
+      final CQClient client, String path, InputStream fileData, String mimeType) {
 
-        // check if jcr:primaryType is set to nt:resource
-        Assert.assertEquals("jcr:primaryType of jcr:content node below " + path +
-                " is not set to nt:resource!",
-                "nt:resource", node.path("jcr:primaryType").textValue());
-
-        try {
-            InputStream in = client.doStreamGet(path, null, null).getEntity().getContent();
-            Assert.assertTrue("The original file and the requested file are not the same", TestUtil.binaryCompare(fileData, in));
-        } catch (IOException | ClientException e) {
-            throw new AssertionError(e);
-        }
-
+    // Get the root node as JsonNode object
+    JsonNode node = null;
+    try {
+      node = client.adaptTo(JsonClient.class).doGetJson(path, -1);
+    } catch (ClientException e) {
+      Assert.fail("Request for " + path + " failed!");
     }
 
-    /**
-     * Tests if a Asset exists at the location  {code}path{code}. It verifies by requesting the json output
-     * of the node and verifying that all nodes and properties are properly created.<br>
-     * <br>
-     * It also makes a binary compare between the original file data and the requested rendition named
-     *  {code}original{code}.<br>
-     * <br>
-     * NOTE: This assert makes no assumptions about the type of the uploaded file (image, pdf, etc)
-     * so it only verifies if the  {code}Metadata{code} node and  {code}renditions{code} folder was created.
-     * It does not verify extracted Metadata or check what renditions have been created. The
-     * only rendition verified is the one named  {code}original{code} through binary compare with the original
-     * file.
-     *
-     * @param client   The client used to request the json for the folder node.
-     * @param path     Path to the asset in question.
-     * @param fileData The file's contents that were uploaded.
-     * @param mimeType file mime type
-     */
-    public static void assertAssetExists(final CQClient client, String path, InputStream fileData, String mimeType) {
+    // check if jcr:primaryType is set to dam:Asset
+    Assert.assertEquals(
+        "jcr:primaryType of folder node " + path + " is not set to dam:Asset!",
+        "dam:Asset",
+        node.get("jcr:primaryType").asText());
 
-        // Get the root node as JsonNode object
-        JsonNode node = null;
-        try {
-            node = client.adaptTo(JsonClient.class).doGetJson(path, -1);
-        } catch (ClientException e) {
-            Assert.fail("Request for " + path + " failed!");
-        }
+    // check if jcr:content node exists
+    Assert.assertTrue(
+        "No jcr:content node found below " + path + "!", !node.path("jcr:content").isMissingNode());
 
-        // check if jcr:primaryType is set to dam:Asset
-        Assert.assertEquals("jcr:primaryType of folder node " + path + " is not set to dam:Asset!",
-                "dam:Asset", node.get("jcr:primaryType").asText());
+    // Get the jcr:content node
+    node = node.path("jcr:content");
+    path += "/jcr:content";
 
-        // check if jcr:content node exists
-        Assert.assertTrue("No jcr:content node found below " + path + "!",
-                !node.path("jcr:content").isMissingNode());
+    // check if jcr:primaryType is set to dam:AssetContent
+    Assert.assertEquals(
+        "jcr:primaryType of jcr:content node below " + path + " is not set to dam:AssetContent!",
+        "dam:AssetContent",
+        node.get("jcr:primaryType").textValue());
 
+    // check if metadata node exists
+    Assert.assertTrue(
+        "No metadata node found below " + path + "!", !node.path("metadata").isMissingNode());
 
-        // Get the jcr:content node
-        node = node.path("jcr:content");
-        path += "/jcr:content";
+    // check if renditions folder exists
+    Assert.assertTrue(
+        "No renditions folder found below " + path + "!", !node.path("renditions").isMissingNode());
 
-        // check if jcr:primaryType is set to dam:AssetContent
-        Assert.assertEquals("jcr:primaryType of jcr:content node below " + path +
-                " is not set to dam:AssetContent!",
-                "dam:AssetContent", node.get("jcr:primaryType").textValue());
+    // Get the renditions node
+    node = node.path("renditions");
+    path += "/renditions";
 
-        // check if metadata node exists
-        Assert.assertTrue("No metadata node found below " + path + "!",
-                !node.path("metadata").isMissingNode());
+    // check if original folder exists
+    Assert.assertTrue(
+        "No original folder found below " + path + "!", !node.path("original").isMissingNode());
 
-        // check if renditions folder exists
-        Assert.assertTrue("No renditions folder found below " + path + "!",
-                !node.path("renditions").isMissingNode());
+    // Get the original node
+    node = node.path("original");
+    path += "/original";
 
-        // Get the renditions node
-        node = node.path("renditions");
-        path += "/renditions";
+    // check if jcr:primaryType is set to nt:file
+    Assert.assertEquals(
+        "jcr:primaryType of node  " + path + " is not set to nt:file!",
+        "nt:file",
+        node.get("jcr:primaryType").textValue());
 
-        // check if original folder exists
-        Assert.assertTrue("No original folder found below " + path + "!",
-                !node.path("original").isMissingNode());
+    // check if jcr:content node exists
+    Assert.assertTrue(
+        "No jcr:content node found below " + path + "!", !node.path("jcr:content").isMissingNode());
 
-        // Get the original node
-        node = node.path("original");
-        path += "/original";
+    // Get the jcr:content node
+    node = node.path("jcr:content");
+    path += "/jcr:content";
 
-        // check if jcr:primaryType is set to nt:file
-        Assert.assertEquals("jcr:primaryType of node  " + path +
-                " is not set to nt:file!",
-                "nt:file", node.get("jcr:primaryType").textValue());
+    // check if jcr:mimeType is set correctly
+    Assert.assertEquals(
+        "jcr:mimeType is not set to " + mimeType, mimeType, node.get("jcr:mimeType").textValue());
 
-        // check if jcr:content node exists
-        Assert.assertTrue("No jcr:content node found below " + path + "!",
-                !node.path("jcr:content").isMissingNode());
+    try {
+      Assert.assertTrue(
+          "The original file and the requested file are not the same",
+          TestUtil.binaryCompare(
+              fileData, client.doStreamGet(path, null, null).getEntity().getContent()));
+    } catch (Exception e) {
+      Assert.fail("Binary compare of files failed!");
+    }
+  }
 
-        // Get the jcr:content node
-        node = node.path("jcr:content");
-        path += "/jcr:content";
+  /**
+   * Verifies if a page is really a CQ page by checking for specific nodes and properties:<br>
+   *
+   * <ul>
+   *   <li>{code}jcr:primaryType{code} is set to {code}cq:Page{code}
+   *   <li>{code}jcr:content{code} node exists
+   * </ul>
+   *
+   * @param client The client used to doGet the JSON of the page
+   * @param path Location of the page
+   */
+  public static void assertIsCQPage(final CQClient client, final String path) {
 
-        // check if jcr:mimeType is set correctly
-        Assert.assertEquals("jcr:mimeType is not set to " + mimeType,
-                mimeType, node.get("jcr:mimeType").textValue());
-
-        try {
-            Assert.assertTrue("The original file and the requested file are not the same",
-                    TestUtil.binaryCompare(fileData, client.doStreamGet(path, null, null).getEntity().getContent()));
-        } catch (Exception e) {
-            Assert.fail("Binary compare of files failed!");
-        }
+    // doGet the root node as JsonNode object
+    JsonNode rootNode = null;
+    try {
+      rootNode = client.adaptTo(JsonClient.class).doGetJson(path, 2);
+    } catch (ClientException e) {
+      Assert.fail("Request for " + path + " failed!");
     }
 
-    /**
-     * Verifies if a page is really a CQ page by checking for specific nodes
-     * and properties:<br>
-     * <ul>
-     * <li> {code}jcr:primaryType{code} is set to  {code}cq:Page{code}</li>
-     * <li> {code}jcr:content{code} node exists</li>
-     * </ul>
-     *
-     * @param client The client used to doGet the JSON of the page
-     * @param path   Location of the page
-     */
-    public static void assertIsCQPage(final CQClient client, final String path) {
+    // check if jcr:primaryType is set to cq:Page
+    Assert.assertEquals(
+        "jcr:primaryType of page node " + path + " is not set to cq:Page!",
+        "cq:Page",
+        rootNode.get("jcr:primaryType").asText());
 
-        // doGet the root node as JsonNode object
-        JsonNode rootNode = null;
-        try {
-            rootNode = client.adaptTo(JsonClient.class).doGetJson(path, 2);
-        } catch (ClientException e) {
-            Assert.fail("Request for " + path + " failed!");
-        }
+    // check if jcr:content node exists
+    Assert.assertTrue(
+        "No jcr:content node found below " + path + "!",
+        !rootNode.path("jcr:content").isMissingNode());
+  }
 
-        // check if jcr:primaryType is set to cq:Page
-        Assert.assertEquals("jcr:primaryType of page node " + path + " is not set to cq:Page!",
-                "cq:Page", rootNode.get("jcr:primaryType").asText());
-
-        // check if jcr:content node exists
-        Assert.assertTrue("No jcr:content node found below " + path + "!", !rootNode.path("jcr:content").isMissingNode());
+  public static void assertIsLiveSite(
+      final CQClient client, final String newPath, final String masterPath) {
+    JsonNode rootNode = null;
+    try {
+      rootNode = client.adaptTo(JsonClient.class).doGetJson(newPath, 2);
+    } catch (ClientException e) {
+      Assert.fail("Request for " + newPath + " failed!");
     }
 
+    JsonNode contentNode = rootNode.path("jcr:content");
+    Assert.assertTrue("No jcr:content node found!", !contentNode.isMissingNode());
+    Assert.assertNotNull("cq:lastRolledout is not set!", contentNode.get("cq:lastRolledout"));
+    Assert.assertNotNull("cq:lastRolledoutBy is not set!", contentNode.get("cq:lastRolledoutBy"));
+    JsonNode liveSyncConfig = contentNode.path("cq:LiveSyncConfig");
+    Assert.assertTrue("No cq:LiveSyncConfig node found!", !liveSyncConfig.isMissingNode());
+    Assert.assertEquals(
+        "cq:master is not set correctly!", masterPath, liveSyncConfig.get("cq:master").asText());
+    Assert.assertNotNull("cq:isDeep is not set!", liveSyncConfig.get("cq:isDeep"));
+  }
 
-    public static void assertIsLiveSite(final CQClient client, final String newPath, final String masterPath) {
-        JsonNode rootNode = null;
-        try {
-            rootNode = client.adaptTo(JsonClient.class).doGetJson(newPath, 2);
-        } catch (ClientException e) {
-            Assert.fail("Request for " + newPath + " failed!");
-        }
-
-        JsonNode contentNode = rootNode.path("jcr:content");
-        Assert.assertTrue("No jcr:content node found!", !contentNode.isMissingNode());
-        Assert.assertNotNull("cq:lastRolledout is not set!", contentNode.get("cq:lastRolledout"));
-        Assert.assertNotNull("cq:lastRolledoutBy is not set!", contentNode.get("cq:lastRolledoutBy"));
-        JsonNode liveSyncConfig = contentNode.path("cq:LiveSyncConfig");
-        Assert.assertTrue("No cq:LiveSyncConfig node found!", !liveSyncConfig.isMissingNode());
-        Assert.assertEquals("cq:master is not set correctly!", masterPath, liveSyncConfig.get("cq:master")
-                .asText());
-        Assert.assertNotNull("cq:isDeep is not set!", liveSyncConfig.get("cq:isDeep"));
+  public static void assertIsBluePrint(final CQClient client, final String path) {
+    JsonNode rootNode = null;
+    try {
+      rootNode = client.adaptTo(JsonClient.class).doGetJson(path, 7);
+    } catch (ClientException e) {
+      Assert.fail("Request for " + path + " failed!");
     }
-
-    public static void assertIsBluePrint(final CQClient client, final String path) {
-        JsonNode rootNode = null;
-        try {
-            rootNode = client.adaptTo(JsonClient.class).doGetJson(path, 7);
-        } catch (ClientException e) {
-            Assert.fail("Request for " + path + " failed!");
-        }
-        JsonNode currentNode = rootNode.path("jcr:content");
-        Assert.assertTrue("No jcr:content node found!", !currentNode.isMissingNode());
-        String[][] nodePath = {
-                {"dialog", "cq:Dialog"},
-                {"items", "cq:WidgetCollection"},
-                {"tabs", "cq:TabPanel"},
-                {"items", "cq:WidgetCollection"}
-        };
-        for (String[] child : nodePath) {
-            currentNode = currentNode.path(child[0]);
-            Assert.assertTrue("No " + child[0] + " node found!", !currentNode.isMissingNode());
-            Assert.assertEquals(child[0] + " is not of type " + child[1], currentNode.get("jcr:primaryType")
-                    .asText(), child[1]);
-        }
-        String[][] tabs = {
-                {"tab_lan", "/libs/wcm/msm/templates/blueprint/defaults/language_tab.infinity.json"},
-                {"tab_chap", "/libs/wcm/msm/templates/blueprint/defaults/chapters_tab.infinity.json"},
-                {"tab_lc", "/libs/wcm/msm/templates/blueprint/defaults/livecopy_tab.infinity.json"}
-        };
-        for (String[] child : tabs) {
-            JsonNode tab = currentNode.path(child[0]);
-            Assert.assertTrue("No " + child[0] + " node found!", !tab.isMissingNode());
-            Assert.assertEquals(child[0] + " has wrong type.", tab.get("jcr:primaryType").asText(),
-                    "cq:Widget");
-            Assert.assertEquals(child[0] + " has wrong path property.", tab.get("path").asText(), child[1]);
-        }
+    JsonNode currentNode = rootNode.path("jcr:content");
+    Assert.assertTrue("No jcr:content node found!", !currentNode.isMissingNode());
+    String[][] nodePath = {
+      {"dialog", "cq:Dialog"},
+      {"items", "cq:WidgetCollection"},
+      {"tabs", "cq:TabPanel"},
+      {"items", "cq:WidgetCollection"}
+    };
+    for (String[] child : nodePath) {
+      currentNode = currentNode.path(child[0]);
+      Assert.assertTrue("No " + child[0] + " node found!", !currentNode.isMissingNode());
+      Assert.assertEquals(
+          child[0] + " is not of type " + child[1],
+          currentNode.get("jcr:primaryType").asText(),
+          child[1]);
     }
-
-    public static void assertIsVersionList(CQClient client, String jsonString) {
-        JsonNode rootNode = null;
-        try {
-            rootNode = JsonUtils.getJsonNodeFromString(jsonString);
-        } catch (ClientException e) {
-            Assert.fail("Parsing of JSON String failed!");
-        }
-        JsonNode versions = rootNode.path("versions");
-        Assert.assertTrue("versions node not found!", !versions.isMissingNode());
-        Assert.assertTrue("versions node is not an array!", versions.isArray());
-
-        final String[] properties = {"id", "label", "name", "title", "comment", "created", "deleted"};
-        for (int i = 0; i < versions.size(); ++i) {
-            JsonNode version = versions.get(i);
-            for (String property : properties) {
-                Assert.assertTrue(property + " property node not found!", !version.get(property).isMissingNode());
-            }
-        }
+    String[][] tabs = {
+      {"tab_lan", "/libs/wcm/msm/templates/blueprint/defaults/language_tab.infinity.json"},
+      {"tab_chap", "/libs/wcm/msm/templates/blueprint/defaults/chapters_tab.infinity.json"},
+      {"tab_lc", "/libs/wcm/msm/templates/blueprint/defaults/livecopy_tab.infinity.json"}
+    };
+    for (String[] child : tabs) {
+      JsonNode tab = currentNode.path(child[0]);
+      Assert.assertTrue("No " + child[0] + " node found!", !tab.isMissingNode());
+      Assert.assertEquals(
+          child[0] + " has wrong type.", tab.get("jcr:primaryType").asText(), "cq:Widget");
+      Assert.assertEquals(
+          child[0] + " has wrong path property.", tab.get("path").asText(), child[1]);
     }
+  }
 
-    public static void assertIsVersionTree(CQClient client, String jsonString) {
-        JsonNode rootNode = null;
-        try {
-            rootNode = JsonUtils.getJsonNodeFromString(jsonString);
-        } catch (ClientException e) {
-            Assert.fail("Parsing of JSON String failed!");
-        }
-        Assert.assertTrue("Version tree is not an array!", rootNode.isArray());
-        final String[] properties = {"text", "date", "name", "id", "leaf", "label", "title", "deleted"};
-        for (int i = 0; i < rootNode.size(); ++i) {
-            JsonNode element = rootNode.get(i);
-            for (String property : properties) {
-                Assert.assertTrue(property + " property node not found!", !element.get(property).isMissingNode());
-            }
-        }
+  public static void assertIsVersionList(CQClient client, String jsonString) {
+    JsonNode rootNode = null;
+    try {
+      rootNode = JsonUtils.getJsonNodeFromString(jsonString);
+    } catch (ClientException e) {
+      Assert.fail("Parsing of JSON String failed!");
     }
+    JsonNode versions = rootNode.path("versions");
+    Assert.assertTrue("versions node not found!", !versions.isMissingNode());
+    Assert.assertTrue("versions node is not an array!", versions.isArray());
+
+    final String[] properties = {"id", "label", "name", "title", "comment", "created", "deleted"};
+    for (int i = 0; i < versions.size(); ++i) {
+      JsonNode version = versions.get(i);
+      for (String property : properties) {
+        Assert.assertTrue(
+            property + " property node not found!", !version.get(property).isMissingNode());
+      }
+    }
+  }
+
+  public static void assertIsVersionTree(CQClient client, String jsonString) {
+    JsonNode rootNode = null;
+    try {
+      rootNode = JsonUtils.getJsonNodeFromString(jsonString);
+    } catch (ClientException e) {
+      Assert.fail("Parsing of JSON String failed!");
+    }
+    Assert.assertTrue("Version tree is not an array!", rootNode.isArray());
+    final String[] properties = {"text", "date", "name", "id", "leaf", "label", "title", "deleted"};
+    for (int i = 0; i < rootNode.size(); ++i) {
+      JsonNode element = rootNode.get(i);
+      for (String property : properties) {
+        Assert.assertTrue(
+            property + " property node not found!", !element.get(property).isMissingNode());
+      }
+    }
+  }
 }

@@ -18,25 +18,26 @@ package com.adobe.cq.testing.client.components.foundation;
 import com.adobe.cq.testing.client.ComponentClient;
 
 public class ParSys extends AbstractFoundationComponent {
-   
-    public static final String RESOURCE_TYPE = "foundation/components/parsys";
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The ComponentClient that will be used for sending the requests.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (String,int...)} has been called.
-     */
-    public ParSys(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
+  public static final String RESOURCE_TYPE = "foundation/components/parsys";
 
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The ComponentClient that will be used for sending the requests.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (String,int...)} has been called.
+   */
+  public ParSys(ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
+
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 }

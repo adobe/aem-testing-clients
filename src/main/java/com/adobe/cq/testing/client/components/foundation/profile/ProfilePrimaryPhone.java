@@ -20,53 +20,56 @@ import com.adobe.cq.testing.client.components.AbstractComponent;
 
 /**
  * Wraps the Profile Primary Phone foundation component, providing methods for editing it. See
- * {@code /libs/foundation/components/profile/form/contact} in the repository for implementation details.
+ * {@code /libs/foundation/components/profile/form/contact} in the repository for implementation
+ * details.
  */
-public class ProfilePrimaryPhone extends AbstractComponent{
+public class ProfilePrimaryPhone extends AbstractComponent {
 
-    public static final String RESOURCE_TYPE = "foundation/components/profile/form/contact";
+  public static final String RESOURCE_TYPE = "foundation/components/profile/form/contact";
 
-    public static final String PROP_TITLE = "jcr:title";
-    public static final String PROP_NAME = "name";
-    public static final String PROP_DESCRIPTION = "jcr:description";
-    public static final String PROP_COLS = "cols";
-    public static final String PROP_ROWS = "rows";
-    public static final String PROP_WIDTH = "width";
-    public static final String PROP_REQUIRED = "required";
-    public static final String PROP_REQUIRED_MESSAGE = "requiredMessage";
-    public static final String PROP_CONSTRAINT_TYPE = "constraintType";
-    public static final String PROP_CONSTRAINT_MESSAGE = "constraintMessage";
-    public static final String PROP_DEFAULT_INITIAL = "defaultValue";
+  public static final String PROP_TITLE = "jcr:title";
+  public static final String PROP_NAME = "name";
+  public static final String PROP_DESCRIPTION = "jcr:description";
+  public static final String PROP_COLS = "cols";
+  public static final String PROP_ROWS = "rows";
+  public static final String PROP_WIDTH = "width";
+  public static final String PROP_REQUIRED = "required";
+  public static final String PROP_REQUIRED_MESSAGE = "requiredMessage";
+  public static final String PROP_CONSTRAINT_TYPE = "constraintType";
+  public static final String PROP_CONSTRAINT_MESSAGE = "constraintMessage";
+  public static final String PROP_DEFAULT_INITIAL = "defaultValue";
 
-    public static final String PROP_TITLE_VALUE = "Phone Number";
-    public static final String PROP_NAME_VALUE = "phoneNumbers";
-    public static final String PROP_DESCRIPTION_VALUE = "Description Phone Number";
-    public static final String PROP_COLS_VALUE = "3";
-    public static final String PROP_ROWS_VALUE = "3";
-    public static final String PROP_WIDTH_VALUE = "100";
-    public static final String PROP_REQUIRED_VALUE = "true";
-    public static final String PROP_REQUIRED_MESSAGE_VALUE = "Required Message";
-    public static final String PROP_CONSTRAINT_TYPE_VALUE = "foundation/components/form/constraints/numeric";
-    public static final String PROP_CONSTRAINT_MESSAGE_VALUE = "Constraint Message";
-    public static final String PROP_DEFAULT_INITIAL_VALUE = "555-010101";
+  public static final String PROP_TITLE_VALUE = "Phone Number";
+  public static final String PROP_NAME_VALUE = "phoneNumbers";
+  public static final String PROP_DESCRIPTION_VALUE = "Description Phone Number";
+  public static final String PROP_COLS_VALUE = "3";
+  public static final String PROP_ROWS_VALUE = "3";
+  public static final String PROP_WIDTH_VALUE = "100";
+  public static final String PROP_REQUIRED_VALUE = "true";
+  public static final String PROP_REQUIRED_MESSAGE_VALUE = "Required Message";
+  public static final String PROP_CONSTRAINT_TYPE_VALUE =
+      "foundation/components/form/constraints/numeric";
+  public static final String PROP_CONSTRAINT_MESSAGE_VALUE = "Constraint Message";
+  public static final String PROP_DEFAULT_INITIAL_VALUE = "555-010101";
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The ComponentClient that will be used for sending the requests.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (order,int...)} has been called.
-     */
-    public ProfilePrimaryPhone(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
- 
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The ComponentClient that will be used for sending the requests.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (order,int...)} has been called.
+   */
+  public ProfilePrimaryPhone(
+      ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
 
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 }

@@ -13,39 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.client.components.xf;
 
 import com.adobe.cq.testing.client.ComponentClient;
 import com.adobe.cq.testing.client.components.AbstractComponent;
 
-/**
- * Experience Fragment Component
- */
+/** Experience Fragment Component */
 public class ExperienceFragmentCmp extends AbstractComponent {
-    private static final String XF_RESOURCE_TYPE = "cq/experience-fragments/editor/components/experiencefragment";
-    private static final String FRAGMENT_PATH_PROP = "fragmentPath";
+  private static final String XF_RESOURCE_TYPE =
+      "cq/experience-fragments/editor/components/experiencefragment";
+  private static final String FRAGMENT_PATH_PROP = "fragmentPath";
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The ComponentClient that will be used for sending the requests.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (order,int...)} has been called.
-     */
-    public ExperienceFragmentCmp(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The ComponentClient that will be used for sending the requests.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (order,int...)} has been called.
+   */
+  public ExperienceFragmentCmp(
+      ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
 
-    @Override
-    public String getResourceType() {
-        return XF_RESOURCE_TYPE;
-    }
+  @Override
+  public String getResourceType() {
+    return XF_RESOURCE_TYPE;
+  }
 
-    public void setFragmentPath(String fragmentReference) {
-        setProperty(FRAGMENT_PATH_PROP, fragmentReference);
-    }
+  public void setFragmentPath(String fragmentReference) {
+    setProperty(FRAGMENT_PATH_PROP, fragmentReference);
+  }
 }

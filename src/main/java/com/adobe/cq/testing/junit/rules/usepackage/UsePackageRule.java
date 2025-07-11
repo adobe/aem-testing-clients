@@ -21,29 +21,29 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * Install a content package from resources.
- * Takes in an {@code Instance} rule, which has to be applied before this rule
+ * Install a content package from resources. Takes in an {@code Instance} rule, which has to be
+ * applied before this rule
  */
 public class UsePackageRule implements TestRule {
 
-    private String srcPath;
-    private Instance instance;
+  private String srcPath;
+  private Instance instance;
 
-    public UsePackageRule(String srcPath, Instance instance) {
-        this.srcPath = srcPath;
-        this.instance = instance;
-    }
+  public UsePackageRule(String srcPath, Instance instance) {
+    this.srcPath = srcPath;
+    this.instance = instance;
+  }
 
-    public String getSrcPath() {
-        return srcPath;
-    }
+  public String getSrcPath() {
+    return srcPath;
+  }
 
-    public Instance getInstance() {
-        return instance;
-    }
+  public Instance getInstance() {
+    return instance;
+  }
 
-    @Override
-    public Statement apply(Statement statement, Description description) {
-        return new UsingPackageStatement(this, statement);
-    }
+  @Override
+  public Statement apply(Statement statement, Description description) {
+    return new UsingPackageStatement(this, statement);
+  }
 }

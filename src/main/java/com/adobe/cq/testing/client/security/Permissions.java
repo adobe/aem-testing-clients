@@ -15,15 +15,13 @@
  */
 package com.adobe.cq.testing.client.security;
 
-
 import com.adobe.cq.testing.client.SecurityClient;
 
 public class Permissions {
 
-    protected SecurityClient client;
+  protected SecurityClient client;
 
-    public <T extends SecurityClient> Permissions(T client) {
-        this.client = client;
-    }
-
+  public <T extends SecurityClient> Permissions(T client) {
+    this.client = client;
+  }
 }

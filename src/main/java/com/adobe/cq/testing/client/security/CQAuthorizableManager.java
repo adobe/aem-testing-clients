@@ -20,43 +20,47 @@ import org.apache.sling.testing.clients.ClientException;
 
 public class CQAuthorizableManager extends AuthorizableManager {
 
-    public <T extends SecurityClient> CQAuthorizableManager(T client) {
-        super(client);
-    }
+  public <T extends SecurityClient> CQAuthorizableManager(T client) {
+    super(client);
+  }
 
-    /**
-     * Get built-in group "content-authors"
-     * @return content-authors' {@link Group}
-     * @throws ClientException if the request fails
-     */
-    public Group getGroupAuthors() throws ClientException {
-        return getGroup("content-authors");
-    }
+  /**
+   * Get built-in group "content-authors"
+   *
+   * @return content-authors' {@link Group}
+   * @throws ClientException if the request fails
+   */
+  public Group getGroupAuthors() throws ClientException {
+    return getGroup("content-authors");
+  }
 
-    /**
-     * Get built-in group "workflow-editors"
-     * @return workflow-editors' {@link Group}
-     * @throws ClientException if the request fails
-     */
-    public Group getGroupWorkflowEditors() throws ClientException {
-        return getGroup("workflow-editors");
-    }
+  /**
+   * Get built-in group "workflow-editors"
+   *
+   * @return workflow-editors' {@link Group}
+   * @throws ClientException if the request fails
+   */
+  public Group getGroupWorkflowEditors() throws ClientException {
+    return getGroup("workflow-editors");
+  }
 
-    /**
-     * Get built-in group "workflow-users"
-     * @return workflow-users' {@link Group}
-     * @throws ClientException if the request fails
-     */
-    public Group getGroupWorkflowUsers() throws ClientException {
-        return getGroup("workflow-users");
-    }
+  /**
+   * Get built-in group "workflow-users"
+   *
+   * @return workflow-users' {@link Group}
+   * @throws ClientException if the request fails
+   */
+  public Group getGroupWorkflowUsers() throws ClientException {
+    return getGroup("workflow-users");
+  }
 
-    /**
-     * Get built-in group "tag-administrators"
-     * @return tag-administrators' {@link Group}
-     * @throws ClientException if the request fails
-     */
-    public Group getGroupTagAdministrators() throws ClientException {
-        return getGroup("tag-administrators");
-    }
+  /**
+   * Get built-in group "tag-administrators"
+   *
+   * @return tag-administrators' {@link Group}
+   * @throws ClientException if the request fails
+   */
+  public Group getGroupTagAdministrators() throws ClientException {
+    return getGroup("tag-administrators");
+  }
 }

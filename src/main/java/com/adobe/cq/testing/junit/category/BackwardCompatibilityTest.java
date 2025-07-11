@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.junit.category;
 
-/**
- * Used to mark that the test is relevant for backward compatibility
- */
-public interface BackwardCompatibilityTest {
-}
+/** Used to mark that the test is relevant for backward compatibility */
+public interface BackwardCompatibilityTest {}

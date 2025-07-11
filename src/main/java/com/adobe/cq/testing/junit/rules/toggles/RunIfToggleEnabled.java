@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Adobe
+ * Copyright 2021 Adobe Systems Incorporated
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to mark a test that should run only if a toggle is enabled.
- * This is meant for tests that validate features introduced via toggles.
+ * Annotation to mark a test that should run only if a toggle is enabled. This is meant for tests
+ * that validate features introduced via toggles.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RunIfToggleEnabled {
-    /**
-     * The toggle that is required for the test to run
-     * @return the toggle name
-     */
-    String value();
+  /**
+   * The toggle that is required for the test to run
+   *
+   * @return the toggle name
+   */
+  String value();
 }

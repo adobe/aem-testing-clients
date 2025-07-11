@@ -16,50 +16,42 @@
 package com.adobe.cq.testing.client.components.foundation.form;
 
 import com.adobe.cq.testing.client.ComponentClient;
-
 import java.io.File;
 
 public class ImageUpload extends AbstractFormFieldComponent {
 
-    public static final String RESOURCE_TYPE = "foundation/components/form/image";
-    File value;
+  public static final String RESOURCE_TYPE = "foundation/components/form/image";
+  File value;
 
-    /**
-     * The constructor stores all the component path information like
-     * parentPage, name etc.
-     * 
-     * @param client
-     *            The ComponentClient that will be used for sending the
-     *            requests.
-     * @param pagePath
-     *            path to the page that will contain the component.
-     * @param location
-     *            relative location to the parent node inside the page that will
-     *            contain the component node.
-     * @param nameHint
-     *            name to be used for the component node. Might get altered by
-     *            the server if a naming conflict occurs. The {@link #getName()}
-     *            method will return the correct name after
-     *            {@link #create (order,int...)} has been called.
-     */
-    public ImageUpload(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The ComponentClient that will be used for sending the requests.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (order,int...)} has been called.
+   */
+  public ImageUpload(ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
 
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 
-    public void setValue(String path) {
-        value = new File(path);
-    }
+  public void setValue(String path) {
+    value = new File(path);
+  }
 
-    public void setValue(File file) {
-        value = file;
-    }
+  public void setValue(File file) {
+    value = file;
+  }
 
-    public File getValue() {
-        return value;
-    }
+  public File getValue() {
+    return value;
+  }
 }

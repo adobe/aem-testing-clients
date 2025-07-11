@@ -13,36 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.client.assets;
 
-/**
- * Tri-state of DirectBinaryAccess support
- */
+/** Tri-state of DirectBinaryAccess support */
 public class DirectBinaryAccessSupport {
 
-    enum State {
-        UNKNOWN,
-        SUPPORTED,
-        UNSUPPORTED
-    }
+  enum State {
+    UNKNOWN,
+    SUPPORTED,
+    UNSUPPORTED
+  }
 
-    private State state;
+  private State state;
 
-    public DirectBinaryAccessSupport() {
-        this.state = State.UNKNOWN;
-    }
+  public DirectBinaryAccessSupport() {
+    this.state = State.UNKNOWN;
+  }
 
-    public boolean isUnknown() {
-        return this.state == State.UNKNOWN;
-    }
+  public boolean isUnknown() {
+    return this.state == State.UNKNOWN;
+  }
 
-    public boolean isSupported() {
-        return this.state == State.SUPPORTED;
-    }
+  public boolean isSupported() {
+    return this.state == State.SUPPORTED;
+  }
 
-    public void setSupported(boolean supported) {
-        this.state = supported ? State.SUPPORTED : State.UNSUPPORTED;
-    }
-
+  public void setSupported(boolean supported) {
+    this.state = supported ? State.SUPPORTED : State.UNSUPPORTED;
+  }
 }

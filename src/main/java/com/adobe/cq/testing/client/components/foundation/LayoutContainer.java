@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.adobe.cq.testing.client.components.foundation;
 
 import com.adobe.cq.testing.client.ComponentClient;
@@ -21,30 +20,32 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
 
 public class LayoutContainer extends AbstractFoundationComponent {
 
-    public static final String RESOURCE_TYPE = "wcm/foundation/components/responsivegrid";
+  public static final String RESOURCE_TYPE = "wcm/foundation/components/responsivegrid";
 
-    /**
-     * The constructor stores all the component path information like parentPage, name etc.
-     *
-     * @param client   The ComponentClient that will be used for sending the requests.
-     * @param pagePath path to the page that will contain the component.
-     * @param location relative location to the parent node inside the page that will contain the component node.
-     * @param nameHint name to be used for the component node. Might get altered by the server if a naming conflict
-     *                 occurs. The {@link #getName()} method will return the correct name after {@link #create
-     *                 (String,int...)} has been called.
-     */
-    public LayoutContainer(ComponentClient client, String pagePath, String location, String nameHint) {
-        super(client, pagePath, location, nameHint);
-    }
+  /**
+   * The constructor stores all the component path information like parentPage, name etc.
+   *
+   * @param client The ComponentClient that will be used for sending the requests.
+   * @param pagePath path to the page that will contain the component.
+   * @param location relative location to the parent node inside the page that will contain the
+   *     component node.
+   * @param nameHint name to be used for the component node. Might get altered by the server if a
+   *     naming conflict occurs. The {@link #getName()} method will return the correct name after
+   *     {@link #create (String,int...)} has been called.
+   */
+  public LayoutContainer(
+      ComponentClient client, String pagePath, String location, String nameHint) {
+    super(client, pagePath, location, nameHint);
+  }
 
-    @Override
-    public String getResourceType() {
-        return RESOURCE_TYPE;
-    }
+  @Override
+  public String getResourceType() {
+    return RESOURCE_TYPE;
+  }
 
-    @Override
-    public FormEntityBuilder getCreateFormEntity(String order) {
-        return super.getCreateFormEntity(order)
-                .addParameter("./cq:responsive/jcr:primaryType", "nt:unstructured");
-    }
+  @Override
+  public FormEntityBuilder getCreateFormEntity(String order) {
+    return super.getCreateFormEntity(order)
+        .addParameter("./cq:responsive/jcr:primaryType", "nt:unstructured");
+  }
 }

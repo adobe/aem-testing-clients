@@ -34,7 +34,7 @@ jobs:
     steps:
       # Check out Git repository
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # Set up environment with Java and Maven
       - name: Setup JDK

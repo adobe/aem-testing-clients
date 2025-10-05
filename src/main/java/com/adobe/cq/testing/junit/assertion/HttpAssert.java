@@ -19,8 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpResponse;
 import org.junit.Assert;
 
 public class HttpAssert {

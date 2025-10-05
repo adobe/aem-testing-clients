@@ -17,7 +17,7 @@ package com.adobe.cq.testing.client;
 
 import com.adobe.cq.testing.client.security.CQAuthorizableManager;
 import java.net.URI;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.slf4j.Logger;

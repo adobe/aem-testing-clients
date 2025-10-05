@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.adobe.cq.testing.client.assets.*;
 import com.adobe.cq.testing.client.assets.dto.FailedRendition;
@@ -35,17 +35,19 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.EntityTemplate;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.EntityTemplate;
 import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
@@ -231,7 +233,7 @@ public class CQAssetsClient extends CQClient {
     List<FailedRendition> failedRenditionList = new ArrayList<>();
     String requestPath = assetPath + "/jcr:content/dam:failedRenditions.2.json";
     SlingHttpResponse response = this.doGet(requestPath, HttpStatus.SC_OK, HttpStatus.SC_NOT_FOUND);
-    if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+    if (response.getCode() == HttpStatus.SC_OK) {
       JsonNode failedRenditions = JsonUtils.getJsonNodeFromString(response.getContent());
       Iterator<String> fieldNames = failedRenditions.fieldNames();
       while (fieldNames.hasNext()) {
@@ -258,7 +260,7 @@ public class CQAssetsClient extends CQClient {
     List<String> processedRenditionList = new ArrayList<>();
     String requestPath = assetPath + "/jcr:content/renditions.2.json";
     SlingHttpResponse response = this.doGet(requestPath, HttpStatus.SC_OK, HttpStatus.SC_NOT_FOUND);
-    if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+    if (response.getCode() == HttpStatus.SC_OK) {
       JsonNode processedRenditions = JsonUtils.getJsonNodeFromString(response.getContent());
       Iterator<String> fieldNames = processedRenditions.fieldNames();
       while (fieldNames.hasNext()) {
@@ -282,18 +284,23 @@ public class CQAssetsClient extends CQClient {
     super(http, config);
 
     // same settings as SlingClient
+    PoolingHttpClientConnectionManager connectionManager =
+        PoolingHttpClientConnectionManagerBuilder.create()
+            .setMaxConnPerRoute(10)
+            .setMaxConnTotal(100)
+            .build();
     storageClient =
         HttpClientBuilder.create()
             .useSystemProperties()
             .setUserAgent("Java")
             // Connection
-            .setMaxConnPerRoute(10)
-            .setMaxConnTotal(100)
+            .setConnectionManager(connectionManager)
             // Interceptors
-            .addInterceptorLast(new TestDescriptionInterceptor())
-            .addInterceptorLast(new DelayRequestInterceptor(SystemPropertiesConfig.getHttpDelay()))
+            .addRequestInterceptorLast(new TestDescriptionInterceptor())
+            .addRequestInterceptorLast(
+                new DelayRequestInterceptor(SystemPropertiesConfig.getHttpDelay()))
             // HTTP request strategy
-            .setServiceUnavailableRetryStrategy(new ServerErrorRetryStrategy())
+            .setRetryStrategy(new ServerErrorRetryStrategy())
             .build();
   }
 
@@ -309,7 +316,7 @@ public class CQAssetsClient extends CQClient {
 
     // Older AEM instances don't have the Platform ACP API end point
     // These don't support direct binary access
-    if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+    if (response.getCode() == HttpStatus.SC_NOT_FOUND) {
       return false;
     }
 
@@ -442,17 +449,13 @@ public class CQAssetsClient extends CQClient {
     // Note: we don't use the simple BufferedHttpEntity to efficiently support larger files (parts)
     request.setEntity(
         new EntityTemplate(
+            size,
+            ContentType.create(mimeType),
+            null,
             out -> {
               InputStream in = ResourceUtil.getResourceAsStream(resourcePath);
               IOUtils.copyLarge(in, out, start, size);
-            }) {
-          @Override
-          public long getContentLength() {
-            // Content-Length header is required and default EntityTemplate returns -1 which skips
-            // the header
-            return size;
-          }
-        });
+            }));
 
     try {
       // use separate client for requests to Azure/S3 blob storage without AEM authorization header

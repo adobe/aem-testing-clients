@@ -16,7 +16,7 @@
 package com.adobe.cq.testing.client;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 import static org.apache.sling.testing.Constants.CHARSET_UTF8;
 import static org.apache.sling.testing.Constants.PARAMETER_CHARSET;
 
@@ -28,8 +28,8 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;

@@ -37,6 +37,6 @@ public class StatusPoller extends Polling {
 
   @Override
   public Boolean call() throws ClientException {
-    return client.doGet(pagePath, status).getStatusLine().getStatusCode() == status;
+    return client.doGet(pagePath, status).getCode() == status;
   }
 }

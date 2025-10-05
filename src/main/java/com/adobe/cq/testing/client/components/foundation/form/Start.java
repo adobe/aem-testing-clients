@@ -20,14 +20,14 @@ import com.adobe.cq.testing.client.components.AbstractComponent;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
@@ -245,7 +245,7 @@ public class Start extends AbstractComponent {
    */
   public HttpEntity createMultipartEntity() throws ClientException, InterruptedException {
     // Use UTF-8 instead of default ISO-8859-1 as we change default Sling encoding to UTF-8
-    ContentType textContentType = ContentType.create("text/plain", Consts.UTF_8);
+    ContentType textContentType = ContentType.create("text/plain", StandardCharsets.UTF_8);
 
     // start a new multipart entity
     MultipartEntityBuilder meb = MultipartEntityBuilder.create();

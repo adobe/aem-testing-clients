@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.InputStream;
@@ -23,12 +23,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;

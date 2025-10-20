@@ -15,8 +15,8 @@
  */
 package com.adobe.cq.testing.junit.rules;
 
-import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_MOVED_TEMPORARILY;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.SlingHttpResponse;

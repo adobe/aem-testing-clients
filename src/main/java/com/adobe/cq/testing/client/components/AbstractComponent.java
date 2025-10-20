@@ -15,8 +15,8 @@
  */
 package com.adobe.cq.testing.client.components;
 
-import static org.apache.http.HttpStatus.SC_CREATED;
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_CREATED;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.adobe.cq.testing.client.ComponentClient;
 import com.fasterxml.jackson.databind.JsonNode;

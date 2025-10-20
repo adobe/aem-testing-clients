@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,11 +29,11 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.InputStreamBody;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.entity.mime.InputStreamBody;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;

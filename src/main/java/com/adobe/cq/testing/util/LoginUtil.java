@@ -17,13 +17,15 @@ package com.adobe.cq.testing.util;
 
 import com.adobe.cq.testing.client.CQClient;
 import java.io.IOException;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.sling.testing.clients.AbstractSlingClient;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
 
@@ -69,11 +71,11 @@ public class LoginUtil {
    */
   public static <T extends AbstractSlingClient> String getLoginToken(
       T graniteClient, String targetPage) throws IOException {
-    HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
+    CloseableHttpClient client = HttpClientBuilder.create().useSystemProperties().build();
     HttpPost post =
         buildFormAuthPost(
             graniteClient, graniteClient.getUser(), graniteClient.getPassword(), targetPage);
-    HttpResponse response = client.execute(post);
+    CloseableHttpResponse response = client.execute(post);
 
     // consume response so that the connection can be reused
     EntityUtils.consume(response.getEntity());

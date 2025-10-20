@@ -15,9 +15,9 @@
  */
 package com.adobe.cq.testing.junit.rules;
 
-import org.apache.http.auth.AuthSchemeProvider;
-import org.apache.http.config.Lookup;
-import org.apache.http.config.RegistryBuilder;
+import org.apache.hc.client5.http.auth.AuthSchemeFactory;
+import org.apache.hc.core5.http.config.Lookup;
+import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.indexing.IndexingClient;
@@ -66,8 +66,8 @@ public class ConfigurableInstance extends ExistingInstance {
   @Override
   public <T extends SlingClient.InternalBuilder> T customize(T builder) {
     if (useLoginToken) {
-      Lookup<AuthSchemeProvider> authSchemeRegistry =
-          RegistryBuilder.<AuthSchemeProvider>create().build();
+      Lookup<AuthSchemeFactory> authSchemeRegistry =
+          RegistryBuilder.<AuthSchemeFactory>create().build();
       builder.httpClientBuilder().setDefaultAuthSchemeRegistry(authSchemeRegistry);
       builder
           .setPreemptiveAuth(false)

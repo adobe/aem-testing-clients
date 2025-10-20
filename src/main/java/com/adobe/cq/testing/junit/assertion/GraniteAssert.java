@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 import java.util.regex.Pattern;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.util.HttpUtils;
 import org.junit.Assert;

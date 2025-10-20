@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.client.security;
 
-import static org.apache.http.HttpStatus.*;
+import static org.apache.hc.core5.http.HttpStatus.*;
 
 import com.adobe.cq.testing.client.SecurityClient;
 import java.util.Map;

@@ -15,8 +15,8 @@
  */
 package com.adobe.cq.testing.client;
 
-import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_MOVED_TEMPORARILY;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -25,10 +25,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;

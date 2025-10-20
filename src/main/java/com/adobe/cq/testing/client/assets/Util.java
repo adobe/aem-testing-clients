@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import org.apache.http.Header;
+import org.apache.hc.core5.http.Header;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.ResourceUtil;

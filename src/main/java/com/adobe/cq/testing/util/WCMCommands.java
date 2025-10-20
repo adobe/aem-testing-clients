@@ -20,7 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;

@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
-import static org.apache.http.HttpStatus.*;
+import static org.apache.hc.core5.http.HttpStatus.*;
 
 import com.adobe.cq.testing.client.workflow.*;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,9 +29,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.http.NameValuePair;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;
@@ -146,7 +146,7 @@ public class WorkflowClient extends CQClient {
     // check the returned status
     HttpUtils.verifyHttpStatus(response, HttpUtils.getExpectedStatus(SC_CREATED, expectedStatus));
     // if it was a valid request
-    if (response.getStatusLine().getStatusCode() == SC_CREATED) {
+    if (response.getCode() == SC_CREATED) {
       // the location header will contain the URL to the newly deployed
       // model
       String url = response.getHeaders("Location")[0].getValue();
@@ -193,7 +193,7 @@ public class WorkflowClient extends CQClient {
     // check the returned status
     HttpUtils.verifyHttpStatus(response, HttpUtils.getExpectedStatus(SC_CREATED, expectedStatus));
     // if it was a valid request
-    if (response.getStatusLine().getStatusCode() == SC_CREATED) {
+    if (response.getCode() == SC_CREATED) {
       // the location header will contain the URL to the newly deployed
       // model
       String url = response.getHeaders("Location")[0].getValue();
@@ -690,7 +690,7 @@ public class WorkflowClient extends CQClient {
     // check returned status
     HttpUtils.verifyHttpStatus(response, HttpUtils.getExpectedStatus(SC_CREATED, expectedStatus));
     // if successfully created
-    if (response.getStatusLine().getStatusCode() == SC_CREATED) {
+    if (response.getCode() == SC_CREATED) {
       // return the instance path
       return getPath(response.getSlingLocation()).toString();
     } else {

@@ -15,15 +15,15 @@
  */
 package com.adobe.cq.testing.client.components.collab;
 
-import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_MOVED_TEMPORARILY;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.adobe.cq.testing.client.ComponentClient;
 import com.adobe.cq.testing.client.components.AbstractComponent;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;

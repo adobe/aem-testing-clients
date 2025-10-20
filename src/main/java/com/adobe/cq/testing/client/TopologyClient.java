@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.client;
 
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.UnsupportedEncodingException;
@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClientConfig;
 import org.apache.sling.testing.clients.SlingHttpResponse;

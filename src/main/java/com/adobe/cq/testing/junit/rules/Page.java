@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.junit.rules;
 
-import static org.apache.http.HttpStatus.SC_CREATED;
+import static org.apache.hc.core5.http.HttpStatus.SC_CREATED;
 
 import com.adobe.cq.testing.client.CQClient;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.ResourceUtil;

@@ -18,7 +18,7 @@ package com.adobe.cq.testing.junit.rules;
 import com.adobe.cq.testing.client.CQClient;
 import java.util.UUID;
 import java.util.function.Supplier;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingClient;
 import org.apache.sling.testing.clients.SlingHttpResponse;

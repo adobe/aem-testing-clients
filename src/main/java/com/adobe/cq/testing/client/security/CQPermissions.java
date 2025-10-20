@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.client.security;
 
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.adobe.cq.testing.client.SecurityClient;
 import com.fasterxml.jackson.databind.JsonNode;

@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.client.security;
 
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.adobe.cq.testing.client.SecurityClient;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,8 +26,8 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.sling.testing.Constants;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;

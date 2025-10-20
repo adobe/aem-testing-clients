@@ -16,7 +16,7 @@
 package com.adobe.cq.testing.util;
 
 import java.nio.charset.Charset;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 
 public class MultiPartNameValuePair extends BasicNameValuePair {
   /** Serial Version Uid */

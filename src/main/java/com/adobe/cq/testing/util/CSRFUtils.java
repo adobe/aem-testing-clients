@@ -15,7 +15,7 @@
  */
 package com.adobe.cq.testing.util;
 
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 
 import com.adobe.cq.testing.client.CQClient;
 import org.apache.sling.testing.clients.ClientException;

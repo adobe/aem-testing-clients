@@ -64,6 +64,9 @@ public class CQClient extends SlingClient {
   /** Path where statistics are stored */
   protected static final String STATISTICS_ROOT = "/var/statistics/pages";
 
+  /** Path to the author replication agents group. I have pulled up from ReplicationClient */
+  protected static final String AUTHOR_GROUP_PATH = "/etc/replication/agents.author";
+
   /** WCMCommands object that encapsulates all available WCM commands */
   protected final WCMCommands wcmCommands = new WCMCommands(this);
 

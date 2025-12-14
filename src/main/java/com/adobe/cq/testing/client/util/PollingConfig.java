@@ -20,7 +20,7 @@ public class PollingConfig {
   private final long interval;
 
   /**
-   *make new polling config
+   * make new polling config
    *
    * @param timeout timeout in millisec
    * @param interval interval in millisec
@@ -38,14 +38,14 @@ public class PollingConfig {
     return interval;
   }
 
-  /**quick polling config - 10s timeout, 100ms interval*/
+  /** quick polling config - 10s timeout, 100ms interval */
   public static PollingConfig fast() {
     long fastTimeout = 10000;
     long fastInterval = 100;
     return new PollingConfig(fastTimeout, fastInterval);
   }
 
-  /**standard polling config - 5s timeout, 500ms interval*/
+  /** standard polling config - 5s timeout, 500ms interval */
   public static PollingConfig standard() {
     long stdTimeout = 5000;
     long stdInterval = 500;

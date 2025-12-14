@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-/**helper methods for JsonNode operations*/
+/** helper methods for JsonNode operations */
 public class JsonNodeUtils {
 
   private JsonNodeUtils() {
-    //utility class
+    // utility class
   }
 
   /**
@@ -38,7 +38,7 @@ public class JsonNodeUtils {
    * @return set of text values
    */
   public static Set<String> getTxtElements(JsonNode node) {
-    //node stream to set
+    // node stream to set
     Stream<JsonNode> elemStream = getElements(node);
     Stream<String> txtStream = elemStream.map(JsonNode::textValue);
     Set<String> result = txtStream.collect(Collectors.toSet());
@@ -57,7 +57,7 @@ public class JsonNodeUtils {
       return Stream.empty();
     }
 
-    //for stream conversion
+    // for stream conversion
     Iterator<JsonNode> elementsIt = node.elements();
     Spliterator<JsonNode> spliterator =
         Spliterators.spliteratorUnknownSize(elementsIt, Spliterator.ORDERED);

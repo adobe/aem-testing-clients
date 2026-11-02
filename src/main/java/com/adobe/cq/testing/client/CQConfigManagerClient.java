@@ -130,10 +130,9 @@ public final class CQConfigManagerClient extends CQClient {
             .addParameter(PARAM_NAME, configName)
             .addParameter(PARAM_PARENT, parentPath);
     Arrays.stream(capabilities)
-        .forEach(
-            c -> {
-              formEntry.addParameter(PARAM_CONFIG_CAPABILITIES, c.getTitle());
-            });
+        .forEach(c -> {
+          formEntry.addParameter(PARAM_CONFIG_CAPABILITIES, c.getTitle());
+        });
     doPost(CREATE_ENDPOINT, formEntry.build(), SC_OK);
     return new CQConfig(this, parentPath + "/" + configTitle);
   }

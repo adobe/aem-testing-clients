@@ -30,23 +30,22 @@ public class TogglesAwareTestRuleTest {
 
   @Rule
   public TogglesAwareTestRule togglesAwareTestRule =
-      new TogglesAwareTestRule(
-          () -> {
-            togglesService.stubFor(
-                get(urlEqualTo("/etc.clientlibs/toggles.json"))
-                    .willReturn(
-                        aResponse()
-                            .withStatus(200)
-                            .withHeader("Content-Type", "application/json")
-                            .withBody("{\"enabled\":[\"a\", \"b\", \"c\"]}")));
+      new TogglesAwareTestRule(() -> {
+        togglesService.stubFor(
+            get(urlEqualTo("/etc.clientlibs/toggles.json"))
+                .willReturn(
+                    aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"enabled\":[\"a\", \"b\", \"c\"]}")));
 
-            try {
-              return new SlingClient(
-                  URI.create(String.format("http://localhost:%d", togglesService.port())), "", "");
-            } catch (ClientException e) {
-              return null;
-            }
-          });
+        try {
+          return new SlingClient(
+              URI.create(String.format("http://localhost:%d", togglesService.port())), "", "");
+        } catch (ClientException e) {
+          return null;
+        }
+      });
 
   @Test
   @RunIfToggleEnabled("a")

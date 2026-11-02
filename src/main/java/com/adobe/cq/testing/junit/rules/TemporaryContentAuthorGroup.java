@@ -108,7 +108,7 @@ public class TemporaryContentAuthorGroup extends ExternalResource {
 
     CreateGroupPolling p = new CreateGroupPolling();
     try {
-      p.poll(DEFAULT_TIMEOUT, SECONDS.toMillis(DEFAULT_RETRY_DELAY));
+      p.poll(DEFAULT_TIMEOUT, DEFAULT_RETRY_DELAY);
     } catch (TimeoutException e) {
       LOG.error(
           "Timeout of "

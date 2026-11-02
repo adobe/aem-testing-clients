@@ -32,21 +32,6 @@
         </license>
     </licenses>
 
-    <developers>
-        <developer>
-            <name>Valentin Olteanu</name>
-            <email>valentin.olteanu@adobe.com</email>
-            <organization>Adobe</organization>
-            <organizationUrl>https://opensource.adobe.com/</organizationUrl>
-        </developer>
-        <developer>
-            <name>Andrei Dulvac</name>
-            <email>andrei.dulvac@adobe.com</email>
-            <organization>Adobe</organization>
-            <organizationUrl>https://opensource.adobe.com/</organizationUrl>
-        </developer>
-    </developers>
-
     <scm>
         <connection>scm:git:https://github.com/adobe/aem-testing-clients.git</connection>
         <developerConnection>scm:git:https://github.com/adobe/aem-testing-clients.git</developerConnection>
@@ -56,8 +41,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.20.1</jackson.version>
-        <google-java-format.version>1.31.0</google-java-format.version>
+        <jackson.version>2.22.4</jackson.version>
+        <google-java-format.version>2.0.0</google-java-format.version>
     </properties>
 
     <build>
@@ -66,7 +51,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>3.7.0</version>
                 <executions>
                     <execution>
                         <id>enforce-maven-version</id>
@@ -78,6 +63,9 @@
                                 <requireMavenVersion>
                                     <version>3.6.3</version>
                                 </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>17</version>
+                                </requireJavaVersion>
                             </rules>
                         </configuration>
                     </execution>
@@ -87,7 +75,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.1</version>
+                <version>3.16.0</version>
                 <configuration>
                     <release>11</release>
                 </configuration>
@@ -99,7 +87,7 @@
                 <version>3.12.0</version>
                 <configuration>
                     <quiet>true</quiet>
-                    <release>11</release>
+                    <release>17</release>
                 </configuration>
                 <executions>
                     <execution>
@@ -115,7 +103,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.2</version>
+                <version>3.5.1</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -129,7 +117,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.3.1</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
@@ -141,7 +129,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>3.6.1</version>
                 <configuration>
                     <!-- Workaround for SUREFIRE-1588 manifested in circleci -->
                     <useSystemClassLoader>false</useSystemClassLoader>
@@ -152,7 +140,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.14</version>
+                <version>0.8.16</version>
                 <executions>
                     <execution>
                         <goals>
@@ -173,7 +161,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.10.4</version>
                 <configuration>
                     <formats>
                         <!-- you can define as many formats as you want, each is independent -->
@@ -244,7 +232,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.3.1</version>
+                        <version>3.4.0</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -273,7 +261,7 @@
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>0.9.0</version>
+                        <version>0.12.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
@@ -301,40 +289,32 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.clients</artifactId>
-            <version>3.1.0</version>
+            <version>3.1.2</version>
             <exclusions>
-                <!-- A newer version of servlet-api is included in the dependencies below -->
+                <!-- A newer version of jackson is included in the dependencies below -->
                 <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
                 </exclusion>
-                <!-- A newer version of hapi.client is included in the dependencies below -->
                 <exclusion>
-                    <groupId>org.apache.sling</groupId>
-                    <artifactId>org.apache.sling.hapi.client</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <!-- New version to fix CVE-2021-37714 of o.a.s.testing.clients -->
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.hapi.client</artifactId>
-            <version>1.0.2</version>
         </dependency>
 
         <!-- Apache IO utilities -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.20.0</version>
+            <version>2.22.0</version>
         </dependency>
 
         <!-- Required by WorkflowClient -->
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.14.0</version>
+            <version>2.15.1</version>
         </dependency>
 
         <!-- Required by CQXSSUtils#escapeXmlJSTL -->
@@ -348,7 +328,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.13.2</version>
+            <version>2.15.0</version>
         </dependency>
 
         <!-- For @Nullable annotations -->
@@ -361,21 +341,6 @@
         <!-- Used by QueryServlet on server side -->
         <!-- To be removed when sling testing clients includes the dependency (removes scope provided) -->
         <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.api</artifactId>
-            <version>2.27.6</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>${jackson.version}</version>
@@ -385,11 +350,6 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <version>5.0.0</version>
-        </dependency>
 
         <!--
             We need a SLF4J binding when we run tests. Dependency on the binding is test-scoped: artifacts that depend
@@ -398,19 +358,14 @@
         -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.17</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.20.0</version>
+            <version>5.24.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -418,7 +373,7 @@
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>3.13.1</version>
+            <version>3.13.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -44,8 +44,9 @@ import org.apache.sling.testing.clients.util.FormEntityBuilder;
  */
 public class CommerceClient extends FormClient {
 
-  public final String PRODUCT_PAGE_RESOURCE_TYPE = "weretail/components/structure/page";
-  public final String PROXY_PRODUCT_PAGE_RESOURCE_TYPE = "commerce/components/productpageproxy";
+  public static final String PRODUCT_PAGE_RESOURCE_TYPE = "weretail/components/structure/page";
+  public static final String PROXY_PRODUCT_PAGE_RESOURCE_TYPE =
+      "commerce/components/productpageproxy";
 
   private String commerceCookieName = "CommercePersistence";
 

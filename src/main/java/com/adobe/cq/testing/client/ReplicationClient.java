@@ -18,15 +18,14 @@ package com.adobe.cq.testing.client;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_OK;
 
+import com.adobe.cq.testing.client.util.JsonNodeUtils;
+import com.adobe.cq.testing.client.util.PollingConfig;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -44,8 +43,6 @@ import org.slf4j.LoggerFactory;
 /** Client for all replication related actions: activate, deactivate, agents management. */
 public class ReplicationClient extends CQClient {
   private static final org.slf4j.Logger log = LoggerFactory.getLogger(ReplicationClient.class);
-
-  public static final String AUTHOR_GROUP_PATH = "/etc/replication/agents.author";
 
   public static final String PUBLISH_REPLICATION_DEFAULT_AGENT = AUTHOR_GROUP_PATH + "/publish";
   public static final String PUBLISH_REVERSE_REPLICATION_DEFAULT_AGENT =
@@ -77,20 +74,7 @@ public class ReplicationClient extends CQClient {
    */
   public SlingHttpResponse activate(String agent, String nodePath, int... expectedStatus)
       throws ClientException {
-    FormEntityBuilder formEntityBuilder =
-        FormEntityBuilder.create()
-            .addParameter("cmd", "Activate")
-            .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
-            .addParameter("path", nodePath);
-
-    if (StringUtils.isNotBlank(agent)) {
-      formEntityBuilder.addParameter("agentId", agent);
-    }
-
-    return doPost(
-        "/bin/replicate.json",
-        formEntityBuilder.build(),
-        HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+    return doReplicationAction("Activate", agent, nodePath, expectedStatus);
   }
 
   /**
@@ -116,20 +100,7 @@ public class ReplicationClient extends CQClient {
    */
   public SlingHttpResponse deactivate(String agent, String pagePath, int... expectedStatus)
       throws ClientException {
-    FormEntityBuilder formEntityBuilder =
-        FormEntityBuilder.create()
-            .addParameter("cmd", "Deactivate")
-            .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
-            .addParameter("path", pagePath);
-
-    if (StringUtils.isNotBlank(agent)) {
-      formEntityBuilder.addParameter("agentId", agent);
-    }
-
-    return doPost(
-        "/bin/replicate.json",
-        formEntityBuilder.build(),
-        HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
+    return doReplicationAction("Deactivate", agent, pagePath, expectedStatus);
   }
 
   /**
@@ -143,6 +114,34 @@ public class ReplicationClient extends CQClient {
   public SlingHttpResponse deactivate(String pagePath, int... expectedStatus)
       throws ClientException {
     return deactivate("", pagePath, expectedStatus);
+  }
+
+  /**
+   * Executes a replication action (activate or deactivate).
+   *
+   * @param command the replication command
+   * @param agent agent to send the replication request
+   * @param path path of the node
+   * @param expectedStatus list of expected HTTP status
+   * @return the response
+   * @throws ClientException if something fails during the request/response cycle
+   */
+  private SlingHttpResponse doReplicationAction(
+      String command, String agent, String path, int... expectedStatus) throws ClientException {
+    FormEntityBuilder formEntityBuilder =
+        FormEntityBuilder.create()
+            .addParameter("cmd", command)
+            .addParameter(Constants.PARAMETER_CHARSET, Constants.CHARSET_UTF8)
+            .addParameter("path", path);
+
+    if (StringUtils.isNotBlank(agent)) {
+      formEntityBuilder.addParameter("agentId", agent);
+    }
+
+    return doPost(
+        "/bin/replicate.json",
+        formEntityBuilder.build(),
+        HttpUtils.getExpectedStatus(SC_OK, expectedStatus));
   }
 
   /**
@@ -251,6 +250,7 @@ public class ReplicationClient extends CQClient {
             .addAllParameters(Arrays.<NameValuePair>asList(properties))
             .build();
 
+    PollingConfig config = PollingConfig.fast();
     try {
       new Polling() {
         @Override
@@ -258,7 +258,7 @@ public class ReplicationClient extends CQClient {
           doPost(agentPath + "/jcr:content", entity, SC_OK);
           return true;
         }
-      }.poll(10000, 100);
+      }.poll(config.getTimeout(), config.getInterval());
     } catch (TimeoutException e) {
       throw new ClientException("Failed to adapt replication agent" + agentPath, e);
     }
@@ -350,52 +350,66 @@ public class ReplicationClient extends CQClient {
    * @throws Exception the exception
    */
   public boolean waitQueueEmptyOfPath(String agentPath, String replicatedPath) throws Exception {
-    JsonNode queuesJson = doGetJson(agentPath, 2, 200, 300).get("queues");
+    JsonNode agentJson = doGetJson(agentPath, 2, 200, 300);
+    JsonNode queuesJson = agentJson.get("queues");
     log.debug("queuesJson for agentPath {} is {}", agentPath, queuesJson);
-    Set<String> queueIds = elementsAsText(queuesJson.get("items"));
+
+    JsonNode itemsNode = queuesJson.get("items");
+    Set<String> queueIds = JsonNodeUtils.getTxtElements(itemsNode);
 
     for (String queueId : queueIds) {
       JsonNode queueJson = queuesJson.get(queueId);
-
-      boolean isEmpty = queueJson.get("empty").booleanValue();
-      log.debug("Queue {} is empty {}", queueId, isEmpty);
-
-      if (!isEmpty) {
-        Set<String> pkgs = elementsAsText(queueJson.get("items"));
-        for (String pkg : pkgs) {
-          JsonNode pkgJson = queueJson.get(pkg);
-
-          if (pkgJson != null) {
-            Set<String> paths = elementsAsText(pkgJson.get("paths"));
-
-            if (paths.contains(replicatedPath)) {
-              log.warn(
-                  "The replication queue {} is blocked by the item {} with paths {} due to {}.",
-                  queueId,
-                  pkg,
-                  paths,
-                  pkgJson.get("errorMessage"));
-            }
-          }
-          log.warn("The replication queue {} is blocked by the item {}.", queueId, pkg);
-          return false;
-        }
+      // Check if queue is blocked
+      boolean isBlocked = checkQueueBlocked(queueJson, queueId, replicatedPath);
+      if (isBlocked) {
+        return false;
       }
     }
     return true;
   }
 
-  private static Set<String> elementsAsText(JsonNode queue) {
-    return elements(queue).map(JsonNode::textValue).collect(Collectors.toSet());
-  }
+  /**
+   * Check if replication queue has blocking items.
+   *
+   * @param queueJson the queue JSON data
+   * @param queueId the queue identifier
+   * @param replicatedPath the path to check
+   * @return true if queue is blocked
+   */
+  private boolean checkQueueBlocked(JsonNode queueJson, String queueId, String replicatedPath) {
+    JsonNode emptyNode = queueJson.get("empty");
+    boolean isEmpty = emptyNode.booleanValue();
+    log.debug("Queue {} is empty {}", queueId, isEmpty);
 
-  private static Stream<JsonNode> elements(JsonNode node) {
-    if (node == null) {
-      return Stream.empty();
+    if (isEmpty) {
+      return false;
     }
-    Iterator<JsonNode> elementsIt = node.elements();
-    return StreamSupport.stream(
-        Spliterators.spliteratorUnknownSize(elementsIt, Spliterator.ORDERED), false);
+
+    // Queue is not empty, check for blocking items
+    JsonNode itemsNode = queueJson.get("items");
+    Set<String> pkgs = JsonNodeUtils.getTxtElements(itemsNode);
+
+    for (String pkg : pkgs) {
+      JsonNode pkgJson = queueJson.get(pkg);
+
+      if (pkgJson != null) {
+        JsonNode pathsNode = pkgJson.get("paths");
+        Set<String> paths = JsonNodeUtils.getTxtElements(pathsNode);
+        if (paths.contains(replicatedPath)) {
+          JsonNode errMsg = pkgJson.get("errorMessage");
+          log.warn(
+              "The replication queue {} is blocked by the item {} with paths {} due to {}.",
+              queueId,
+              pkg,
+              paths,
+              errMsg);
+        }
+      }
+      log.warn("The replication queue {} is blocked by the item {}.", queueId, pkg);
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -485,19 +499,20 @@ public class ReplicationClient extends CQClient {
 
     for (String line : lines) {
       if (line.length() >= 20) {
-        String time = line.substring(0, 19);
+        String timeStr = line.substring(0, 19);
         try {
-          SimpleDateFormat logDate = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-          Date convertedLogDate = logDate.parse(time);
-          if (convertedLogDate.equals(startTime) || convertedLogDate.after(startTime)) {
-            // checks the error level
+          SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+          Date logDate = dateFormat.parse(timeStr);
+          if (logDate.equals(startTime) || logDate.after(startTime)) {
             for (String pattern : patterns) {
-              // System.out.println(line);
-              if (line.contains(pattern)) return true;
+              if (line.contains(pattern)) {
+                return true;
+              }
             }
           }
         } catch (Exception e) {
-          // if the text cannot be converted, ignore it
+          // Display logs for errors. Not a good practice to keep these empty
+          log.debug("Could not parse timestamp from log line: {}", timeStr, e);
         }
       }
     }
